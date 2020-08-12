@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "956658967590",
+    "firebase_url": "https://fitnessapp-f3b39.firebaseio.com",
+    "project_id": "fitnessapp-f3b39",
+    "storage_bucket": "fitnessapp-f3b39.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956658967590:android:15577641fdcc213d35b2e7",
+        "android_client_info": {
+          "package_name": "com.example.FlutterFitnessApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtc0S_e_3udlyX04tBymC9P_kR9EokK7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956658967590:android:86ed4ef316cfb47835b2e7",
+        "android_client_info": {
+          "package_name": "com.example.fitnessapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956658967590-cr3i4l353qgpc4qbneec47ogp8chl8tu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fitnessapp",
+            "certificate_hash": "096b1c79da22b6660911a62321866643b452decc"
+          }
+        },
+        {
+          "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtc0S_e_3udlyX04tBymC9P_kR9EokK7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
