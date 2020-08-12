@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:nice_button/nice_button.dart';
 
+import 'HomeScreen.dart';
+
 final FirebaseAuth mAuth = FirebaseAuth.instance;
 
 class LoginRoute extends StatelessWidget {
@@ -73,11 +75,12 @@ class LoginRoute extends StatelessWidget {
                         NiceButton(
                           radius: 40,
                           padding: const EdgeInsets.all(15),
-                          text: "Register",
+                          text: "Log in",
                           icon: Icons.account_box,
                           gradientColors: [Color(0xff36d1dc), Color(0xff5b86e5)],
                           onPressed: () {
                             signInWithEmailAndPassword(context);
+                            navigateToHomeScreen(context);
                           },
                         ),
                       ]
@@ -122,11 +125,18 @@ class LoginRoute extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         //this delay is just for now
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 1), () {
           Navigator.of(context).pop(true);
         });
         return alert;
       },
     );
   }
+
+  Future navigateToHomeScreen(context) async{
+    Navigator.push(context,MaterialPageRoute(
+      builder: (context) => HomeScreen())
+    );
+  }
+
 }

@@ -31,14 +31,17 @@ class BaseScreen extends StatelessWidget{
             child: RaisedButton(
               child: Text('Login'),
               onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginRoute())
-                );
+                navigate(context);
               },
               //sendData(); //used as debug to send test data to firebase
             ),
         ), //center
+    );
+  }
+
+  Future navigate(BuildContext context) async{
+    Navigator.push(context,MaterialPageRoute(
+        builder: (context) => LoginRoute())
     );
   }
 }
