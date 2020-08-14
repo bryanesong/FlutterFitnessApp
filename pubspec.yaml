@@ -27,7 +27,8 @@ dependencies:
   firebase_database: ^3.1.6
   firebase_auth: ^0.16.0
   nice_button: ^0.1.7
-  flame: ^0.10.2
+  flame: ^0.23.0
+  spritewidget:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
@@ -38,7 +39,7 @@ dev_dependencies:
   firebase_core: ^0.4.0
   firebase_auth: ^0.16.0
   firebase_database: ^3.1.6
-  flame: ^0.10.2
+  flame: ^0.23.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,10 +57,13 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+    - assets/images/penguinSpriteSheet1.png
     - assets/images/penguin1.png
     - assets/images/penguin2.png
     - assets/images/penguin3.png
     - assets/images/penguin4.png
+    - assets/images/backgroundTemp.png
+    - assets/images/seattleBackgroundTEMP.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
