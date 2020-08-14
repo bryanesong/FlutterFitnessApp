@@ -81,7 +81,6 @@ class LoginRoute extends StatelessWidget {
                           gradientColors: [Color(0xff36d1dc), Color(0xff5b86e5)],
                           onPressed: () {
                             signInWithEmailAndPassword(context);
-                            navigateToHomeScreen(context);
                           },
                         ),
                       ]
@@ -109,6 +108,7 @@ class LoginRoute extends StatelessWidget {
     dispose();
     if (user != null) {
       showAlertDialog(context,"Login Successful");
+      navigateToHomeScreen(context);
     } else {
       showAlertDialog(context,"Login Failed");
     }

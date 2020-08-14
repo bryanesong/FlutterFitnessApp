@@ -66,13 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _clickFab(GlobalKey<ScaffoldState> key) {
-    key.currentState.showSnackBar(
-      const SnackBar(
-        content: const Text('You clicked the FAB!'),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _clickFab(key),
-        child: const Icon(Icons.add),
       ),
     );
   }
