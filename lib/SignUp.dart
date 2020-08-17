@@ -9,7 +9,9 @@ class SignUpRoute extends StatefulWidget {
 class SignUpState extends State<SignUpRoute> {
   TextField username, password1, password2, email = new TextField();
   var keyboardListener;
+  bool _checked = false;
   String title = 'Sign Up';
+  GlobalKey rememberMeSpacer = new GlobalKey();
 
   @override
   void initState() {
@@ -18,28 +20,25 @@ class SignUpState extends State<SignUpRoute> {
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
         visible ? title = "" : title = "Sign Up";
-        setState(() {
-
-        });
+        setState(() {});
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        body: Stack(children: [createTitle(),
+        body: Stack(children: [
+      createTitle(),
       Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          createTextField("Usn", username, false),
-          createTextField("Pwd", password1, true),
-          createTextField("Pwd", password2, true),
-          createTextField("Email", email, false),
+          createTextField("Usn", username, false, null),
+          createTextField("Pwd", password1, true, null),
+          createTextField("Pwd", password2, true, null),
+          createTextField("Email", email, false, rememberMeSpacer),
           createCheckboxTile()
         ],
       ),
@@ -48,7 +47,7 @@ class SignUpState extends State<SignUpRoute> {
 
   Widget createTitle() {
     return Container(
-      alignment: Alignment.topCenter,
+        alignment: Alignment.topCenter,
         padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
         child: Text(
           title,
@@ -61,19 +60,21 @@ class SignUpState extends State<SignUpRoute> {
         ));
   }
 
-  Widget createTextField(String textLabel, TextField field, bool isPassword) {
+  Widget createTextField(String textLabel, TextField field, bool isPassword, Key spacerKey) {
     field = new TextField(
       style: TextStyle(fontSize: 20, color: Colors.black45),
       obscureText: isPassword,
     );
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
+      children: [Container(
+        key: spacerKey,
+        child: Text(
           '$textLabel',
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),
-        ),
+        )
+      ),
         Container(
             padding: EdgeInsets.fromLTRB(20, 5, 0, 0), width: 250, child: field)
       ],
@@ -81,6 +82,15 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   Widget createCheckboxTile() {
-    return CheckboxListTile(title: Text('Remind Me'), value: false, controlAffinity: ListTileControlAffinity.trailing,);
+    return Container(width: 170,
+        child: CheckboxListTile(
+      title: Text('Remind Me'),
+      controlAffinity: ListTileControlAffinity.trailing,
+      value: _checked,
+      onChanged: (bool value) {
+        _checked = value;
+        setState(() {});
+      },
+    ));
   }
 }
