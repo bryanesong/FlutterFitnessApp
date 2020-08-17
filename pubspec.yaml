@@ -64,6 +64,11 @@ flutter:
     - assets/images/penguin4.png
     - assets/images/backgroundTemp.png
     - assets/images/seattleBackgroundTEMP.jpg
+    - assets/images/calorieButton.png
+    - assets/images/inventoryButton.png
+    - assets/images/settingsButton.png
+    - assets/images/statsButton.png
+    - assets/images/workoutButton.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

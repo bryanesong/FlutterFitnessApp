@@ -178,7 +178,11 @@ class HomeScreen extends StatelessWidget{
                       child: SizedBox(
                           width: buttonWidth,
                           height: buttonHeight,
-                          child: Icon(Icons.menu)),
+                          child: new Image.asset(
+                            'assets/images/calorieButton.png',
+                            fit: BoxFit.fill,
+                          ),
+                      ),
                       onTap: () {},
                     ),
                   ),
@@ -191,7 +195,11 @@ class HomeScreen extends StatelessWidget{
                       child: SizedBox(
                           width: buttonWidth,
                           height: buttonHeight,
-                          child: Icon(Icons.menu)),
+                          child: new Image.asset(
+                            'assets/images/workoutButton.png',
+                            fit: BoxFit.fill,
+                          ),
+                      ),
                       onTap: () {},
                     ),
                   ),
@@ -204,7 +212,11 @@ class HomeScreen extends StatelessWidget{
                       child: SizedBox(
                           width: buttonWidth,
                           height: buttonHeight,
-                          child: Icon(Icons.menu)),
+                          child: new Image.asset(
+                            'assets/images/inventoryButton.png',
+                            fit: BoxFit.fill,
+                          ),
+                      ),
                       onTap: () {},
                     ),
                   ),
@@ -217,7 +229,11 @@ class HomeScreen extends StatelessWidget{
                       child: SizedBox(
                           width: buttonWidth,
                           height: buttonHeight,
-                          child: Icon(Icons.menu)),
+                          child: new Image.asset(
+                            'assets/images/statsButton.png',
+                            fit: BoxFit.fill,
+                          ),
+                      ),
                       onTap: () {},
                     ),
                   ),
@@ -230,7 +246,11 @@ class HomeScreen extends StatelessWidget{
                       child: SizedBox(
                           width: buttonWidth,
                           height: buttonHeight,
-                          child: Icon(Icons.menu)),
+                          child: new Image.asset(
+                            'assets/images/settingsButton.png',
+                            fit: BoxFit.fill,
+                          ),
+                      ),
                       onTap: () {
                         navigateAnimationTest(context);
                       },
