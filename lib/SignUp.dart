@@ -32,14 +32,15 @@ class SignUpState extends State<SignUpRoute> {
         body: Stack(children: [
       createTitle(),
       Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        //crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          createTextField("Usn", username, false, null),
-          createTextField("Pwd", password1, true, null),
-          createTextField("Pwd", password2, true, null),
-          createTextField("Email", email, false, rememberMeSpacer),
-          createCheckboxTile()
+          createTextField("Usn", username, false),
+          createTextField("Pwd", password1, true),
+          createTextField("Pwd", password2, true),
+          createTextField("Email", email, false),
+          createCheckboxTile(),
+          createGoButton()
         ],
       ),
     ]));
@@ -60,21 +61,20 @@ class SignUpState extends State<SignUpRoute> {
         ));
   }
 
-  Widget createTextField(String textLabel, TextField field, bool isPassword, Key spacerKey) {
+  Widget createTextField(String textLabel, TextField field, bool isPassword) {
     field = new TextField(
       style: TextStyle(fontSize: 20, color: Colors.black45),
       obscureText: isPassword,
     );
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [Container(
-        key: spacerKey,
-        child: Text(
+      children: [
+        Container(
+            child: Text(
           '$textLabel',
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),
-        )
-      ),
+        )),
         Container(
             padding: EdgeInsets.fromLTRB(20, 5, 0, 0), width: 250, child: field)
       ],
@@ -82,15 +82,37 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   Widget createCheckboxTile() {
-    return Container(width: 170,
-        child: CheckboxListTile(
-      title: Text('Remind Me'),
-      controlAffinity: ListTileControlAffinity.trailing,
-      value: _checked,
-      onChanged: (bool value) {
-        _checked = value;
-        setState(() {});
-      },
-    ));
+/*    double spaceFromRight = 0;
+    print('checkbox');
+    RenderBox box = rememberMeSpacer.currentContext.findRenderObject();
+    Offset position = box.localToGlobal(Offset.zero);
+    spaceFromRight = position.dx;*/
+
+    return Container(
+        alignment: Alignment.centerRight,
+        child: Container(
+            alignment: Alignment.centerRight,
+            width: 170,
+            child: CheckboxListTile(
+              title: Text('Remind Me'),
+              controlAffinity: ListTileControlAffinity.trailing,
+              value: _checked,
+              onChanged: (bool value) {
+                _checked = value;
+                setState(() {});
+              },
+            )));
+  }
+
+  Widget createGoButton() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+        child: FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: BorderSide(color: Colors.black54)),
+          onPressed: () {},
+          child: Text("GO!", style: TextStyle(fontSize: 20)),
+        ));
   }
 }
