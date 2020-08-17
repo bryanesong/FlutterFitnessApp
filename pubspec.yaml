@@ -36,10 +36,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase_core: ^0.4.0
-  firebase_auth: ^0.16.0
-  firebase_database: ^3.1.6
-  flame: ^0.23.0
+  image: ^2.1.14
+  keyboard_visibility: ^0.5.2
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -58,10 +57,16 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/penguinSpriteSheet1.png
+    - assets/images/penguin0.png
     - assets/images/penguin1.png
     - assets/images/penguin2.png
     - assets/images/penguin3.png
     - assets/images/penguin4.png
+    - assets/images/penguin5.png
+    - assets/images/penguin6.png
+    - assets/images/penguin7.png
+    - assets/images/penguin8.png
+    - assets/images/penguin9.png
     - assets/images/backgroundTemp.png
     - assets/images/seattleBackgroundTEMP.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -75,17 +80,15 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
+  fonts:
+    - family: Anton
+      fonts:
+        - asset: assets/fonts/Anton-Regular.ttf
+          weight: 400
+    - family: Work Sans
+      fonts:
+        - asset: assets/fonts/WorkSans-Heavy.ttf
+          weight: 900
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

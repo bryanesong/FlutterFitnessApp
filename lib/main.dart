@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/sprite.dart';
@@ -40,12 +41,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(),
+      home: SignInOrSignUp(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+/*class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -64,44 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _position = Position(10 + _position.x, 10 + _position.y);
     });
-  }
+  }*/
 
-
-  @override
-  Widget build(BuildContext context) {
-    final key = GlobalKey<ScaffoldState>();
-    return Scaffold(
-      key: key,
-      appBar: AppBar(
-        title: const Text('Base Screen'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Welcome to Pengu Fit'),
-            Container(
-              width: 200,
-              height: 200,
-              child: AnimationWidget(animation: _animation),
-            ),
-            RaisedButton(
-              child: Text("Log in"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginRoute(),
-                  ),
-                );
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 /*
 class _MyAppState extends State<MyApp> {
   @override
@@ -218,7 +183,8 @@ class HomeScreen extends StatelessWidget{
                           width: buttonWidth,
                           height: buttonHeight,
                           child: Icon(Icons.menu)),
-                      onTap: () {},
+                      onTap: () {
+                      },
                     ),
                   ),
                 ),
@@ -250,7 +216,6 @@ class HomeScreen extends StatelessWidget{
         builder: (context) => HomeScreen())
     );
   }
-
 
 }
 
