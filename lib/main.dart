@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/sprite.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(),
+      home: SignInOrSignUp(),
     );
   }
 }
