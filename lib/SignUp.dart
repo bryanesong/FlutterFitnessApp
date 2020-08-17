@@ -12,6 +12,7 @@ class SignUpState extends State<SignUpRoute> {
   bool _checked = false;
   String title = 'Sign Up';
   GlobalKey rememberMeSpacer = new GlobalKey();
+  GlobalKey usernameKey, password1Key, password2Key, emailKey = new GlobalKey();
 
   @override
   void initState() {
@@ -35,10 +36,10 @@ class SignUpState extends State<SignUpRoute> {
         //crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          createTextField("Usn", username, false),
-          createTextField("Pwd", password1, true),
-          createTextField("Pwd", password2, true),
-          createTextField("Email", email, false),
+          createTextField("Usn", username, false, usernameKey),
+          createTextField("Pwd", password1, true, password1Key),
+          createTextField("Pwd", password2, true, password2Key),
+          createTextField("Email", email, false, emailKey),
           createCheckboxTile(),
           createGoButton()
         ],
@@ -61,7 +62,7 @@ class SignUpState extends State<SignUpRoute> {
         ));
   }
 
-  Widget createTextField(String textLabel, TextField field, bool isPassword) {
+  Widget createTextField(String textLabel, TextField field, bool isPassword, GlobalKey key) {
     field = new TextField(
       style: TextStyle(fontSize: 20, color: Colors.black45),
       obscureText: isPassword,
