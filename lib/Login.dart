@@ -1,3 +1,4 @@
+import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -107,37 +108,22 @@ class LoginRoute extends StatelessWidget {
 
     dispose();
     if (user != null) {
-      showAlertDialog(context,"Login Successful");
+      print("Login Successful");
       navigateToHomeScreen(context);
     } else {
-      showAlertDialog(context,"Login Failed");
+      print("Login Failed");
     }
 
   }
 
   //show alert dialog will eventually be replaced by something more aesthic, but it will work for now
-  showAlertDialog(BuildContext context, String message){
-    AlertDialog alert = AlertDialog(
-      content: Text(message),
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        //this delay is just for now
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.of(context).pop(true);
-        });
-        return alert;
-      },
-    );
-  }
 
   Future navigateToHomeScreen(context) async{
     Navigator.push(context,MaterialPageRoute(
       builder: (context) => HomeScreen())
     );
   }
+
+
 
 }
