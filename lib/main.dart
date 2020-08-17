@@ -133,12 +133,19 @@ final double buttonWidth = 65;
 final double buttonHeight = 65;
 
 class HomeScreen extends StatelessWidget{
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: new AppDrawer(),
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar: new AppBar(
         title: Text('Home Screen'),
+        actions: <Widget>[
+          new Container(),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -253,7 +260,7 @@ class HomeScreen extends StatelessWidget{
                           ),
                       ),
                       onTap: () {
-                        navigateAnimationTest(context);
+                        _scaffoldKey.currentState.openEndDrawer();
                       },
                     ),
                   ),
@@ -272,7 +279,32 @@ class HomeScreen extends StatelessWidget{
     );
   }
 
+}
 
+class AppDrawer extends StatefulWidget {
+  @override
+  _AppDrawerState createState() => new _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  @override
+  Widget build(BuildContext context) {
+    return new Drawer(
+      child: new ListView(
+        children: <Widget>[
+          new ListTile(
+            title: new Text("Item 1"),
+          ),
+          new ListTile(
+            title: new Text("Item 2"),
+          ),
+          new ListTile(
+            title: new Text("Item 2"),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 
