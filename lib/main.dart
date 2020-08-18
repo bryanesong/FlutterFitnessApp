@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/sprite.dart';
@@ -7,6 +8,7 @@ import 'package:flame/spritesheet.dart';
 import 'package:flame/position.dart';
 import 'package:flame/widgets/animation_widget.dart';
 import 'package:flame/widgets/sprite_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Login.dart';
 
@@ -281,6 +283,8 @@ class HomeScreen extends StatelessWidget{
 
 }
 
+final FirebaseAuth mAuth = FirebaseAuth.instance;
+
 class AppDrawer extends StatefulWidget {
   @override
   _AppDrawerState createState() => new _AppDrawerState();
@@ -297,9 +301,18 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           new ListTile(
             title: new Text("Item 2"),
+            onTap: (){
+              print("Clicked on item 2!");
+            },
           ),
           new ListTile(
-            title: new Text("Item 2"),
+            title: new Text("Log out"),
+            onTap: (){
+              print("signed user out.");
+              mAuth.signOut();
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

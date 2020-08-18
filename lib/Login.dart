@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +12,49 @@ import 'main.dart';
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;
 
-class LoginRoute extends StatelessWidget {
+
+class LoginRoute extends StatefulWidget{
+  @override
+  LoginRouteState createState() => LoginRouteState();
+}
+
+class LoginRouteState extends State<LoginRoute> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool rememberMe = false;
+
+  @protected
+  @mustCallSuper
+  void initState() {
+
+    if(mAuth != null){
+      print("currently logged in.");
+      navigateToHomeScreen(context);
+    }else{
+      print("NOT logged in,");
+    }
+  }
+
+  final snackBarSuccess = SnackBar(
+    content: Text('Logged In Successfully'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  );
+
+  final snackBarFail = SnackBar(
+    content: Text('Unable to Login'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,15 +116,26 @@ class LoginRoute extends StatelessWidget {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         new Padding(padding: EdgeInsets.only(top: 20.0)),
-                        NiceButton(
-                          radius: 40,
-                          padding: const EdgeInsets.all(15),
-                          text: "Log in",
-                          icon: Icons.account_box,
-                          gradientColors: [Color(0xff36d1dc), Color(0xff5b86e5)],
-                          onPressed: () {
-                            signInWithEmailAndPassword(context);
-                          },
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            createCheckboxTile(),
+                            Text(" Remember Me"),
+                          ],
+                        ),
+                        new Padding(padding: EdgeInsets.only(top: 20.0)),
+                        new Builder(
+                          builder: (context)=>
+                              NiceButton(
+                                radius: 40,
+                                padding: const EdgeInsets.all(15),
+                                text: "Log in",
+                                icon: Icons.account_box,
+                                gradientColors: [Color(0xff36d1dc), Color(0xff5b86e5)],
+                                onPressed: () {
+                                  signInWithEmailAndPassword(context);
+                                },
+                              ),
                         ),
                       ]
                   )
@@ -107,11 +160,13 @@ class LoginRoute extends StatelessWidget {
     )).user;
 
     dispose();
+    print("user info: "+user.toString());
     if (user != null) {
       print("Login Successful");
       navigateToHomeScreen(context);
     } else {
       print("Login Failed");
+      Scaffold.of(context).showSnackBar(snackBarFail);
     }
 
   }
@@ -124,6 +179,15 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-
-
+  Widget createCheckboxTile() {
+    return Container(width: 170,
+        child: CheckboxListTile(
+          controlAffinity: ListTileControlAffinity.trailing,
+          value: rememberMe,
+          onChanged: (bool value) {
+            rememberMe = value;
+            setState(() {});
+          },
+        ));
+  }
 }
