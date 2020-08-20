@@ -147,6 +147,7 @@ class LoginRouteState extends State<LoginRoute> {
   }
 
   void dispose(){
+    super.dispose();
     emailController.clear();
     passwordController.clear();
   }

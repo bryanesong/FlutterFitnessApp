@@ -134,6 +134,8 @@ class _MyAppState extends State<MyApp> {
 final double buttonWidth = 65;
 final double buttonHeight = 65;
 
+String currentState = "idle_screen";
+
 class HomeScreen extends StatelessWidget{
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -155,23 +157,7 @@ class HomeScreen extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Expanded(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                ),
-                image: DecorationImage(
-                  image: AssetImage("assets/images/seattleBackgroundTEMP.jpg"),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              child: Container(
-                width: 200,
-                height: 200,
-                child: AnimationWidget(animation: _animation),
-              ),
-            ),
+            child: getCustomContiner(),
           ),
           Container(
             decoration: BoxDecoration(
@@ -281,6 +267,41 @@ class HomeScreen extends StatelessWidget{
     );
   }
 
+  Widget getCustomContiner(){
+    switch(currentState){
+      case "idle_screen":
+        return getIdleScreenWidget();
+      case  "workout_log_screen":
+        return getworkoutLogWidget();
+    }
+  }
+
+  Widget getworkoutLogWidget(){
+    return Container(
+      
+    );
+  }
+
+  Widget getIdleScreenWidget(){
+    return Container(
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black,
+        ),
+        image: DecorationImage(
+          image: AssetImage("assets/images/seattleBackgroundTEMP.jpg"),
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: Container(
+        width: 200,
+        height: 200,
+        child: AnimationWidget(animation: _animation),
+      ),
+    );
+  }
+
 }
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;
@@ -293,30 +314,38 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
-    return new Drawer(
-      child: new ListView(
-        children: <Widget>[
-          new ListTile(
-            title: new Text("Item 1"),
-          ),
-          new ListTile(
-            title: new Text("Item 2"),
-            onTap: (){
-              print("Clicked on item 2!");
-            },
-          ),
-          new ListTile(
-            title: new Text("Log out"),
-            onTap: (){
-              print("signed user out.");
-              mAuth.signOut();
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-        ],
+    return new Container(
+      width: 150,
+      child: new Drawer(
+        child: new ListView(
+          children: <Widget>[
+            new ListTile(
+              title: new Text("Profile Settings"),
+              onTap: (){
+                print("Clicked on profile settings!");
+              },
+            ),
+            new ListTile(
+              title: new Text("About Us"),
+              onTap: (){
+                print("Clicked on about us.");
+              },
+            ),
+            new ListTile(
+              title: new Text("Log out"),
+              onTap: ()=>logout(context),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void logout(context) async{
+    print("signed user out.");
+    mAuth.signOut();
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 }
 
