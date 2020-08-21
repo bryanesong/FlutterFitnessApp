@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/sprite.dart';
@@ -7,6 +8,7 @@ import 'package:flame/spritesheet.dart';
 import 'package:flame/position.dart';
 import 'package:flame/widgets/animation_widget.dart';
 import 'package:flame/widgets/sprite_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Login.dart';
 
