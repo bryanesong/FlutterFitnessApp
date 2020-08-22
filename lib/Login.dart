@@ -27,12 +27,6 @@ class LoginRouteState extends State<LoginRoute> {
   @mustCallSuper
   void initState() {
 
-    if(mAuth != null){
-      print("currently logged in.");
-      navigateToHomeScreen(context);
-    }else{
-      print("NOT logged in,");
-    }
   }
 
   final snackBarSuccess = SnackBar(
@@ -162,7 +156,7 @@ class LoginRouteState extends State<LoginRoute> {
 
     dispose();
     print("user info: "+user.toString());
-    if (user != null) {
+    if (user != null){
       print("Login Successful");
       navigateToHomeScreen(context);
     } else {
@@ -175,8 +169,11 @@ class LoginRouteState extends State<LoginRoute> {
   //show alert dialog will eventually be replaced by something more aesthic, but it will work for now
 
   Future navigateToHomeScreen(context) async{
-    Navigator.push(context,MaterialPageRoute(
-      builder: (context) => HomeScreen())
+    Navigator.of(context).pop();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
+      ),
     );
   }
 
