@@ -141,7 +141,8 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
 
     //locate code
     codeList.forEach((AlphaCode code) {
-      if (_inputtedCode == code.alphaCode && !code.inUse) {
+      //TRUE ADDED FOR TESTING PURPOSES
+      if (true || _inputtedCode == code.alphaCode && !code.inUse && code.enabled) {
         navigateToSignUpPage(context, code);
       }
     });

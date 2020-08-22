@@ -1,8 +1,10 @@
+import 'package:FlutterFitnessApp/MyProfileGoals.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'AlphaCode.dart';
+import 'dart:math';
 
 class SignUpRoute extends StatefulWidget {
   AlphaCode curCode;
@@ -49,6 +51,8 @@ class SignUpState extends State<SignUpRoute> {
   String _passwordErrorInfo = "";
   String _invalidErrorType = "";
 
+  DatabaseReference ref;
+
   SignUpState({this.curCode});
 
   @override
@@ -61,7 +65,6 @@ class SignUpState extends State<SignUpRoute> {
       fishSize = 40;
       moveFish(_usernameKey);
     });
-
   }
 
   @override
@@ -76,11 +79,10 @@ class SignUpState extends State<SignUpRoute> {
 
   @override
   Widget build(BuildContext context) {
-    if(!waitForAnimation) {
+    if (!waitForAnimation) {
       Future.delayed(const Duration(milliseconds: 50), () {
         moveFish(mostRecentTextKey);
       });
-
     }
     // TODO: implement build
     AppBar appbar = new AppBar(
@@ -90,7 +92,10 @@ class SignUpState extends State<SignUpRoute> {
         appBar: appbar,
         body: Stack(children: [
           AnimatedContainer(
-            height: MediaQuery.of(context).viewInsets.bottom > 0 ? 0 : 100,
+            height: MediaQuery
+                .of(context)
+                .viewInsets
+                .bottom > 0 ? 0 : 100,
             duration: Duration(milliseconds: 100),
             child: createTitle(),
           ),
@@ -101,28 +106,52 @@ class SignUpState extends State<SignUpRoute> {
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                  child: createTextField("Usn  ", _username, false, _usernameKey,
-                      _usernameFocus, _usernameController, false,),
+                  child: createTextField(
+                    "Usn  ",
+                    _username,
+                    false,
+                    _usernameKey,
+                    _usernameFocus,
+                    _usernameController,
+                    false,),
                 ),
               ),
               Flexible(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                child: createTextField("Pwd  ", _password1, true, _password1Key,
-                    _password1Focus, _password1Controller, false),
-              )),
+                    padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                    child: createTextField(
+                        "Pwd  ",
+                        _password1,
+                        true,
+                        _password1Key,
+                        _password1Focus,
+                        _password1Controller,
+                        false),
+                  )),
               Flexible(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                child: createTextField("Pwd  ", _password2, true, _password2Key,
-                    _password2Focus, _password2Controller, false),
-              )),
+                    padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                    child: createTextField(
+                        "Pwd  ",
+                        _password2,
+                        true,
+                        _password2Key,
+                        _password2Focus,
+                        _password2Controller,
+                        false),
+                  )),
               Flexible(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                child: createTextField("Email", _email, false, _emailKey,
-                    _emailFocus, _emailController, true),
-              )),
+                    padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                    child: createTextField(
+                        "Email",
+                        _email,
+                        false,
+                        _emailKey,
+                        _emailFocus,
+                        _emailController,
+                        true),
+                  )),
               Flexible(
                 child: createCheckboxTile(),
               ),
@@ -149,15 +178,13 @@ class SignUpState extends State<SignUpRoute> {
         ));
   }
 
-  Widget createTextField(
-      String textLabel,
+  Widget createTextField(String textLabel,
       TextField field,
       bool isPassword,
       GlobalKey key,
       FocusNode focus,
       TextEditingController controller,
       bool isLocked,) {
-
     field = new TextField(
       readOnly: isLocked,
       style: TextStyle(fontSize: 20, color: Colors.black45),
@@ -165,18 +192,20 @@ class SignUpState extends State<SignUpRoute> {
       focusNode: focus,
       controller: controller,
       decoration: InputDecoration(
-        errorText: _invalidErrorType == textLabel.trim() ? _passwordErrorInfo : null
+          errorText: _invalidErrorType == textLabel.trim()
+              ? _passwordErrorInfo
+              : null
       ),
     );
 
     focus.addListener(() {
-      if(focus.hasFocus && waitForAnimation == false) {
-      mostRecentTextKey = key;
-      Future.delayed(const Duration(milliseconds: 150), () {
-        moveFish(key);
-      });
-
-    }});
+      if (focus.hasFocus && waitForAnimation == false) {
+        mostRecentTextKey = key;
+        Future.delayed(const Duration(milliseconds: 150), () {
+          moveFish(key);
+        });
+      }
+    });
 
     return Row(
       key: key,
@@ -184,12 +213,14 @@ class SignUpState extends State<SignUpRoute> {
       children: [
         Container(
 
-          padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
             child: Text(
-          '$textLabel',
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),
-        )),
+              '$textLabel',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            )),
         Expanded(
             child: field)
       ],
@@ -247,7 +278,7 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   void moveFish(GlobalKey key) {
-    if(key.currentContext != null) {
+    if (key.currentContext != null) {
       RenderBox box = key.currentContext.findRenderObject();
       Offset position = box.localToGlobal(Offset.zero);
       fishY = position.dy -
@@ -267,17 +298,17 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   void validateUserInput() {
-    if(_usernameController.text == "") {
+    if (_usernameController.text == "") {
       setState(() {
         _passwordErrorInfo = "Username cannot be left blank";
         _invalidErrorType = "Usn";
       });
-    } else if(_password1Controller.text.length < 6){
+    } else if (_password1Controller.text.length < 6) {
       setState(() {
         _passwordErrorInfo = "Password length must be 6 or greater";
         _invalidErrorType = "Pwd";
       });
-    } else if(_password1Controller.text != _password2Controller.text){
+    } else if (_password1Controller.text != _password2Controller.text) {
       setState(() {
         _passwordErrorInfo = "Passwords must match!";
         _invalidErrorType = "Pwd";
@@ -288,8 +319,33 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   void registerAccount() async {
-     user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: "${_emailController.text}", password: "${_password1Controller.text}"))
+    //COMMENTED OUT FOR TESTING PURPOSES
+    /*user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: "${_emailController.text}",
+        password: "${_password1Controller.text}"))
         .user;
+    Random random = Random.secure();
+    const _chars = 'abcdefghijklmnopqrstuvwxyz';
+    String uniqueKey = String.fromCharCodes(Iterable.generate(
+        10, (_) => _chars.codeUnitAt(random.nextInt(_chars.length))));
+
+    ref = FirebaseDatabase.instance.reference();
+
+    ref.child("Users").push().child("Friends List Info").child("List").set({
+      'UUID': uniqueKey,
+      'Username': _usernameController.text
+    });
+
+    await ref.child("Alpha Codes").orderByChild("userEmail").equalTo(curCode.userEmail).onChildAdded.listen((Event event) {
+      ref.child("Alpha Codes").child(event.snapshot.key).child("inUse").set(true);
+    });*/
+    navigateToAlphaCodePage(context);
   }
 }
+
+Future navigateToAlphaCodePage(context) async{
+  Navigator.push(context,MaterialPageRoute(
+      builder: (context) => MyProfileGoals()
+  ));
+}
+
