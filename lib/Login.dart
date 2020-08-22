@@ -26,7 +26,17 @@ class LoginRouteState extends State<LoginRoute> {
   @protected
   @mustCallSuper
   void initState() {
-
+    if (mAuth != null) {
+      print("currently logged in.");
+      Navigator.of(context).pop();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(),
+        ),
+      );
+    } else {
+      print("NOT logged in,");
+    }
   }
 
   final snackBarSuccess = SnackBar(

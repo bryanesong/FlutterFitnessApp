@@ -100,22 +100,11 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Log in"),
               onPressed: () {
                 print("LOG IN BUTTON HAS BEEN PRESSED!!!!!!");
-                if(mAuth != null){
-                  print("currently logged in.");
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ),
-                  );
-                }else{
-                  print("NOT logged in,");
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => LoginRoute(),
-                    ),
-                  );
+                      MaterialPageRoute(
+                        builder: (context) => LoginRoute(),
+                      ));
                 }
-              },
             )
           ],
         ),
@@ -170,7 +159,11 @@ class HomeScreenState extends State<HomeScreen>{
   @override
   void initState() {
     // TODO: implement initState
+    initializeStuff();
     super.initState();
+  }
+
+  void initializeStuff() async{
     _calendarController = CalendarController();
     //get workoutlog from firebase
 
@@ -534,7 +527,7 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  void logout(context) async{
+  void logout(context){
     print("signed user out.");
     mAuth.signOut();
     Navigator.pop(context);

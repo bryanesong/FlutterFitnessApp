@@ -163,7 +163,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     );
   }
 
-  void buttonPushed(String from) {
+  void buttonPushed(String from) async{
     RenderBox box;
     from == "Sign Up"
         ? box = signUpKey.currentContext.findRenderObject()
