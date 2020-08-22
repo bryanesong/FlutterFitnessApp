@@ -34,7 +34,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
   Widget createRow() {
     return Row(
       children: [
-        Image(Image.asset(""))
+        Image();
       ],
     );
   }
