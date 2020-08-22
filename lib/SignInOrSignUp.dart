@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:FlutterFitnessApp/Login.dart';
+import 'package:FlutterFitnessApp/PromptAlphaCode.dart';
 import 'package:FlutterFitnessApp/SignUp.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +45,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Scaffold(/*appBar: AppBar(title: Text("hello"),),*/ body: Center(
         child: Container(
             constraints: BoxConstraints.expand(),
             //padding: EdgeInsets.fromLTRB(0, 100, 0, 50),
@@ -53,22 +54,25 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
               children: [
                 createPenguinImage(),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      'FITNESS NAME',
-                      style: TextStyle(
-                          decoration: TextDecoration.none,
-                          fontFamily: 'Work Sans',
-                          fontWeight: FontWeight.w900,
-                          fontSize: 53,
-                          color: Colors.grey),
-                    ),
+                  children: [Container(padding: EdgeInsets.fromLTRB(15, 0, 15, 0),child: FittedBox(child: Text(
+                    'FITNESS NAME',
+                    style: TextStyle(
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Work Sans',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.grey),
+                  ),)),
+
                     createSignInSignOutRow()
                   ],
                 ),
               ],
-            )));
+            ))),);
+
+
   }
 
   @override
@@ -88,7 +92,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
         height: penguinSize,
         duration: Duration(seconds: 3),
         //divided by 2 to center the penguin
-        top: penguinPositionY - penguinSize / 2,
+        top: penguinPositionY - penguinSize / 2 /*- AppBar().preferredSize.height-MediaQuery.of(context).padding.top*/,
         left: penguinPositionX - penguinSize / 2,
         curve: Curves.decelerate,
         child: RotationTransition(
@@ -177,7 +181,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
     Future.delayed(const Duration(seconds: 3), ()
     {
-      from == "Sign In" ? navigateToLoginPage(context) : navigateToSignUpPage(context);
+      from == "Sign In" ? navigateToLoginPage(context) : navigateToAlphaCodePage(context);
     });
 
 
@@ -198,18 +202,11 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     );
   }
 
-  Future navigateToSignUpPage(context) async{
+  Future navigateToAlphaCodePage(context) async{
     Navigator.push(context,MaterialPageRoute(
-        builder: (context) => SignUpRoute())
+        builder: (context) => PromptAlphaCode())
     );
   }
-
-
-/*  Future navigateAnimationTest(context) async{
-    Navigator.push(context,MaterialPageRoute(
-        builder: (context) => SignUpRoute())
-    );
-  }*/
 
 }
 
