@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
 
 class MyProfileInfo extends StatefulWidget {
   List<bool> goals = new List<bool>();
@@ -14,6 +16,12 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   double _width, _height;
   AutoSizeGroup _textFitGroup;
 
+
+  @override
+  void initState() {
+    MediaQuery.
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +38,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
             createTitle(),
             createRow(),
             createDivider(),
+            makeArrowButtons(),
           ])
         ]));
   }
@@ -110,11 +119,49 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     );
   }
 
+  Widget makeArrowButtons() {
+    return Expanded(
+      child: Stack(children: [Container(
+          alignment: Alignment.bottomRight,
+          padding: EdgeInsets.fromLTRB(0, 0, wpad(5), hpad(5)),
+          child: FlatButton(
+              onPressed: () {
+                /*navigateToAlphaCodePage(context);*/
+              },
+              child: Image.asset(
+                "assets/images/arrow.png",
+                height: hpad(7),)
+          )),
+
+        Container(
+            alignment: Alignment.bottomLeft,
+            padding: EdgeInsets.fromLTRB(wpad(5), 0, 0, hpad(5)),
+            child: FlatButton(
+                onPressed: () {
+                  navigateToPrevPage(context);
+                },
+                child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: Image.asset(
+                  "assets/images/arrow.png",
+                  height: hpad(7),))
+            )),
+
+
+      ])
+    );
+  }
+
   double wpad(double percent) {
     return _width * percent / 100;
   }
 
   double hpad(double percent) {
     return _height * percent / 100;
+  }
+
+  Future navigateToPrevPage(context) async{
+    Navigator.pop(context);
   }
 }

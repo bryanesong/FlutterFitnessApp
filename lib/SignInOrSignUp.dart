@@ -20,11 +20,16 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
   double penguinPositionX = -1;
   double penguinPositionY = -1;
   double penguinSize = 150;
-  final double iconSize = 125;
+  double iconSize = 125;
+  double _width, _height;
 
   @override
   void initState() {
     super.initState();
+
+
+
+
     _animationController =
         AnimationController(duration: Duration(seconds: 6));
     _animation = IntTween(begin: 0, end: 9).animate(_animationController);
@@ -45,6 +50,12 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
   @override
   Widget build(BuildContext context) {
+
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
+
+    iconSize = wpad(35);
+
     return Scaffold(/*appBar: AppBar(title: Text("hello"),),*/ body: Center(
         child: Container(
             constraints: BoxConstraints.expand(),
@@ -196,6 +207,14 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     });
   }
 
+  double wpad(double percent) {
+    return _width * percent / 100;
+  }
+
+  double hpad(double percent) {
+    return _height * percent / 100;
+  }
+
   Future navigateToLoginPage(context) async{
     Navigator.push(context,MaterialPageRoute(
         builder: (context) => LoginRoute())
@@ -228,4 +247,5 @@ class PenguinAnimate extends AnimatedWidget {
           );
         });
   }
+
 }
