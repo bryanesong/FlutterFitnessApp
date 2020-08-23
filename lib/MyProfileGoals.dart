@@ -35,9 +35,12 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
       appBar: AppBar(
         title: Text("Goals"),
       ),
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          Column(children: [
+          Column(
+            mainAxisSize: MainAxisSize.max,
+              children: [
             createTitle(),
             createRow(),
             createDivider(),
@@ -52,10 +55,9 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
 
   Widget createTitle() {
     return Container(
-        alignment: Alignment.topCenter,
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: Text(
           "Goals",
+          textAlign: TextAlign.center,
           style: TextStyle(
               decoration: TextDecoration.none,
               fontFamily: 'Work Sans',
@@ -146,15 +148,17 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
   }
 
   Widget makeChoices() {
-    return Column(
-      children: [
-        makeIndivChoice("Track My Calories", _trackCalories),
-        makeIndivChoice("Gain Weight", _gainWeight),
-        makeIndivChoice("Lose Weight", _loseWeight),
-        makeIndivChoice("Maintain Weight", _maintainWeight),
-        makeIndivChoice("Track My Workout", _trackWorkouts),
-      ],
-    );
+    return Container(
+        height: hpad(40),
+        child: Scrollbar(child: ListView(
+          children: [
+            makeIndivChoice("Track My Calories", _trackCalories),
+            makeIndivChoice("Gain Weight", _gainWeight),
+            makeIndivChoice("Lose Weight", _loseWeight),
+            makeIndivChoice("Maintain Weight", _maintainWeight),
+            makeIndivChoice("Track My Workouts", _trackWorkouts),
+          ],)
+    ));
   }
 
   Widget makeIndivChoice(String boldedText, bool refBool) {
@@ -216,7 +220,6 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
   }
 
   Future navigateToAlphaCodePage(context) async{
-
     Navigator.push(context,CupertinoPageRoute(builder: (context) => MyProfileInfo(goals: goals)));
   }
 
