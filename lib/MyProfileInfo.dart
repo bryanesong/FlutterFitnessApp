@@ -19,7 +19,6 @@ class MyProfileInfoState extends State<MyProfileInfo> {
 
   @override
   void initState() {
-    MediaQuery.
     super.initState();
   }
 
