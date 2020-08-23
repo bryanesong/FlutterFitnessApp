@@ -36,10 +36,6 @@ class LoginRouteState extends State<LoginRoute> {
     super.initState();
   }
 
-  void dispose(){
-    super.dispose();
-  }
-
   void navigateToHomeScreenNoContext() async{
     Navigator.of(context).push(
       MaterialPageRoute(
