@@ -150,14 +150,14 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
   Widget makeChoices() {
     return Container(
         height: hpad(40),
-        child: ListView(
-      children: [
-        makeIndivChoice("Track My Calories", _trackCalories),
-        makeIndivChoice("Gain Weight", _gainWeight),
-        makeIndivChoice("Lose Weight", _loseWeight),
-        makeIndivChoice("Maintain Weight", _maintainWeight),
-        makeIndivChoice("Track My Workout", _trackWorkouts),
-      ],
+        child: Scrollbar(child: ListView(
+          children: [
+            makeIndivChoice("Track My Calories", _trackCalories),
+            makeIndivChoice("Gain Weight", _gainWeight),
+            makeIndivChoice("Lose Weight", _loseWeight),
+            makeIndivChoice("Maintain Weight", _maintainWeight),
+            makeIndivChoice("Track My Workouts", _trackWorkouts),
+          ],)
     ));
   }
 
