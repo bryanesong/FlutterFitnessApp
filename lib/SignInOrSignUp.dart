@@ -31,7 +31,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
 
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 6));
+        AnimationController(duration: Duration(seconds: 6));
     _animation = IntTween(begin: 0, end: 9).animate(_animationController);
 
     _animationController.repeat().whenComplete(() {
