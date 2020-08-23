@@ -29,14 +29,23 @@ class LoginRouteState extends State<LoginRoute> {
     if (mAuth != null) {
       print("currently logged in.");
       Navigator.of(context).pop();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(),
-        ),
-      );
+      navigateToHomeScreenNoContext();
     } else {
       print("NOT logged in,");
     }
+    super.initState();
+  }
+
+  void dispose(){
+    super.dispose();
+  }
+
+  void navigateToHomeScreenNoContext() async{
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
+      ),
+    );
   }
 
   final snackBarSuccess = SnackBar(
