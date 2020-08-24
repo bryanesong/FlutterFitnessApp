@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-
 class MyProfileInfo extends StatefulWidget {
   List<bool> goals = new List<bool>();
 
@@ -15,10 +14,16 @@ class MyProfileInfo extends StatefulWidget {
 class MyProfileInfoState extends State<MyProfileInfo> {
   double _width, _height;
   AutoSizeGroup _textFitGroup;
-
+  String _weightMeasurement, _heightMeasurement;
+  double decreaseListviewHeightBy = 0;
+  GlobalKey listViewKey = new GlobalKey();
+  //1: Sedentary, 2: Lightly Active, 3: Moderately Active, 4: Very Active
+  List<bool> sedentaryLevel = [false, false, false, false];
 
   @override
   void initState() {
+    _weightMeasurement = "Lb";
+    _heightMeasurement = "Ft";
     super.initState();
   }
 
@@ -27,16 +32,30 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     _textFitGroup = AutoSizeGroup();
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
+
+    if (MediaQuery.of(context).viewInsets.bottom != 0) {
+      print("keyboard up");
+      RenderBox box = listViewKey.currentContext.findRenderObject();
+      decreaseListviewHeightBy = box.localToGlobal(Offset.zero).dy +
+          box.size.height -
+          (MediaQuery.of(context).size.height -
+              MediaQuery.of(context).viewInsets.bottom);
+    } else {
+      decreaseListviewHeightBy = 0;
+    }
+
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
           title: Text("Personal Info"),
         ),
+        resizeToAvoidBottomInset: false,
         body: Stack(children: [
           Column(children: [
             createTitle(),
             createRow(),
             createDivider(),
+            createListView(),
             makeArrowButtons(),
           ])
         ]));
@@ -118,9 +137,166 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     );
   }
 
+  Widget createListView() {
+    return Container(
+        key: listViewKey,
+        width: wpad(80),
+        height: hpad(40) - decreaseListviewHeightBy,
+        child: Scrollbar(
+            child: ListView(
+          children: [
+            createAgeRow(),
+            createHeightRow(),
+            createWeightRow("Weight"),
+            createWeightRow("Target Weight"),
+            createSedentaryLevels(),
+          ],
+        )));
+  }
+
+  Widget createAgeRow() {
+    return Row(
+      children: [
+        Expanded(
+            child: AutoSizeText(
+          "Age   ",
+        )),
+        Container(
+            width: wpad(68),
+            height: hpad(8),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            )),
+      ],
+    );
+  }
+
+  Widget createHeightRow() {
+    return Row(
+      children: [
+        Expanded(
+            child: AutoSizeText(
+          "Height",
+        )),
+        Container(
+            padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
+            width: wpad(55),
+            height: hpad(8),
+            child: TextField(
+              keyboardType: TextInputType.numberWithOptions(),
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            )),
+        Container(
+            width: wpad(13),
+            height: hpad(8),
+            child: DropdownButton<String>(
+              value: _heightMeasurement,
+              onChanged: (String value) {
+                setState(() {
+                  _heightMeasurement = value;
+                });
+              },
+              items: <String>['Ft', 'Cm']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ))
+      ],
+    );
+  }
+
+  Widget createWeightRow(String textLabel) {
+    return Row(
+      children: [
+        Expanded(
+            child: AutoSizeText(
+          textLabel,
+        )),
+        Container(
+            padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
+            width: wpad(55),
+            height: hpad(8),
+            child: TextField(
+              decoration: InputDecoration(border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+            )),
+        Container(
+            width: wpad(13),
+            height: hpad(8),
+            child: DropdownButton<String>(
+              value: _weightMeasurement,
+              onChanged: (String value) {
+                setState(() {
+                  _weightMeasurement = value;
+                });
+              },
+              items: <String>['Lb', 'Kg']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ))
+      ],
+    );
+  }
+
+  Widget createSedentaryLevels() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, hpad(3), 0, hpad(3)),
+      child: Column(children: [
+        Container(
+          width: wpad(80),
+            height: hpad(3),
+            child: Text("Activity Level:",
+            textAlign: TextAlign.left,)),
+        createFlatButton("Sedentary", 0),
+        createFlatButton("Lightly Active", 1),
+        createFlatButton("Moderately Active", 2),
+        createFlatButton("Very Active", 3),
+
+      ],),
+    );
+  }
+
+  Widget createFlatButton(String textLabel, int numInBoolList) {
+    return Container(
+        width: wpad(80),
+        child: FlatButton(
+          color: sedentaryLevel[numInBoolList] ? Colors.lightBlueAccent : Colors.white,
+          onPressed: () {
+            clearSedentaryList();
+            setState(() {
+              sedentaryLevel[numInBoolList] = true;
+            });
+
+          },
+
+          shape: RoundedRectangleBorder(side: BorderSide(
+              color: Colors.black54,
+              width: 1,
+              style: BorderStyle.solid
+          ), borderRadius: BorderRadius.circular(50)),
+          child: Text(textLabel),
+      )
+    );
+  }
+
+  void clearSedentaryList() {
+    for(int i = 0; i < sedentaryLevel.length; i++) {
+      sedentaryLevel[i] = false;
+    }
+  }
+
   Widget makeArrowButtons() {
     return Expanded(
-      child: Stack(children: [Container(
+        child: Stack(children: [
+      Container(
           alignment: Alignment.bottomRight,
           padding: EdgeInsets.fromLTRB(0, 0, wpad(5), hpad(5)),
           child: FlatButton(
@@ -129,27 +305,23 @@ class MyProfileInfoState extends State<MyProfileInfo> {
               },
               child: Image.asset(
                 "assets/images/arrow.png",
-                height: hpad(7),)
-          )),
-
-        Container(
-            alignment: Alignment.bottomLeft,
-            padding: EdgeInsets.fromLTRB(wpad(5), 0, 0, hpad(5)),
-            child: FlatButton(
-                onPressed: () {
-                  navigateToPrevPage(context);
-                },
-                child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: Image.asset(
-                  "assets/images/arrow.png",
-                  height: hpad(7),))
-            )),
-
-
-      ])
-    );
+                height: hpad(7),
+              ))),
+      Container(
+          alignment: Alignment.bottomLeft,
+          padding: EdgeInsets.fromLTRB(wpad(5), 0, 0, hpad(5)),
+          child: FlatButton(
+              onPressed: () {
+                navigateToPrevPage(context);
+              },
+              child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: Image.asset(
+                    "assets/images/arrow.png",
+                    height: hpad(7),
+                  )))),
+    ]));
   }
 
   double wpad(double percent) {
@@ -160,7 +332,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     return _height * percent / 100;
   }
 
-  Future navigateToPrevPage(context) async{
+  Future navigateToPrevPage(context) async {
     Navigator.pop(context);
   }
 }

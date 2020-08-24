@@ -112,6 +112,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
               onChanged: (String value) {
                 value.length == 3 ? _focusBox2.requestFocus() : "";
               },
+              keyboardType: TextInputType.number,
               autofocus: true,
               focusNode: _focusBox1,
               style: TextStyle(fontSize: 30),
@@ -126,6 +127,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
               onChanged: (String value) {
                 value.length == 0 ? _focusBox1.requestFocus() : "";
               },
+              keyboardType: TextInputType.number,
               focusNode: _focusBox2,
               style: TextStyle(fontSize: 30),
               textAlign: TextAlign.center,

@@ -61,7 +61,7 @@ class SignUpState extends State<SignUpRoute> {
 
     _emailController.text = curCode.userEmail;
 
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       fishSize = 40;
       moveFish(_usernameKey);
     });
@@ -79,30 +79,20 @@ class SignUpState extends State<SignUpRoute> {
 
   @override
   Widget build(BuildContext context) {
-    if (!waitForAnimation) {
-      Future.delayed(const Duration(milliseconds: 50), () {
-        moveFish(mostRecentTextKey);
-      });
-    }
     // TODO: implement build
     AppBar appbar = new AppBar(
       title: Text("Sign Up"),
     );
     return Scaffold(
+      resizeToAvoidBottomInset: false,
         appBar: appbar,
         body: Stack(children: [
-          AnimatedContainer(
-            height: MediaQuery
-                .of(context)
-                .viewInsets
-                .bottom > 0 ? 0 : 100,
-            duration: Duration(milliseconds: 100),
-            child: createTitle(),
-          ),
           Column(
             //crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              createTitle(),
+
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
@@ -164,8 +154,6 @@ class SignUpState extends State<SignUpRoute> {
 
   Widget createTitle() {
     return Container(
-        alignment: Alignment.center,
-        constraints: BoxConstraints.expand(),
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Text(
           "Sign Up",
@@ -201,9 +189,7 @@ class SignUpState extends State<SignUpRoute> {
     focus.addListener(() {
       if (focus.hasFocus && waitForAnimation == false) {
         mostRecentTextKey = key;
-        Future.delayed(const Duration(milliseconds: 150), () {
-          moveFish(key);
-        });
+        moveFish(key);
       }
     });
 
@@ -316,6 +302,7 @@ class SignUpState extends State<SignUpRoute> {
     } else {
       registerAccount();
     }
+    moveFish(mostRecentTextKey);
   }
 
   void registerAccount() async {

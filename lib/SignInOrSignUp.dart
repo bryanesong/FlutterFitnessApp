@@ -4,12 +4,13 @@ import 'package:FlutterFitnessApp/PromptAlphaCode.dart';
 import 'package:FlutterFitnessApp/SignUp.dart';
 import 'package:flutter/material.dart';
 
+import 'main.dart';
+
 class SignInOrSignUp extends StatefulWidget {
   SignInOrSignUpState createState() => SignInOrSignUpState();
 }
 
-class SignInOrSignUpState extends State<SignInOrSignUp>
-    with TickerProviderStateMixin {
+class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderStateMixin {
   AnimationController _animationController;
   Animation _animation;
 
@@ -178,7 +179,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     );
   }
 
-  void buttonPushed(String from) {
+  void buttonPushed(String from) async{
     RenderBox box;
     from == "Sign Up"
         ? box = signUpKey.currentContext.findRenderObject()
@@ -217,7 +218,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
   Future navigateToLoginPage(context) async{
     Navigator.push(context,MaterialPageRoute(
-        builder: (context) => LoginRoute())
+        builder: (context) => HomeScreen())
     );
   }
 
