@@ -19,6 +19,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   GlobalKey listViewKey = new GlobalKey();
   //1: Sedentary, 2: Lightly Active, 3: Moderately Active, 4: Very Active
   List<bool> sedentaryLevel = [false, false, false, false];
+  AutoSizeGroup rowLabels = new AutoSizeGroup();
 
   @override
   void initState() {
@@ -65,7 +66,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     return Container(
         alignment: Alignment.topCenter,
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: Text(
+        child: AutoSizeText(
           "Personal Info",
           style: TextStyle(
               decoration: TextDecoration.none,
@@ -159,7 +160,9 @@ class MyProfileInfoState extends State<MyProfileInfo> {
       children: [
         Expanded(
             child: AutoSizeText(
-          "Age   ",
+              "Age   ",
+              group: rowLabels,
+              maxLines: 1,
         )),
         Container(
             width: wpad(68),
@@ -173,12 +176,16 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   }
 
   Widget createHeightRow() {
-    return Row(
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        child: Row(
       children: [
         Expanded(
             child: AutoSizeText(
-          "Height",
-        )),
+              "Height",
+              group: rowLabels,
+              maxLines: 1,
+            )),
         Container(
             padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
             width: wpad(55),
@@ -206,16 +213,20 @@ class MyProfileInfoState extends State<MyProfileInfo> {
               }).toList(),
             ))
       ],
-    );
+    ));
   }
 
   Widget createWeightRow(String textLabel) {
-    return Row(
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        child: Row(
       children: [
         Expanded(
             child: AutoSizeText(
-          textLabel,
-        )),
+              textLabel,
+              group: rowLabels,
+              maxLines: 2,
+            )),
         Container(
             padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
             width: wpad(55),
@@ -243,7 +254,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
               }).toList(),
             ))
       ],
-    );
+    ));
   }
 
   Widget createSedentaryLevels() {
@@ -253,8 +264,9 @@ class MyProfileInfoState extends State<MyProfileInfo> {
         Container(
           width: wpad(80),
             height: hpad(3),
-            child: Text("Activity Level:",
-            textAlign: TextAlign.left,)),
+            child: AutoSizeText("Activity Level:",
+              group: rowLabels,
+              textAlign: TextAlign.left,)),
         createFlatButton("Sedentary", 0),
         createFlatButton("Lightly Active", 1),
         createFlatButton("Moderately Active", 2),
