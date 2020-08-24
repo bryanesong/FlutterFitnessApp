@@ -1,14 +1,17 @@
+import 'package:FlutterFitnessApp/MyProfileReview.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/services.dart';
 
 class MyProfileInfo extends StatefulWidget {
   List<bool> goals = new List<bool>();
 
   MyProfileInfo({this.goals});
 
-  MyProfileInfoState createState() => MyProfileInfoState();
+  MyProfileInfoState createState() => MyProfileInfoState(goals: goals);
 }
 
 class MyProfileInfoState extends State<MyProfileInfo> {
@@ -17,9 +20,18 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   String _weightMeasurement, _heightMeasurement;
   double decreaseListviewHeightBy = 0;
   GlobalKey listViewKey = new GlobalKey();
-  //1: Sedentary, 2: Lightly Active, 3: Moderately Active, 4: Very Active
-  List<bool> sedentaryLevel = [false, false, false, false];
   AutoSizeGroup rowLabels = new AutoSizeGroup();
+  //0: Sedentary, 1: Lightly Active, 2: Moderately Active, 3: Very Active
+  int _activityLevel = -1;
+  TextEditingController _ageController = new TextEditingController(), _heightController = new TextEditingController(), _weightController = new TextEditingController(), _targetWeightController = new TextEditingController();
+  List<bool> goals = new List<bool>();
+
+  String errorMessage = "";
+  String errorType = "";
+
+
+  MyProfileInfoState({this.goals});
+
 
   @override
   void initState() {
@@ -149,8 +161,8 @@ class MyProfileInfoState extends State<MyProfileInfo> {
           children: [
             createAgeRow(),
             createHeightRow(),
-            createWeightRow("Weight"),
-            createWeightRow("Target Weight"),
+            createWeightRow("Weight", _weightController),
+            createWeightRow("Target Weight", _targetWeightController),
             createSedentaryLevels(),
           ],
         )));
@@ -170,10 +182,15 @@ class MyProfileInfoState extends State<MyProfileInfo> {
         Container(
           padding: EdgeInsets.fromLTRB(wpad(1), 0, 0, 0),
             width: wpad(67),
-            height: hpad(8),
+            //height: hpad(8),
             child: TextField(
+              controller: _ageController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  errorText: errorType == "Age" ? errorMessage : null
+              ),
             )),
       ],
     ));
@@ -193,14 +210,18 @@ class MyProfileInfoState extends State<MyProfileInfo> {
         Container(
             padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
             width: wpad(52),
-            height: hpad(8),
+            //height: hpad(8),
             child: TextField(
+              controller: _heightController,
               keyboardType: TextInputType.numberWithOptions(),
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(border: OutlineInputBorder(),
+                hintText: _heightMeasurement == "Ft" ? "5-11" : null,
+                  errorText: errorType == "Height" ? errorMessage : null
+              ),
             )),
         Container(
             width: wpad(15),
-            height: hpad(8),
+            //height: hpad(8),
             child: DropdownButton<String>(
               value: _heightMeasurement,
               onChanged: (String value) {
@@ -220,7 +241,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     ));
   }
 
-  Widget createWeightRow(String textLabel) {
+  Widget createWeightRow(String textLabel, TextEditingController controller) {
     return Container(
       padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
         child: Row(
@@ -234,14 +255,20 @@ class MyProfileInfoState extends State<MyProfileInfo> {
         Container(
             padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
             width: wpad(52),
-            height: hpad(8),
+            //height: hpad(8),
             child: TextField(
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              controller: controller,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                errorText: textLabel == errorType ? errorMessage : null
+              ),
               keyboardType: TextInputType.number,
+
             )),
         Container(
             width: wpad(15),
-            height: hpad(8),
+            //height: hpad(8),
             child: DropdownButton<String>(
               value: _weightMeasurement,
               onChanged: (String value) {
@@ -280,15 +307,14 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     );
   }
 
-  Widget createFlatButton(String textLabel, int numInBoolList) {
+  Widget createFlatButton(String textLabel, int level) {
     return Container(
         width: wpad(80),
         child: FlatButton(
-          color: sedentaryLevel[numInBoolList] ? Colors.lightBlueAccent : Colors.white,
+          color: _activityLevel == level ? Colors.lightBlueAccent : Colors.white,
           onPressed: () {
-            clearSedentaryList();
             setState(() {
-              sedentaryLevel[numInBoolList] = true;
+              _activityLevel = level;
             });
 
           },
@@ -303,12 +329,6 @@ class MyProfileInfoState extends State<MyProfileInfo> {
     );
   }
 
-  void clearSedentaryList() {
-    for(int i = 0; i < sedentaryLevel.length; i++) {
-      sedentaryLevel[i] = false;
-    }
-  }
-
   Widget makeArrowButtons() {
     return Expanded(
         child: Stack(children: [
@@ -317,7 +337,27 @@ class MyProfileInfoState extends State<MyProfileInfo> {
           padding: EdgeInsets.fromLTRB(0, 0, wpad(5), hpad(5)),
           child: FlatButton(
               onPressed: () {
-                /*navigateToAlphaCodePage(context);*/
+                if(_ageController.text == "") {
+                  print("age error");
+                  errorMessage = "Age cannot be blank";
+                  errorType = "Age";
+                } else if(_heightController.text == "") {
+                  errorMessage = "Height cannot be blank";
+                  errorType = "Height";
+                } else if(_weightController.text == "") {
+                  errorMessage = "Weight cannot be blank";
+                  errorType = "Weight";
+                } else if(_targetWeightController.text == "") {
+                  errorMessage = "Target Weight cannot be blank";
+                  errorType = "Target Weight";
+                } else if(_activityLevel == -1) {
+
+                } else {
+                  navigateToReview(context);
+                }
+
+                setState(() {});
+
               },
               child: Image.asset(
                 "assets/images/arrow.png",
@@ -350,5 +390,14 @@ class MyProfileInfoState extends State<MyProfileInfo> {
 
   Future navigateToPrevPage(context) async {
     Navigator.pop(context);
+  }
+
+  Future navigateToReview(context) async {
+    Navigator.push(context,CupertinoPageRoute(builder: (context) => MyProfileReview(
+        goals: goals,
+        age: int.parse(_ageController.text),
+        weight: int.parse(_weightController.text),
+        targetWeight: int.parse(_targetWeightController.text),
+        activityLevel: _activityLevel)));
   }
 }

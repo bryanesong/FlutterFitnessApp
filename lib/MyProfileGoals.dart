@@ -202,7 +202,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
           padding: EdgeInsets.fromLTRB(0, 0, wpad(5), hpad(5)),
           child: FlatButton(
             onPressed: () {
-              navigateToAlphaCodePage(context);
+              navigateToProfileInfo(context);
             },
             child: Image.asset(
                 "assets/images/arrow.png",
@@ -219,7 +219,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
     return _height * percent / 100;
   }
 
-  Future navigateToAlphaCodePage(context) async{
+  Future navigateToProfileInfo(context) async{
     Navigator.push(context,CupertinoPageRoute(builder: (context) => MyProfileInfo(goals: goals)));
   }
 
