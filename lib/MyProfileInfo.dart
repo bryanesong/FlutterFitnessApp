@@ -157,23 +157,26 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   }
 
   Widget createAgeRow() {
-    return Row(
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        child: Row(
       children: [
         Expanded(
             child: AutoSizeText(
               "Age   ",
               group: rowLabels,
               maxLines: 1,
-        )),
+            )),
         Container(
-            width: wpad(68),
+          padding: EdgeInsets.fromLTRB(wpad(1), 0, 0, 0),
+            width: wpad(67),
             height: hpad(8),
             child: TextField(
               keyboardType: TextInputType.number,
               decoration: InputDecoration(border: OutlineInputBorder()),
             )),
       ],
-    );
+    ));
   }
 
   Widget createHeightRow() {
@@ -188,15 +191,15 @@ class MyProfileInfoState extends State<MyProfileInfo> {
               maxLines: 1,
             )),
         Container(
-            padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
-            width: wpad(55),
+            padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
+            width: wpad(52),
             height: hpad(8),
             child: TextField(
               keyboardType: TextInputType.numberWithOptions(),
               decoration: InputDecoration(border: OutlineInputBorder()),
             )),
         Container(
-            width: wpad(13),
+            width: wpad(15),
             height: hpad(8),
             child: DropdownButton<String>(
               value: _heightMeasurement,
@@ -229,15 +232,15 @@ class MyProfileInfoState extends State<MyProfileInfo> {
               maxLines: 2,
             )),
         Container(
-            padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
-            width: wpad(55),
+            padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
+            width: wpad(52),
             height: hpad(8),
             child: TextField(
               decoration: InputDecoration(border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
             )),
         Container(
-            width: wpad(13),
+            width: wpad(15),
             height: hpad(8),
             child: DropdownButton<String>(
               value: _weightMeasurement,
