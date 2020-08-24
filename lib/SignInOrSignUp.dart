@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:FlutterFitnessApp/Login.dart';
-import 'package:FlutterFitnessApp/PromptAlphaCode.dart';
-import 'package:FlutterFitnessApp/SignUp.dart';
+import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/PromptAlphaCode.dart';
+import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/SignUp.dart';
 import 'package:flutter/material.dart';
 
 import 'main.dart';

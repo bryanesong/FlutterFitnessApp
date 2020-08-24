@@ -1,4 +1,4 @@
-import 'package:FlutterFitnessApp/MyProfileGoals.dart';
+import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/MyProfileGoals.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:FlutterFitnessApp/MyProfileGoals.dart';
+import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/MyProfileGoals.dart';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/flame.dart';
