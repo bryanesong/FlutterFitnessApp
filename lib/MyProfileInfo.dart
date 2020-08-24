@@ -68,6 +68,7 @@ class MyProfileInfoState extends State<MyProfileInfo> {
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: AutoSizeText(
           "Personal Info",
+          maxLines: 1,
           style: TextStyle(
               decoration: TextDecoration.none,
               fontFamily: 'Work Sans',
