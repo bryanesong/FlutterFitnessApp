@@ -17,6 +17,8 @@ class MyProfileInfoState extends State<MyProfileInfo> {
   String _weightMeasurement, _heightMeasurement;
   double decreaseListviewHeightBy = 0;
   GlobalKey listViewKey = new GlobalKey();
+  //1: Sedentary, 2: Lightly Active, 3: Moderately Active, 4: Very Active
+  List<bool> sedentaryLevel = [false, false, false, false];
 
   @override
   void initState() {
@@ -253,28 +255,42 @@ class MyProfileInfoState extends State<MyProfileInfo> {
             height: hpad(3),
             child: Text("Activity Level:",
             textAlign: TextAlign.left,)),
-        createOutlineButton("Sedentary"),
-        createOutlineButton("Lightly Active"),
-        createOutlineButton("Moderately Active"),
-        createOutlineButton("Very Active"),
+        createFlatButton("Sedentary", 0),
+        createFlatButton("Lightly Active", 1),
+        createFlatButton("Moderately Active", 2),
+        createFlatButton("Very Active", 3),
 
       ],),
     );
   }
 
-  Widget createOutlineButton(String textLabel) {
-    Color myColor = Colors.purple;
+  Widget createFlatButton(String textLabel, int numInBoolList) {
     return Container(
         width: wpad(80),
-        child: OutlineButton(
-
-          color: myColor,
+        child: FlatButton(
+          color: sedentaryLevel[numInBoolList] ? Colors.lightBlueAccent : Colors.white,
           onPressed: () {
-            myColor = Colors.grey;
+            clearSedentaryList();
+            setState(() {
+              sedentaryLevel[numInBoolList] = true;
+            });
+
           },
+
+          shape: RoundedRectangleBorder(side: BorderSide(
+              color: Colors.black54,
+              width: 1,
+              style: BorderStyle.solid
+          ), borderRadius: BorderRadius.circular(50)),
           child: Text(textLabel),
       )
     );
+  }
+
+  void clearSedentaryList() {
+    for(int i = 0; i < sedentaryLevel.length; i++) {
+      sedentaryLevel[i] = false;
+    }
   }
 
   Widget makeArrowButtons() {
