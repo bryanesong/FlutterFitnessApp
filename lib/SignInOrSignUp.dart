@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:FlutterFitnessApp/Login.dart';
 import 'package:FlutterFitnessApp/PromptAlphaCode.dart';
 import 'package:FlutterFitnessApp/SignUp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'main.dart';
@@ -11,6 +12,9 @@ class SignInOrSignUp extends StatefulWidget {
 }
 
 class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderStateMixin {
+
+  final FirebaseAuth mAuth = FirebaseAuth.instance;
+
   AnimationController _animationController;
   Animation _animation;
 
@@ -27,10 +31,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
   @override
   void initState() {
     super.initState();
-
-
-
-
+    
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 6));
     _animation = IntTween(begin: 0, end: 9).animate(_animationController);
@@ -59,11 +60,18 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
 
     return Scaffold(/*appBar: AppBar(title: Text("hello"),),*/ body: Center(
         child: Container(
+
             constraints: BoxConstraints.expand(),
             //padding: EdgeInsets.fromLTRB(0, 100, 0, 50),
             color: Colors.white,
             child: Stack(
               children: [
+                Image.asset(
+                  "assets/images/comicTEMP.png",
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  fit: BoxFit.fill,
+                ),
                 createPenguinImage(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -217,9 +225,18 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
   }
 
   Future navigateToLoginPage(context) async{
-    Navigator.push(context,MaterialPageRoute(
-        builder: (context) => HomeScreen())
-    );
+    if (await FirebaseAuth.instance.currentUser() != null) {
+      print("currently logged in.");
+      Navigator.push(context,MaterialPageRoute(
+          builder: (context) => HomeScreen())
+      );
+    } else {
+      print("NOT logged in,");
+      Navigator.push(context,MaterialPageRoute(
+          builder: (context) => LoginRoute())
+      );
+    }
+
   }
 
   Future navigateToAlphaCodePage(context) async{
@@ -248,5 +265,4 @@ class PenguinAnimate extends AnimatedWidget {
           );
         });
   }
-
 }

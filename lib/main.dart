@@ -1,45 +1,50 @@
 import 'dart:async';
-import 'package:FlutterFitnessApp/MyProfileGoals.dart';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
-import 'package:flame/sprite.dart';
 import 'package:flame/spritesheet.dart';
 import 'package:flame/position.dart';
 import 'package:flame/widgets/animation_widget.dart';
-import 'package:flame/widgets/sprite_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'Login.dart';
 
-Sprite _sprite;
-animation.Animation _animation;
+
+animation.Animation penguinAnimation;
+Position _position = Position(256.0, 256.0);
+AnimationController _animationController;
+Animation _animation;
+
+AnimationController _waddleController;
+Animation<double> _waddleAngle;
+double penguinPositionX = -1;
+double penguinPositionY = -1;
+double penguinSize = 150;
+double iconSize = 125;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  _sprite = await Sprite.loadSprite('penguinSpriteSheet1.png', width: 1144, height: 1108);
 
   await Flame.images.load('penguinSpriteSheet1.png');
-  final _animationSpriteSheet = SpriteSheet(
+
+  final penguinSpriteSheet = SpriteSheet(
     imageName: 'penguinSpriteSheet1.png',
+    textureWidth: 200,
+    textureHeight: 200,
     columns: 2,
     rows: 1,
-    textureWidth: 1144,
-    textureHeight: 1108,
-  );
-  _animation = _animationSpriteSheet.createAnimation(
-    0,
-    stepTime: 0.5,
-    to: 2,
   );
 
+  penguinAnimation = penguinSpriteSheet.createAnimation(
+    0,
+    stepTime: 0.4,
+    to: 2,
+  );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final animationGb = _animation;
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +55,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+  /*
+
+  ========================================================================================================================================
+
+
+  HOME SCREEN
+
+   ========================================================================================================================================
+
+   */
+
+final double buttonWidth = 65;
+final double buttonHeight = 65;
+
+String currentState = "idle_screen";
+var _calendarController = CalendarController();
+
+enum WidgetMarker{home,calorie, workout, stats, inventory}
+enum WorkoutState{log, addStrength, addCardio}
+
+class HomeScreen extends StatefulWidget{
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  Position _position = Position(256.0, 256.0);
+BuildContext logoutContext;
+
+class HomeScreenState extends State<HomeScreen>{
+
+
+
+  bool addWorkoutButtonVisibility = true;
+
+  bool strengthNameValidate = false;
+  bool strengthSetsValidate = false;
+  bool strengthRepsValidate = false;
+  bool strengthWeightValidate = false;
+
+  TextEditingController strengthTextControllerReps;
+  TextEditingController strengthTextControllerSets;
+  TextEditingController strengthTextControllerWeight;
+  TextEditingController strengthTextControllerName;
+
+
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  WidgetMarker selectedWidgetMarker = WidgetMarker.home;
+  WorkoutState currentWorkoutState = WorkoutState.log;
+  List workouts = new List();
+  String mainScreenTitle = "Home Screen";
 
   @override
   void initState() {
     super.initState();
+    strengthTextControllerReps = TextEditingController();
+    strengthTextControllerSets = TextEditingController();
+    strengthTextControllerWeight = TextEditingController();
+    strengthTextControllerName = TextEditingController();
+    initializeStuff();
     changePosition();
   }
 
@@ -71,109 +123,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-  @override
-  Widget build(BuildContext context) {
-    final key = GlobalKey<ScaffoldState>();
-    return Scaffold(
-      key: key,
-      appBar: AppBar(
-        title: const Text('Base Screen'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Welcome to Pengu Fit'),
-            Container(
-              width: 200,
-              height: 200,
-              child: AnimationWidget(animation: _animation),
-            ),
-            RaisedButton(
-              child: Text("Log in"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginRoute(),
-                  ),
-                );
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-/*
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("The main route"),
-      ),
-      body: Center(
-          child: RaisedButton(
-            child: Text("Open next route"),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginRoute(),
-                ),
-              );
-            },
-          )
-      ),
-    );
-  }
-
- */
-
-final double buttonWidth = 65;
-final double buttonHeight = 65;
-
-String currentState = "idle_screen";
-var _calendarController = CalendarController();
-
-enum WidgetMarker{home,calorie, workout, stats, inventory}
-
-class HomeScreen extends StatefulWidget{
-  @override
-  HomeScreenState createState() => HomeScreenState();
-}
-
-class HomeScreenState extends State<HomeScreen>{
-  AnimationController _animationController;
-  Animation _animation;
-
-  AnimationController _waddleController;
-  Animation<double> _waddleAngle;
-  GlobalKey signInKey = GlobalKey();
-  GlobalKey signUpKey = GlobalKey();
-  double penguinPositionX = -1;
-  double penguinPositionY = -1;
-  double penguinSize = 150;
-
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
-  WidgetMarker selectedWidgetMarker = WidgetMarker.home;
-  List workouts = new List();
-  String mainScreenTitle = "Home Screen";
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    initializeStuff();
-    super.initState();
-  }
-
   @override
   dispose() {
-    _animationController.dispose();
     _calendarController.dispose();
+    strengthTextControllerReps.dispose();
+    strengthTextControllerSets.dispose();
+    strengthTextControllerWeight.dispose();
+    strengthTextControllerName.dispose();
     super.dispose();
   }
 
@@ -198,6 +154,7 @@ class HomeScreenState extends State<HomeScreen>{
 
   @override
   Widget build(BuildContext context) {
+    logoutContext = context;
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: new AppDrawer(),
@@ -376,11 +333,11 @@ class HomeScreenState extends State<HomeScreen>{
   }
 
   Widget getStatsWidget(){
-
+    return new Container();
   }
 
   Widget getInventoryWidget(){
-
+    return new Container();
   }
 
   Widget getworkoutLogWidget(){
@@ -400,57 +357,279 @@ class HomeScreenState extends State<HomeScreen>{
           Expanded(
             child: Stack(
               children: [
-                ListView.builder(
-                  itemCount: workouts.length,
-                  itemBuilder: (BuildContext context,int index) {
-                    return Container(
-                      decoration: new BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10)
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Card(
-                        child: ListTile(
-                          leading: Icon(Icons.add_a_photo),
-                          title: Text(workouts[index]),
-                          onTap: (){
-                            print("You've clicked on workout number: "+index.toString());
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: FloatingActionButton(
-                      onPressed:() async{
-
-                      },
-                      child: Icon(Icons.add),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                  ),
-                ),
+                getWorkoutState(),
+                getAddWorkoutButton(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget getAddWorkoutButton(){
+    if(addWorkoutButtonVisibility){
+      return Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: EdgeInsets.all(5),
+          child: FloatingActionButton(
+            onPressed:() async{
+              Alert(
+                context: context,
+                type: AlertType.info,
+                title: "Add Workout",
+                desc: "Would you like to log a cardio or strength workout?",
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      "Cardio",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: (){
+                      setState(() {
+                        currentWorkoutState = WorkoutState.addCardio;
+                        addWorkoutButtonVisibility = false;
+                        Navigator.pop(context);
+                      });
+                    },
+                    width: 120,
+                  ),
+                  DialogButton(
+                    child: Text(
+                      "Strength",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        currentWorkoutState = WorkoutState.addStrength;
+                        addWorkoutButtonVisibility = false;
+                        Navigator.pop(context);
+                      });
+                    },
+                    width: 120,
+                  )
+                ],
+              ).show();
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.blueAccent,
+          ),
+        ),
+      );
+    }else{
+      return new Container();
+    }
+  }
+
+  Widget getWorkoutState(){
+    switch (currentWorkoutState){
+      case WorkoutState.log:
+        return getWorkoutLog();
+      case WorkoutState.addStrength:
+        return getWorkoutAddStrength();
+      case WorkoutState.addCardio:
+        return getWorkoutAddCardio();
+    }
+    return getWorkoutLog();
+  }
+
+  Widget getWorkoutAddStrength(){
+    return Container(
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          getStrengthNameTextField(),
+          getStrengthSetsTextField(),
+          getStrengthRepsTextField(),
+          getStrengthWeightTextField(),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RaisedButton(
+                textColor: Colors.red,
+                onPressed: () {
+                  setState(() {
+                    currentWorkoutState = WorkoutState.log;
+                    //reset validation booleans so they dont maintain the same state
+                    strengthNameValidate = false;
+                    strengthSetsValidate = false;
+                    strengthRepsValidate = false;
+                    strengthWeightValidate = false;
+                    addWorkoutButtonVisibility = true;
+                  });
+                },
+                child: const Text('Cancel', style: TextStyle(fontSize: 20)),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+              ),
+              RaisedButton(
+                textColor: Colors.green,
+                onPressed: () {
+                  setState(() {
+                    strengthTextControllerName.text.isEmpty ? strengthNameValidate = true : strengthNameValidate = false;
+                    strengthTextControllerSets.text.isEmpty ? strengthSetsValidate = true : strengthSetsValidate = false;
+                    strengthTextControllerReps.text.isEmpty ? strengthRepsValidate = true : strengthRepsValidate = false;
+                    strengthTextControllerWeight.text.isEmpty ? strengthWeightValidate = true : strengthWeightValidate = false;
+                    addWorkoutButtonVisibility = true;
+                  });
+                },
+                child: const Text('Submit', style: TextStyle(fontSize: 20)),
+              ),
+            ],
+          ),
+        ]),
+    );
+  }
+
+  Widget getStrengthWeightTextField(){
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        new Text(
+          "Weight(lbs):",
+          style: TextStyle(fontSize: 25),
+        ),
+        new Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent)
+          ),
+          width: MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 3),
+          height: 50,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: strengthTextControllerWeight,
+            decoration: InputDecoration(
+              labelText: 'Enter the Value',
+              errorText: strengthNameValidate ? 'Value Can\'t Be Empty' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getStrengthRepsTextField(){
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        new Text(
+          "Reps:",
+          style: TextStyle(fontSize: 25),
+        ),
+        new Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent)
+          ),
+          width: MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 3),
+          height: 50,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: strengthTextControllerReps,
+            decoration: InputDecoration(
+              labelText: 'Enter the Value',
+              errorText: strengthRepsValidate ? 'Value Can\'t Be Empty' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getStrengthSetsTextField(){
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        new Text(
+          "Sets:",
+          style: TextStyle(fontSize: 25),
+        ),
+        new Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent)
+          ),
+          width: MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 3),
+          height: 50,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: strengthTextControllerSets,
+            decoration: InputDecoration(
+              labelText: 'Enter the Value',
+              errorText: strengthSetsValidate ? 'Value Can\'t Be Empty' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getStrengthNameTextField(){
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        new Text(
+          "Name:",
+          style: TextStyle(fontSize: 25),
+        ),
+        new Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent)
+          ),
+          width: MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 3),
+          height: 50,
+          child: TextField(
+            controller: strengthTextControllerName,
+            decoration: InputDecoration(
+              labelText: 'Enter the Value',
+              errorText: strengthNameValidate ? 'Value Can\'t Be Empty' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
+  Widget getWorkoutAddCardio(){
+
+  }
+
+  Widget getWorkoutLog(){
+    return ListView.builder(
+      itemCount: workouts.length,
+      itemBuilder: (BuildContext context,int index) {
+        return Container(
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10)
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Card(
+            child: ListTile(
+              leading: Icon(Icons.add_a_photo),
+              title: Text(workouts[index]),
+              onTap: (){
+                print("You've clicked on workout number: "+index.toString());
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -469,6 +648,7 @@ class HomeScreenState extends State<HomeScreen>{
       child: Container(
         width: 200,
         height: 200,
+        //put penguin animation here
         //child: createPenguinImage(),
       ),
     );
@@ -477,7 +657,7 @@ class HomeScreenState extends State<HomeScreen>{
   Widget createPenguinImage() {
     if (penguinPositionX == -1 && penguinPositionY == -1) {
       penguinPositionX = MediaQuery.of(context).size.width / 2;
-      penguinPositionY = MediaQuery.of(context).size.height -( MediaQuery.of(context).size.height / 5);
+      penguinPositionY = MediaQuery.of(context).size.height / 2;
     }
     return AnimatedPositioned(
         width: penguinSize,
@@ -486,14 +666,11 @@ class HomeScreenState extends State<HomeScreen>{
         //divided by 2 to center the penguin
         top: penguinPositionY - penguinSize / 2 /*- AppBar().preferredSize.height-MediaQuery.of(context).padding.top*/,
         left: penguinPositionX - penguinSize / 2,
-        curve: Curves.decelerate,
-        child: RotationTransition(
-            turns: _waddleAngle,
-            child: AnimatedContainer(
-                duration: Duration(seconds: 3),
-                curve: Curves.decelerate,
-                child: PenguinAnimate(animation: _animation))));
+        child: PenguinAnimate(animation: _animation),
+    );
   }
+
+
 }
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;
@@ -525,7 +702,9 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             new ListTile(
               title: new Text("Log out"),
-              onTap: () => logout(context),
+              onTap: () {
+                logout(context);
+              },
             ),
           ],
         ),
@@ -533,12 +712,32 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  void logout(context) {
+  void logout(context) async{
     print("signed user out.");
     mAuth.signOut();
     Navigator.pop(context);
+    Navigator.pop(logoutContext);
   }
 
+}
 
+class PenguinAnimate extends AnimatedWidget {
+  PenguinAnimate({@required Animation<int> animation})
+      : super(listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = super.listenable as Animation<int>;
+    // TODO: implement build
+    return AnimatedBuilder(
+        animation: animation,
+        builder: (BuildContext context, Widget child) {
+          String frame = animation.value.toString();
+          return new Image.asset(
+            'assets/images/penguin$frame.png',
+            gaplessPlayback: true,
+          );
+        });
+  }
 }
 

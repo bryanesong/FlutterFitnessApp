@@ -12,20 +12,24 @@ import 'main.dart';
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;
 
-
 class LoginRoute extends StatefulWidget{
   @override
   LoginRouteState createState() => LoginRouteState();
 }
 
 class LoginRouteState extends State<LoginRoute> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   bool rememberMe = false;
 
   @protected
   @mustCallSuper
   void initState() {
+    super.initState();
+    //checkLoggedIn();
+  }
+
+  void checkLoggedIn() async{
     if (mAuth != null) {
       print("currently logged in.");
       Navigator.of(context).pop();
@@ -33,7 +37,6 @@ class LoginRouteState extends State<LoginRoute> {
     } else {
       print("NOT logged in,");
     }
-    super.initState();
   }
 
   void navigateToHomeScreenNoContext() async{
@@ -44,7 +47,7 @@ class LoginRouteState extends State<LoginRoute> {
     );
   }
 
-  final snackBarSuccess = SnackBar(
+  SnackBar snackBarSuccess = SnackBar(
     content: Text('Logged In Successfully'),
     action: SnackBarAction(
       label: 'Undo',
@@ -157,8 +160,8 @@ class LoginRouteState extends State<LoginRoute> {
 
   void dispose(){
     super.dispose();
-    emailController.clear();
-    passwordController.clear();
+    emailController.dispose();
+    passwordController.dispose();
   }
 
   void signInWithEmailAndPassword(BuildContext context) async {
@@ -169,7 +172,7 @@ class LoginRouteState extends State<LoginRoute> {
       password: passwordController.text.trim(),
     )).user;
 
-    dispose();
+
     print("user info: "+user.toString());
     if (user != null){
       print("Login Successful");
@@ -178,7 +181,6 @@ class LoginRouteState extends State<LoginRoute> {
       print("Login Failed");
       Scaffold.of(context).showSnackBar(snackBarFail);
     }
-
   }
 
   //show alert dialog will eventually be replaced by something more aesthic, but it will work for now
