@@ -1,4 +1,4 @@
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/Obsolete/MyProfileReview.dart';
+import 'package:FlutterFitnessApp/SignUpClasses/MyProfileReview.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class MyProfileInfo extends StatefulWidget {
 class MyProfileInfoState extends State<MyProfileInfo> {
   double _width, _height;
   AutoSizeGroup _textFitGroup;
-  String _weightMeasurement = "Lb", _heightMeasurement = "Ft";
+  String _weightMeasurement, _heightMeasurement;
   double decreaseListviewHeightBy = 0;
   GlobalKey listViewKey = new GlobalKey();
   AutoSizeGroup rowLabels = new AutoSizeGroup();
