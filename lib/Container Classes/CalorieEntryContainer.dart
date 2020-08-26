@@ -23,7 +23,8 @@ class CalorieEntryContainer {
   }
 
   _onEntryAdded(Event event) {
-    //entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.))].add(CalorieTrackerEntry.fromSnapshot(event.snapshot));
+    print("grab");
+    entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.snapshot.key))].add(CalorieTrackerEntry.fromSnapshot(event.snapshot));
   }
 
   /*_onEntryChanged(Event event) {

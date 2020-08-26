@@ -156,8 +156,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
     bool codeFound = false;
     //locate code
     codeList.forEach((AlphaCode code) {
-      //COMMENTED OUT FOR TESTING PURPOSES
-      if (_inputtedCode == code.alphaCode /*&& !code.inUse && code.enabled*/) {
+      if (_inputtedCode == code.alphaCode) {
         codeFound = true;
         if (code.inUse) {
           errorFound = true;

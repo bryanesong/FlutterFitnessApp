@@ -26,7 +26,7 @@ class LoginRouteState extends State<LoginRoute> {
   @mustCallSuper
   void initState() {
     super.initState();
-    //checkLoggedIn();
+    checkLoggedIn();
   }
 
   void checkLoggedIn() async{

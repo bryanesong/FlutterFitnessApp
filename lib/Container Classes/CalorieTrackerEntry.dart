@@ -19,7 +19,6 @@ class CalorieTrackerEntry {
 
   toJson() {
     return {
-      "key" : key,
       "calories" : calories,
       "foodType" : foodType,
       "measurement" : measurement,
