@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/SignUp.dart';
+import 'SignUp.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/AlphaCode.dart';
+import 'AlphaCode.dart';
 
 
 class PromptAlphaCode extends StatefulWidget {

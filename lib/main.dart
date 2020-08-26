@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
+import 'package:FlutterFitnessApp/WorkoutStrengthEntryContainer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/spritesheet.dart';
@@ -474,6 +476,7 @@ class HomeScreenState extends State<HomeScreen>{
                     strengthTextControllerReps.text.isEmpty ? strengthRepsValidate = true : strengthRepsValidate = false;
                     strengthTextControllerWeight.text.isEmpty ? strengthWeightValidate = true : strengthWeightValidate = false;
                     addWorkoutButtonVisibility = true;
+                    addWorkoutToDatabase();
                   });
                 },
                 child: const Text('Submit', style: TextStyle(fontSize: 20)),
@@ -483,6 +486,27 @@ class HomeScreenState extends State<HomeScreen>{
         ]),
     );
   }
+
+  void addWorkoutToDatabase() async {
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    //this retrieves the current UID that is logged in from the firebase
+    //should not be null since user needs to be logged in in order to access this route
+    final FirebaseUser user = await mAuth.currentUser();
+    final uid = user.uid;
+
+    WorkoutStrengthEntryContainer entry = new WorkoutStrengthEntryContainer.define(
+      strengthTextControllerName.text.toString(),
+      int.parse(strengthTextControllerSets.text),
+      int.parse(strengthTextControllerReps.text),
+      int.parse(strengthTextControllerWeight.text),
+      new DateTime.now()
+    );
+
+    print("Added to Workout Log for user: "+uid);
+    ref.child("Users").child(uid).child("Workout Log Data").set({});
+
+  }
+
 
   Widget getStrengthWeightTextField(){
     return new Row(

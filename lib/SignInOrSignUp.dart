@@ -1,13 +1,10 @@
 import 'dart:io';
 import 'package:FlutterFitnessApp/Login.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/PromptAlphaCode.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/SignUp.dart';
+import 'SignUpClasses/PromptAlphaCode.dart';
+import 'SignUpClasses/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/PromptAlphaCode.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/SignUp.dart';
 import 'package:flutter/material.dart';
-
 import 'main.dart';
 
 class SignInOrSignUp extends StatefulWidget {
@@ -254,10 +251,6 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
           builder: (context) => LoginRoute())
       );
     }
-
-    Navigator.push(context,MaterialPageRoute(
-        builder: (context) => LoginRoute())
-    );
   }
 
   Future navigateToAlphaCodePage(context) async{
