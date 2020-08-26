@@ -30,6 +30,7 @@ dependencies:
   flame: ^0.23.0
   auto_size_text: ^2.1.0
   table_calendar: ^2.2.3
+  intl: 0.15.7
   spritewidget:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

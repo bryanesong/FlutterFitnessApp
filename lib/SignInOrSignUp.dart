@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:FlutterFitnessApp/Login.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/PromptAlphaCode.dart';
 import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/SignUpClasses/SignUp.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,8 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
   double penguinSize = 150;
   double iconSize = 125;
   double _width, _height;
+  String curLocation;
+  bool setUpSizesInBuild = true;
 
   @override
   void initState() {
@@ -55,7 +58,11 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
 
-    iconSize = wpad(35);
+    if(setUpSizesInBuild) {
+      iconSize = wpad(30);
+      penguinSize = wpad(30);
+      setUpSizesInBuild = false;
+    }
 
     return Scaffold(/*appBar: AppBar(title: Text("hello"),),*/ body: Center(
         child: Container(
@@ -135,8 +142,9 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
                     maxWidth: iconSize),
                 onPressed: () => (buttonPushed("Sign In")),
                 fillColor: Colors.white,
-                child: Text(
+                child: AutoSizeText(
                   "Sign In",
+                  maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontFamily: 'Work Sans',
@@ -162,8 +170,9 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
                     maxWidth: iconSize),
                 onPressed: () => (buttonPushed("Sign Up")),
                 fillColor: Colors.white,
-                child: Text(
+                child: AutoSizeText(
                   "Sign Up",
+                  maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontFamily: 'Work Sans',
@@ -181,21 +190,28 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
 
   void buttonPushed(String from) async{
     RenderBox box;
-    from == "Sign Up"
-        ? box = signUpKey.currentContext.findRenderObject()
-        : box = signInKey.currentContext.findRenderObject();
-    Offset position = box.localToGlobal(Offset.zero);
-    penguinPositionX = position.dx + iconSize / 2;
-    penguinPositionY = position.dy + iconSize / 2 - 50;
-    penguinSize = 250;
-
-    waddle();
-
-    Future.delayed(const Duration(seconds: 3), ()
-    {
+    if(curLocation == from) {
       from == "Sign In" ? navigateToLoginPage(context) : navigateToAlphaCodePage(context);
-    });
+    } else {
+      if(from == "Sign Up") {
+        box = signUpKey.currentContext.findRenderObject();
+        curLocation = "Sign Up";
+      } else {
+        box = signInKey.currentContext.findRenderObject();
+        curLocation = "Sign In";
+      }
+      Offset position = box.localToGlobal(Offset.zero);
+      penguinPositionX = position.dx + iconSize / 2;
+      penguinPositionY = position.dy + iconSize / 2 - 50;
+      penguinSize = wpad(65);
 
+      waddle();
+
+      Future.delayed(const Duration(seconds: 3), ()
+      {
+        from == "Sign In" ? navigateToLoginPage(context) : navigateToAlphaCodePage(context);
+      });
+    }
 
   }
 
@@ -218,7 +234,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
 
   Future navigateToLoginPage(context) async{
     Navigator.push(context,MaterialPageRoute(
-        builder: (context) => HomeScreen())
+        builder: (context) => LoginRoute())
     );
   }
 

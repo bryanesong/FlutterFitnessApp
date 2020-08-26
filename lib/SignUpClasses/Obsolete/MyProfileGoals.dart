@@ -1,4 +1,4 @@
-import 'package:FlutterFitnessApp/SignUpClasses/MyProfileInfo.dart';
+import 'package:FlutterFitnessApp/SignUpClasses/Obsolete/MyProfileInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -20,6 +20,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
 
   @override
   void initState() {
+
     goals = [_trackCalories, _gainWeight, _loseWeight, _maintainWeight, _trackWorkouts];
     super.initState();
   }
