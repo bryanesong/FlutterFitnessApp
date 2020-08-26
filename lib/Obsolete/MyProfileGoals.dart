@@ -1,4 +1,3 @@
-import 'package:FlutterFitnessApp/MyProfileInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -20,6 +19,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
 
   @override
   void initState() {
+
     goals = [_trackCalories, _gainWeight, _loseWeight, _maintainWeight, _trackWorkouts];
     super.initState();
   }
@@ -220,7 +220,7 @@ class MyProfileGoalsState extends State<MyProfileGoals> {
   }
 
   Future navigateToAlphaCodePage(context) async{
-    Navigator.push(context,CupertinoPageRoute(builder: (context) => MyProfileInfo(goals: goals)));
+    /*Navigator.push(context,CupertinoPageRoute(builder: (context) => MyProfileInfo(goals: goals)));*/
   }
 
 }

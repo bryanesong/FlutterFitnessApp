@@ -1,4 +1,5 @@
-import 'package:FlutterFitnessApp/MyProfileGoals.dart';
+import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
+import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ class SignUpRoute extends StatefulWidget {
 }
 
 class SignUpState extends State<SignUpRoute> {
+  final DEBUGMODE = true;
+
   TextField _username = new TextField(),
       _password1 = new TextField(),
       _password2 = new TextField(),
@@ -43,7 +46,6 @@ class SignUpState extends State<SignUpRoute> {
   double fishY = AppBar().preferredSize.height;
   double fishSize = 0;
 
-  FirebaseUser user;
   AlphaCode curCode;
 
   double curYOfUsn = -1;
@@ -156,6 +158,7 @@ class SignUpState extends State<SignUpRoute> {
                 child: createCheckboxTile(),
               ),
               Flexible(child: createGoButton()),
+
             ],
           ),
           createFish(),
@@ -194,7 +197,7 @@ class SignUpState extends State<SignUpRoute> {
       decoration: InputDecoration(
           errorText: _invalidErrorType == textLabel.trim()
               ? _passwordErrorInfo
-              : null
+              : null,
       ),
     );
 
@@ -319,8 +322,9 @@ class SignUpState extends State<SignUpRoute> {
   }
 
   void registerAccount() async {
-    //COMMENTED OUT FOR TESTING PURPOSES
-    /*user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    //DEBUG MODE IS ON
+
+    FirebaseUser user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: "${_emailController.text}",
         password: "${_password1Controller.text}"))
         .user;
@@ -331,21 +335,30 @@ class SignUpState extends State<SignUpRoute> {
 
     ref = FirebaseDatabase.instance.reference();
 
-    ref.child("Users").push().child("Friends List Info").child("List").set({
-      'UUID': uniqueKey,
-      'Username': _usernameController.text
-    });
+    if(!DEBUGMODE) {
+      ref.child("Users").child(user.uid).child("Friends List Info").child(
+          "List").set({
+        'UUID': uniqueKey,
+        'Username': _usernameController.text
+      });
+      await ref.child("Alpha Codes").orderByChild("userEmail").equalTo(curCode.userEmail).onChildAdded.listen((Event event) {
+        ref.child("Alpha Codes").child(event.snapshot.key).child("inUse").set(true);
+      });
+    }
+    //FirebaseAuth.instance.currentUser().
 
-    await ref.child("Alpha Codes").orderByChild("userEmail").equalTo(curCode.userEmail).onChildAdded.listen((Event event) {
-      ref.child("Alpha Codes").child(event.snapshot.key).child("inUse").set(true);
-    });*/
-    navigateToAlphaCodePage(context);
+    navigateToProfileMainPage(context);
+  }
+
+  Future navigateToProfileMainPage(context) async{
+    if(_checked) {
+
+    }
+    Navigator.push(context,MaterialPageRoute(
+        builder: (context) => MyProfileMain(username: _usernameController.text, email: _emailController.text,)
+    ));
   }
 }
 
-Future navigateToAlphaCodePage(context) async{
-  Navigator.push(context,MaterialPageRoute(
-      builder: (context) => MyProfileGoals()
-  ));
-}
+
 

@@ -14,7 +14,7 @@ class MyProfileInfo extends StatefulWidget {
 class MyProfileInfoState extends State<MyProfileInfo> {
   double _width, _height;
   AutoSizeGroup _textFitGroup;
-  String _weightMeasurement, _heightMeasurement;
+  String _weightMeasurement = "Lb", _heightMeasurement = "Ft";
   double decreaseListviewHeightBy = 0;
   GlobalKey listViewKey = new GlobalKey();
 
