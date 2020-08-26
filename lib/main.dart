@@ -502,7 +502,8 @@ class HomeScreenState extends State<HomeScreen>{
       new DateTime.now()
     );
 
-
+    print("Added to Workout Log for user: "+uid);
+    ref.child("Users").child(uid).child("Workout Log Data").set({});
 
   }
 
