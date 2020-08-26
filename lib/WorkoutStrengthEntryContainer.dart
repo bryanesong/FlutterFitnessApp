@@ -1,19 +1,17 @@
-import 'package:flutter/cupertino.dart';
-
-class WorkoutContainer{
-  int sets;
-  int reps;
+class WorkoutStrengthEntryContainer{
+  int sets,reps,weight;
   String name;
   DateTime dateTime;
 
-  WorkoutContainer(){
+  WorkoutStrengthEntryContainer(){
     sets = 0;
     reps = 0;
-    name = "N/A";
+    weight = 0;
+    name = "";
     dateTime = new DateTime.now();
   }
 
-  WorkoutContainer.setValues(int sets, int reps, name, DateTime dateTime){
+  WorkoutStrengthEntryContainer.define(String name, int sets, int reps, int weight, DateTime dateTime){
     this.sets = sets;
     this.reps = reps;
     this.name = name;
@@ -55,5 +53,4 @@ class WorkoutContainer{
   void setDateTime(DateTime dateTime){
     this.dateTime = dateTime;
   }
-
 }
