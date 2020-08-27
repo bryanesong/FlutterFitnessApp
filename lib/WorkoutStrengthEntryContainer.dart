@@ -22,6 +22,14 @@ class WorkoutStrengthEntryContainer{
     return name+" Sets: "+sets.toString()+" Reps: "+reps.toString()+" Date: "+dateTime.month.toString()+"/"+dateTime.day.toString()+"/"+dateTime.year.toString();
   }
 
+  int getWeight(){
+    return weight;
+  }
+
+  void setWeight(int weight){
+    this.weight = weight;
+  }
+
   int getSets(){
     return sets;
   }

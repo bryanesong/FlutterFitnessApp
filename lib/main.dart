@@ -496,16 +496,31 @@ class HomeScreenState extends State<HomeScreen>{
 
     WorkoutStrengthEntryContainer entry = new WorkoutStrengthEntryContainer.define(
       strengthTextControllerName.text.toString(),
-      int.parse(strengthTextControllerSets.text),
-      int.parse(strengthTextControllerReps.text),
-      int.parse(strengthTextControllerWeight.text),
+      int.parse(strengthTextControllerSets.text.trim()),
+      int.parse(strengthTextControllerReps.text.trim()),
+      int.parse(strengthTextControllerWeight.text.trim()),
       new DateTime.now()
     );
 
     print("Added to Workout Log for user: "+uid);
-    ref.child("Users").child(uid).child("Workout Log Data").set({});
+    //ref.child("Users").child(uid).child("Workout Log Data").
+
+    //get current number of children in workoutlog
+    //int workoutLogCount;
+
+    //print("workoutLogCount: "+workoutLogCount.toString());
+
+    //add entry to firebase
+    ref.child("Users").child(uid).child("Workout Log Data").push().set({
+      'Name': entry.getName().trim(),
+      'Sets': entry.getSets(),
+      'Reps': entry.getReps(),
+      'Weight': entry.getWeight(),
+      'DateTime': entry.getDateTime().toString(),
+    });
 
   }
+
 
 
   Widget getStrengthWeightTextField(){
