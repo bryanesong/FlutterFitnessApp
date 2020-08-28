@@ -35,8 +35,8 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
 
   _onEntryAdded(Event event) {
     codeList.add(AlphaCode.fromSnapshot(event.snapshot));
-    print(codeList[codeList.length - 1].userEmail);
-    print("added");
+    /*print(codeList[codeList.length - 1].userEmail);
+    print("added");*/
   }
 
   _onEntryChanged(Event event) {

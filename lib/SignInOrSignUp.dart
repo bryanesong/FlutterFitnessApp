@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:FlutterFitnessApp/AnimationTest.dart';
 import 'package:FlutterFitnessApp/Login.dart';
+import 'package:FlutterFitnessApp/TestClass.dart';
 import 'SignUpClasses/PromptAlphaCode.dart';
 import 'SignUpClasses/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -243,7 +245,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
     if (await FirebaseAuth.instance.currentUser() != null) {
       print("currently logged in.");
       Navigator.push(context,MaterialPageRoute(
-          builder: (context) => HomeScreen())
+          builder: (context) => TestClass())
       );
     } else {
       print("NOT logged in,");
