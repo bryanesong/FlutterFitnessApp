@@ -25,6 +25,7 @@ double penguinPositionY = -1;
 double penguinSize = 150;
 double iconSize = 125;
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -86,7 +87,7 @@ BuildContext logoutContext;
 
 class HomeScreenState extends State<HomeScreen>{
 
-
+  DateTime currentDayShown;
 
   bool addWorkoutButtonVisibility = true;
 
@@ -114,7 +115,8 @@ class HomeScreenState extends State<HomeScreen>{
     strengthTextControllerSets = TextEditingController();
     strengthTextControllerWeight = TextEditingController();
     strengthTextControllerName = TextEditingController();
-    initializeStuff();
+    //initializeStuff();
+    _calendarController = CalendarController();
     changePosition();
   }
 
@@ -133,25 +135,6 @@ class HomeScreenState extends State<HomeScreen>{
     strengthTextControllerWeight.dispose();
     strengthTextControllerName.dispose();
     super.dispose();
-  }
-
-  void initializeStuff() async{
-    _calendarController = CalendarController();
-    //get workoutlog from firebase
-
-    //placeholdr for workout log for now
-    workouts.add("workout 1");
-    workouts.add("workout 2");
-    workouts.add("workout 3");
-    workouts.add("workout 4");
-    workouts.add("workout 5");
-    workouts.add("workout 6");
-    workouts.add("workout 7");
-    workouts.add("workout 8");
-    workouts.add("workout 9");
-    workouts.add("workout 10");
-    workouts.add("workout 11");
-    workouts.add("workout 12");
   }
 
   @override
@@ -355,6 +338,7 @@ class HomeScreenState extends State<HomeScreen>{
             availableCalendarFormats: const {
               CalendarFormat.week: 'Weekly',
             },
+            onDaySelected: _onDaySelected,
           ),
           Expanded(
             child: Stack(
@@ -367,6 +351,13 @@ class HomeScreenState extends State<HomeScreen>{
         ],
       ),
     );
+  }
+
+  void _onDaySelected(DateTime day, List events) {
+    print('CALLBACK: _onDaySelected: '+day.day.toString());
+    setState(() {
+      currentDayShown = day;
+    });
   }
 
   Widget getAddWorkoutButton(){
@@ -470,13 +461,29 @@ class HomeScreenState extends State<HomeScreen>{
               RaisedButton(
                 textColor: Colors.green,
                 onPressed: () {
+                  print("submit button for strength workout pressed.");
                   setState(() {
                     strengthTextControllerName.text.isEmpty ? strengthNameValidate = true : strengthNameValidate = false;
                     strengthTextControllerSets.text.isEmpty ? strengthSetsValidate = true : strengthSetsValidate = false;
                     strengthTextControllerReps.text.isEmpty ? strengthRepsValidate = true : strengthRepsValidate = false;
                     strengthTextControllerWeight.text.isEmpty ? strengthWeightValidate = true : strengthWeightValidate = false;
                     addWorkoutButtonVisibility = true;
-                    addWorkoutToDatabase();
+                    print(strengthNameValidate);
+                    print(strengthSetsValidate);
+                    print(strengthRepsValidate);
+                    print(strengthWeightValidate);
+                    if(!strengthNameValidate && !strengthSetsValidate && !strengthRepsValidate && !strengthWeightValidate){
+                      print("adding strength workout to database...");
+                      addWorkoutToDatabase();
+                      currentWorkoutState = WorkoutState.log;
+                      //reset validation booleans so they dont maintain the same state
+                      strengthNameValidate = false;
+                      strengthSetsValidate = false;
+                      strengthRepsValidate = false;
+                      strengthWeightValidate = false;
+                      addWorkoutButtonVisibility = true;
+                    }
+                    populateWorkoutLog();
                   });
                 },
                 child: const Text('Submit', style: TextStyle(fontSize: 20)),
@@ -487,6 +494,10 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
+  void populateWorkoutLog() async{
+
+  }
+
   void addWorkoutToDatabase() async {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     //this retrieves the current UID that is logged in from the firebase
@@ -494,12 +505,25 @@ class HomeScreenState extends State<HomeScreen>{
     final FirebaseUser user = await mAuth.currentUser();
     final uid = user.uid;
 
+    print("TESTING UNDERNEATH:");
+    print("name: "+strengthTextControllerName.text.toString());
+    print("sets: "+strengthTextControllerSets.text.trim());
+    print("reps: "+strengthTextControllerReps.text.trim());
+    print("weight: "+strengthTextControllerWeight.text.trim());
+    print("END OF TEST---------------------");
+
+    DateTime currentTime = new DateTime.now();
     WorkoutStrengthEntryContainer entry = new WorkoutStrengthEntryContainer.define(
       strengthTextControllerName.text.toString(),
       int.parse(strengthTextControllerSets.text.trim()),
       int.parse(strengthTextControllerReps.text.trim()),
       int.parse(strengthTextControllerWeight.text.trim()),
-      new DateTime.now()
+      currentTime.year,
+      currentTime.month,
+      currentTime.day,
+      currentTime.hour,
+      currentTime.minute,
+      currentTime.second
     );
 
     print("Added to Workout Log for user: "+uid);
@@ -510,18 +534,26 @@ class HomeScreenState extends State<HomeScreen>{
 
     //print("workoutLogCount: "+workoutLogCount.toString());
 
+    print("WEIGHT CHECK: "+entry.getWeight().toString());
     //add entry to firebase
     ref.child("Users").child(uid).child("Workout Log Data").push().set({
       'Name': entry.getName().trim(),
       'Sets': entry.getSets(),
       'Reps': entry.getReps(),
       'Weight': entry.getWeight(),
-      'DateTime': entry.getDateTime().toString(),
+      'Year': entry.getYear(),
+      'Month': entry.getMonth(),
+      'Day': entry.getDay(),
+      'Hour': entry.getHour(),
+      'Minute': entry.getMinute(),
+      'Second': entry.getSecond(),
     });
+    strengthTextControllerName.clear();
+    strengthTextControllerSets.clear();
+    strengthTextControllerReps.clear();
+    strengthTextControllerWeight.clear();
 
   }
-
-
 
   Widget getStrengthWeightTextField(){
     return new Row(
@@ -630,47 +662,139 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
-
-
   Widget getWorkoutAddCardio(){
 
   }
 
+  DatabaseReference reference = FirebaseDatabase.instance.reference();
+  String hold = "";
+
+  Future<String> getUID() async{
+    final FirebaseUser user = await mAuth.currentUser();
+    final uid = user.uid;
+
+    uid.toLowerCase();
+    print("uid as Future<String>: "+uid);
+    hold = uid;
+    return uid;
+  }
+
+
+
   Widget getWorkoutLog(){
-    return ListView.builder(
-      itemCount: workouts.length,
-      itemBuilder: (BuildContext context,int index) {
-        return Container(
-          decoration: new BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10)
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+    getUID();
+    //used to for testing to make sure getUID is invoked
+    if(hold == ""){
+      print("current userID is empty.");
+    }
+    return FutureBuilder(
+      future: reference.child("Users").child(hold).child("Workout Log Data").once(),
+      builder: (context, AsyncSnapshot<DataSnapshot> snapshot){
+        print("getUID: "+getUID().toString());
+        if(snapshot.hasData){
+          workouts.clear();
+          Map<dynamic, dynamic> values = snapshot.data.value;
+          if(values != null){
+            values.forEach((key, value) {
+              WorkoutStrengthEntryContainer temp = WorkoutStrengthEntryContainer.parse(value);
+              print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());
+              if(temp.getYear() == currentDayShown.year && temp.getMonth() == currentDayShown.month && temp.getDay() == currentDayShown.day){
+                print("current day workout: "+temp.toString());
+                workouts.add(new WorkoutStrengthEntryContainer.parse(value));
+              }
+            });
+          }
+        }
+        return new ListView.builder(
+          itemCount: workouts.length,
+          itemBuilder: (BuildContext context,int index) {
+            return Container(
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Card(
-            child: ListTile(
-              leading: Icon(Icons.add_a_photo),
-              title: Text(workouts[index]),
-              onTap: (){
-                print("You've clicked on workout number: "+index.toString());
-              },
-            ),
-          ),
+              child: getWorkoutItem(index),
+            );
+          },
         );
       },
     );
   }
+
+  Widget getWorkoutItem(int index){
+    return Card(
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            workouts[index].getMonth().toString()+"/"+workouts[index].getDay().toString()+"/"+workouts[index].getYear().toString(),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            "Name: "+workouts[index].getName(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Sets: "+workouts[index].getSets().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Reps: "+workouts[index].getReps().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Weight: "+workouts[index].getWeight().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*
+  Box effect for list view
+  decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+   */
 
   Widget getIdleScreenWidget(){
     return Container(
