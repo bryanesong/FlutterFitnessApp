@@ -45,6 +45,7 @@ class CalorieEntryContainer {
             key,
             DATA[key]['calories'],
             DATA[key]['foodType'],
+            DATA[key]['brandName'],
             DATA[key]['measurement'],
             DATA[key]['quantity'],
             DATA[key]['time']));
