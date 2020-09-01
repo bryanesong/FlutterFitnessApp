@@ -43,11 +43,11 @@ class CalorieEntryContainer {
         print(key.toString());
         entryHolder[dateIndex].add(new CalorieTrackerEntry(
             key,
-            DATA[key]['calories'],
+            DATA[key]['calories'].toDouble(),
             DATA[key]['foodType'],
             DATA[key]['brandName'],
             DATA[key]['measurement'],
-            DATA[key]['quantity'],
+            DATA[key]['quantity'].toDouble(),
             DATA[key]['time']));
       }
     });
@@ -108,6 +108,7 @@ class CalorieEntryContainer {
   int length() {
     return entryHolder.length;
   }
+
 }
 
 class DatedEntryList {

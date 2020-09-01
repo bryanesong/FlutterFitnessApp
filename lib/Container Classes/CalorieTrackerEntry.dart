@@ -2,12 +2,13 @@ import 'package:firebase_database/firebase_database.dart';
 
 class CalorieTrackerEntry {
   String key;
-  int calories;
+  double calories;
   String foodType;
   String brandName;
   String measurement;
-  int quantity;
+  double quantity;
   String time;
+  String foodDescription;
 
 //  DocumentReference reference;
 
@@ -16,10 +17,10 @@ class CalorieTrackerEntry {
 
   CalorieTrackerEntry.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
-        calories = snapshot.value["calories"],
+        calories = snapshot.value["calories"].toDouble(),
         foodType = snapshot.value["foodType"],
         brandName = snapshot.value["brandName"],
         measurement = snapshot.value["measurement"],
-        quantity = snapshot.value["quantity"],
+        quantity = snapshot.value["quantity"].toDouble(),
         time = snapshot.value["time"];
 }
