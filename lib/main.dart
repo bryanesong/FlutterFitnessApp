@@ -7,11 +7,13 @@ import 'package:flame/flame.dart';
 import 'package:flame/animation.dart' as animation;
 import 'package:flame/spritesheet.dart';
 import 'package:flame/position.dart';
-import 'package:flame/widgets/animation_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:table_calendar/table_calendar.dart';
-
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'FancyButton.dart';
+import 'package:location/location.dart';
 
 animation.Animation penguinAnimation;
 Position _position = Position(256.0, 256.0);
@@ -24,6 +26,17 @@ double penguinPositionX = -1;
 double penguinPositionY = -1;
 double penguinSize = 150;
 double iconSize = 125;
+
+/*
+  Dear future bryan,
+  dont forget to add permission into Info.plist for iOS location
+
+  yuh,
+  9/1/20 bryan
+
+  reference article:
+  https://pub.dev/packages/location
+ */
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,7 +87,7 @@ final double buttonHeight = 65;
 String currentState = "idle_screen";
 var _calendarController = CalendarController();
 
-enum WidgetMarker{home,calorie, workout, stats, inventory}
+enum WidgetMarker{home,calorie, workout, stats, inventory, logCardio}
 enum WorkoutState{log, addStrength, addCardio}
 
 class HomeScreen extends StatefulWidget{
@@ -84,9 +97,9 @@ class HomeScreen extends StatefulWidget{
 
 BuildContext logoutContext;
 
-class HomeScreenState extends State<HomeScreen>{
+class HomeScreenState extends State<HomeScreen> {
 
-
+  DateTime currentDayShown = DateTime.now();
 
   bool addWorkoutButtonVisibility = true;
 
@@ -114,9 +127,14 @@ class HomeScreenState extends State<HomeScreen>{
     strengthTextControllerSets = TextEditingController();
     strengthTextControllerWeight = TextEditingController();
     strengthTextControllerName = TextEditingController();
-    initializeStuff();
+    //initializeStuff();
+    _calendarController = CalendarController();
     changePosition();
+    getWorkoutLog(); //load things in workout list
+    checkLocation();
+    getCameraPosition(0,0);
   }
+
 
   void changePosition() async {
     await Future.delayed(const Duration(seconds: 1));
@@ -133,25 +151,6 @@ class HomeScreenState extends State<HomeScreen>{
     strengthTextControllerWeight.dispose();
     strengthTextControllerName.dispose();
     super.dispose();
-  }
-
-  void initializeStuff() async{
-    _calendarController = CalendarController();
-    //get workoutlog from firebase
-
-    //placeholdr for workout log for now
-    workouts.add("workout 1");
-    workouts.add("workout 2");
-    workouts.add("workout 3");
-    workouts.add("workout 4");
-    workouts.add("workout 5");
-    workouts.add("workout 6");
-    workouts.add("workout 7");
-    workouts.add("workout 8");
-    workouts.add("workout 9");
-    workouts.add("workout 10");
-    workouts.add("workout 11");
-    workouts.add("workout 12");
   }
 
   @override
@@ -174,7 +173,7 @@ class HomeScreenState extends State<HomeScreen>{
           ),
           Container(
             decoration: BoxDecoration(
-                border: Border.all(width: 4.0,color: Colors.blueAccent)
+                border: Border.all(width: 4.0, color: Colors.blueAccent)
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -184,7 +183,7 @@ class HomeScreenState extends State<HomeScreen>{
                   minWidth: 5,
                   shape: CircleBorder(
                       side: BorderSide(
-                          width: 1,//this is the side of the border
+                          width: 1, //this is the side of the border
                           color: Colors.blue,
                           style: BorderStyle.solid
                       )
@@ -197,7 +196,7 @@ class HomeScreenState extends State<HomeScreen>{
                       fit: BoxFit.fill,
                     ),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
                       print("set state invoked for calorie.");
                       selectedWidgetMarker = WidgetMarker.calorie;
@@ -209,7 +208,7 @@ class HomeScreenState extends State<HomeScreen>{
                   minWidth: 5,
                   shape: CircleBorder(
                       side: BorderSide(
-                          width: 1,//this is the side of the border
+                          width: 1, //this is the side of the border
                           color: Colors.blue,
                           style: BorderStyle.solid
                       )
@@ -222,7 +221,7 @@ class HomeScreenState extends State<HomeScreen>{
                       fit: BoxFit.fill,
                     ),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
                       print("set state invoked for workout.");
                       mainScreenTitle = "Workout Log";
@@ -235,7 +234,7 @@ class HomeScreenState extends State<HomeScreen>{
                   minWidth: 5,
                   shape: CircleBorder(
                       side: BorderSide(
-                          width: 1,//this is the side of the border
+                          width: 1, //this is the side of the border
                           color: Colors.blue,
                           style: BorderStyle.solid
                       )
@@ -248,7 +247,7 @@ class HomeScreenState extends State<HomeScreen>{
                       fit: BoxFit.fill,
                     ),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
                       print("set state invoked for inventory.");
                       selectedWidgetMarker = WidgetMarker.inventory;
@@ -260,7 +259,7 @@ class HomeScreenState extends State<HomeScreen>{
                   minWidth: 5,
                   shape: CircleBorder(
                       side: BorderSide(
-                          width: 1,//this is the side of the border
+                          width: 1, //this is the side of the border
                           color: Colors.blue,
                           style: BorderStyle.solid
                       )
@@ -273,7 +272,7 @@ class HomeScreenState extends State<HomeScreen>{
                       fit: BoxFit.fill,
                     ),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
                       print("set state invoked for stats.");
                       selectedWidgetMarker = WidgetMarker.stats;
@@ -285,7 +284,7 @@ class HomeScreenState extends State<HomeScreen>{
                   minWidth: 5,
                   shape: CircleBorder(
                       side: BorderSide(
-                          width: 1,//this is the side of the border
+                          width: 1, //this is the side of the border
                           color: Colors.blue,
                           style: BorderStyle.solid
                       )
@@ -294,12 +293,14 @@ class HomeScreenState extends State<HomeScreen>{
                     width: buttonWidth,
                     height: buttonHeight,
                     child: new Image.asset(
-                      'assets/images/settingsButton.png',
+                      'assets/images/homeButtonTEMP.png',
                       fit: BoxFit.fill,
                     ),
                   ),
-                  onPressed: (){
-                    _scaffoldKey.currentState.openEndDrawer();
+                  onPressed: () {
+                    setState(() {
+                      selectedWidgetMarker = WidgetMarker.home;
+                    });
                   },
                 ),
               ],
@@ -309,24 +310,29 @@ class HomeScreenState extends State<HomeScreen>{
       ),
     );
   }
+
   //_scaffoldKey.currentState.openEndDrawer();
 
-  Widget getCustomContainer(){
-    switch(selectedWidgetMarker){
+  //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
+  Widget getCustomContainer() {
+    switch (selectedWidgetMarker) {
       case WidgetMarker.home:
         return getIdleScreenWidget();
       case WidgetMarker.calorie:
         return getIdleScreenWidget();
-      case  WidgetMarker.workout:
+      case WidgetMarker.workout:
         return getworkoutLogWidget();
       case WidgetMarker.inventory:
         return getInventoryWidget();
       case WidgetMarker.stats:
         return getStatsWidget();
+      case WidgetMarker.logCardio:
+        return logNewCardioWidget();
     }
     return getGraphWidget();
   }
 
+  //this is just a placeholder widget, not really used for anything
   Widget getGraphWidget() {
     return Container(
       height: 200,
@@ -334,49 +340,66 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Widget getStatsWidget(){
+  //this will return the stats container widget although not yet implemented, still waiting on both calorie tracker / workout log integration
+  Widget getStatsWidget() {
     return new Container();
   }
 
-  Widget getInventoryWidget(){
+  //this will return the inventory widget, not yet implemented(assigned to Evan)
+  Widget getInventoryWidget() {
     return new Container();
   }
 
-  Widget getworkoutLogWidget(){
-    return Container(
-      child: Column(
-        children: [
-          TableCalendar(
-            calendarController: _calendarController,
-            initialCalendarFormat: CalendarFormat.week,
-            formatAnimation: FormatAnimation.slide,
-            startingDayOfWeek: StartingDayOfWeek.sunday,
-            availableGestures: AvailableGestures.all,
-            availableCalendarFormats: const {
-              CalendarFormat.week: 'Weekly',
-            },
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                getWorkoutState(),
-                getAddWorkoutButton(),
-              ],
+  //main layout for the workout log when user presses the workout log button
+  //consists of a 1 row calendar at the top while the bottom changes depending on what the user is doing
+  Widget getworkoutLogWidget() {
+    if(currentWorkoutState == WorkoutState.addStrength || currentWorkoutState == WorkoutState.addCardio){
+      return getWorkoutState();
+    }else{
+      return Container(
+        child: Column(
+          children: [
+            TableCalendar(
+              calendarController: _calendarController,
+              initialCalendarFormat: CalendarFormat.week,
+              formatAnimation: FormatAnimation.slide,
+              startingDayOfWeek: StartingDayOfWeek.sunday,
+              availableGestures: AvailableGestures.all,
+              availableCalendarFormats: const {
+                CalendarFormat.week: 'Weekly',
+              },
+              onDaySelected: _onDaySelected,
             ),
-          ),
-        ],
-      ),
-    );
+            Expanded(//this is the container that holds all the stuff underneath the 1 row table calendar
+              child: Stack(
+                children: [
+                  getWorkoutState(),
+                  getAddWorkoutButton(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
   }
 
-  Widget getAddWorkoutButton(){
-    if(addWorkoutButtonVisibility){
+  void _onDaySelected(DateTime day, List events) {
+    print('CALLBACK: _onDaySelected: ' + day.day.toString());
+    setState(() {
+      currentDayShown = day;
+    });
+  }
+
+  Widget getAddWorkoutButton() {
+    if (addWorkoutButtonVisibility) {
       return Align(
         alignment: Alignment.bottomRight,
         child: Padding(
           padding: EdgeInsets.all(5),
           child: FloatingActionButton(
-            onPressed:() async{
+            onPressed: () async {
               Alert(
                 context: context,
                 type: AlertType.info,
@@ -388,7 +411,7 @@ class HomeScreenState extends State<HomeScreen>{
                       "Cardio",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: (){
+                    onPressed: () {
                       setState(() {
                         currentWorkoutState = WorkoutState.addCardio;
                         addWorkoutButtonVisibility = false;
@@ -419,22 +442,30 @@ class HomeScreenState extends State<HomeScreen>{
           ),
         ),
       );
-    }else{
+    } else {
       return new Container();
     }
   }
 
-  Widget getWorkoutState(){
-    switch (currentWorkoutState){
+  Widget getWorkoutState() {
+    switch (currentWorkoutState) {
       case WorkoutState.log:
         return getWorkoutLog();
       case WorkoutState.addStrength:
         return getWorkoutAddStrength();
       case WorkoutState.addCardio:
-        return getWorkoutAddCardio();
+        return getWorkoutAddCardioButtons();
     }
     return getWorkoutLog();
   }
+
+  Widget noWorkoutsLoggedWidget() {
+    return new Container(
+      alignment: Alignment.center,
+      child: Text("You have no workouts logged for today. :("),
+    );
+  }
+
 
   Widget getWorkoutAddStrength(){
     return Container(
@@ -470,13 +501,29 @@ class HomeScreenState extends State<HomeScreen>{
               RaisedButton(
                 textColor: Colors.green,
                 onPressed: () {
+                  print("submit button for strength workout pressed.");
                   setState(() {
                     strengthTextControllerName.text.isEmpty ? strengthNameValidate = true : strengthNameValidate = false;
                     strengthTextControllerSets.text.isEmpty ? strengthSetsValidate = true : strengthSetsValidate = false;
                     strengthTextControllerReps.text.isEmpty ? strengthRepsValidate = true : strengthRepsValidate = false;
                     strengthTextControllerWeight.text.isEmpty ? strengthWeightValidate = true : strengthWeightValidate = false;
                     addWorkoutButtonVisibility = true;
-                    addWorkoutToDatabase();
+                    print(strengthNameValidate);
+                    print(strengthSetsValidate);
+                    print(strengthRepsValidate);
+                    print(strengthWeightValidate);
+                    if(!strengthNameValidate && !strengthSetsValidate && !strengthRepsValidate && !strengthWeightValidate){
+                      print("adding strength workout to database...");
+                      addWorkoutToDatabase();
+                      currentWorkoutState = WorkoutState.log;
+                      //reset validation booleans so they dont maintain the same state
+                      strengthNameValidate = false;
+                      strengthSetsValidate = false;
+                      strengthRepsValidate = false;
+                      strengthWeightValidate = false;
+                      addWorkoutButtonVisibility = true;
+                    }
+                    populateWorkoutLog();
                   });
                 },
                 child: const Text('Submit', style: TextStyle(fontSize: 20)),
@@ -487,6 +534,10 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
+  void populateWorkoutLog() async{
+
+  }
+
   void addWorkoutToDatabase() async {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     //this retrieves the current UID that is logged in from the firebase
@@ -494,19 +545,55 @@ class HomeScreenState extends State<HomeScreen>{
     final FirebaseUser user = await mAuth.currentUser();
     final uid = user.uid;
 
+    print("TESTING UNDERNEATH:");
+    print("name: "+strengthTextControllerName.text.toString());
+    print("sets: "+strengthTextControllerSets.text.trim());
+    print("reps: "+strengthTextControllerReps.text.trim());
+    print("weight: "+strengthTextControllerWeight.text.trim());
+    print("END OF TEST---------------------");
+
+    DateTime currentTime = new DateTime.now();
     WorkoutStrengthEntryContainer entry = new WorkoutStrengthEntryContainer.define(
       strengthTextControllerName.text.toString(),
-      int.parse(strengthTextControllerSets.text),
-      int.parse(strengthTextControllerReps.text),
-      int.parse(strengthTextControllerWeight.text),
-      new DateTime.now()
+      int.parse(strengthTextControllerSets.text.trim()),
+      int.parse(strengthTextControllerReps.text.trim()),
+      int.parse(strengthTextControllerWeight.text.trim()),
+      currentTime.year,
+      currentTime.month,
+      currentTime.day,
+      currentTime.hour,
+      currentTime.minute,
+      currentTime.second
     );
 
     print("Added to Workout Log for user: "+uid);
-    ref.child("Users").child(uid).child("Workout Log Data").set({});
+    //ref.child("Users").child(uid).child("Workout Log Data").
+
+    //get current number of children in workoutlog
+    //int workoutLogCount;
+
+    //print("workoutLogCount: "+workoutLogCount.toString());
+
+    print("WEIGHT CHECK: "+entry.getWeight().toString());
+    //add entry to firebase
+    ref.child("Users").child(uid).child("Workout Log Data").push().set({
+      'Name': entry.getName().trim(),
+      'Sets': entry.getSets(),
+      'Reps': entry.getReps(),
+      'Weight': entry.getWeight(),
+      'Year': entry.getYear(),
+      'Month': entry.getMonth(),
+      'Day': entry.getDay(),
+      'Hour': entry.getHour(),
+      'Minute': entry.getMinute(),
+      'Second': entry.getSecond(),
+    });
+    strengthTextControllerName.clear();
+    strengthTextControllerSets.clear();
+    strengthTextControllerReps.clear();
+    strengthTextControllerWeight.clear();
 
   }
-
 
   Widget getStrengthWeightTextField(){
     return new Row(
@@ -615,47 +702,356 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
-
-
-  Widget getWorkoutAddCardio(){
-
-  }
-
-  Widget getWorkoutLog(){
-    return ListView.builder(
-      itemCount: workouts.length,
-      itemBuilder: (BuildContext context,int index) {
-        return Container(
-          decoration: new BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10)
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+  Widget getWorkoutAddCardioButtons(){
+    return new Container(
+      alignment: Alignment.center,
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FancyButton(
+                child: Text(
+                  "Log Previous Cardio Workout",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+                size: 50,
+                color: Color(0xFFCA3034),
+                onPressed: () {
+                  print("Button pressed to log previous cardio workout.");
+                },
               ),
             ],
           ),
-          child: Card(
-            child: ListTile(
-              leading: Icon(Icons.add_a_photo),
-              title: Text(workouts[index]),
-              onTap: (){
-                print("You've clicked on workout number: "+index.toString());
+          new Padding(
+            padding: EdgeInsets.all(16.0),
+          ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FancyButton(
+                child: Text(
+                  "Log New Cardio Workout",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+                size: 50,
+                color: Colors.blue,
+                onPressed: () {
+                  print("Button pressed to log previous cardio workout.");
+                  setState(() {
+                    selectedWidgetMarker = WidgetMarker.logCardio;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      )
+    );
+  }
+
+  Widget logNewCardioWidget(){
+    return new Container(
+      child: new Column(
+        children: [
+          getCurrentCardioTime(),
+          getCurrentCardioDistance(),
+          getCurrentCardioPace(),
+          getCardioLogButtons(),
+        ],
+      ),
+    );
+  }
+
+  //this is the controller used for the stopwatch when logging a cardio workout
+  //contains prints for examples to retrieve time data ex:current time and seconds
+  final _stopWatchTimer = StopWatchTimer(
+    onChange: (value) {
+      final displayTime = StopWatchTimer.getDisplayTime(value);
+      print('displayTime $displayTime');
+    },
+    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+    onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+  );
+
+  Widget getCurrentCardioTime(){
+    return new Container(
+      child: StreamBuilder<int>(
+        stream: _stopWatchTimer.rawTime,
+        initialData: 0,
+        builder: (context, snap) {
+          final value = snap.data;
+          final displayTime = StopWatchTimer.getDisplayTime(value);
+          return Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  displayTime,
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontFamily: 'Helvetica',
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
+  void checkLocation() async{
+    print("getting location data");
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        print("locations services have not been enabled.");
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        print("permissions have not been granted for location.");
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    print("location data retrieved... lat: "+_locationData.latitude.toString()+" lng: "+_locationData.longitude.toString());
+  }
+
+  //variables used for the google maps implementation
+  Completer<GoogleMapController> _controller = Completer();
+  CameraPosition _myLocation = CameraPosition(target: LatLng(0, 0),);
+
+  void getCameraPosition(double lat, double lng) async{
+    _myLocation = CameraPosition(
+    target: LatLng(lat, lng),
+    zoom: 14.4746,
+    );
+    print("finished setting _myLocation variable.");
+  }
+
+  Widget getCurrentCardioDistance(){
+    checkLocation();
+    getCameraPosition(_locationData.latitude,_locationData.longitude);
+    print("Location: latitude: "+_locationData.latitude.toString()+" longitude: "+_locationData.longitude.toString());
+    return new Column(
+      children:<Widget>[
+        Text("Location: latitude: "+_locationData.latitude.toString()+" longitude: "+_locationData.longitude.toString()),
+        SizedBox(
+            width: MediaQuery.of(context).size.width,  // or use fixed size like 200
+            height: MediaQuery.of(context).size.height/2,
+            child: GoogleMap(
+              mapType: MapType.hybrid,
+              initialCameraPosition: _myLocation,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
               },
             ),
+        ),
+      ],
+    );
+  }
+
+  Widget getCurrentCardioPace(){
+    return new Container(
+      child: Text("Current Pace: "),
+    );
+  }
+
+  String startStop = "Start";
+  Color startStopColor = Colors.green;
+
+  Widget getCardioLogButtons(){
+    return new Row(
+      children: [
+        FancyButton(
+          child: Text(
+            startStop,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+            ),
           ),
-        );
+          size: 50,
+          color: startStopColor,
+          onPressed: () {
+            print("start stop button pressed.");
+            setState(() {
+              if(startStop == "Start"){
+                startStop="Stop";
+                startStopColor = Colors.red;
+                // Start
+                _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+              }else{
+                startStop="Start";
+                startStopColor = Colors.green;
+                _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+              }
+
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  DatabaseReference reference = FirebaseDatabase.instance.reference();
+  String hold = "";
+
+  Future<String> getUID() async{
+    final FirebaseUser user = await mAuth.currentUser();
+    final uid = user.uid;
+
+    uid.toLowerCase();
+    print("uid as Future<String>: "+uid);
+    hold = uid;
+    return uid;
+  }
+
+
+
+  Widget getWorkoutLog(){
+    getUID();
+    //used to for testing to make sure getUID is invoked
+    if(hold == ""){
+      print("current userID is empty.");
+    }
+    return FutureBuilder(
+      future: reference.child("Users").child(hold).child("Workout Log Data").once(),
+      builder: (context, AsyncSnapshot<DataSnapshot> snapshot){
+        if(snapshot.hasData){
+          workouts.clear();
+          Map<dynamic, dynamic> values = snapshot.data.value;
+          if(values != null){
+            values.forEach((key, value) {
+              WorkoutStrengthEntryContainer temp = WorkoutStrengthEntryContainer.parse(value);
+              //print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());//debugging purposes
+              if(temp.getYear() == currentDayShown.year && temp.getMonth() == currentDayShown.month && temp.getDay() == currentDayShown.day){
+                //print("current day workout: "+temp.toString());//debugging purposes
+                workouts.add(new WorkoutStrengthEntryContainer.parse(value));
+              }
+            });
+          }
+        }
+        if(workouts.length == 0){
+          return noWorkoutsLoggedWidget();
+        }else{
+          return new ListView.builder(
+            itemCount: workouts.length,
+            itemBuilder: (BuildContext context,int index) {
+              return Container(
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: getWorkoutItem(index),
+              );
+            },
+          );
+        }
       },
     );
   }
+
+  Widget getWorkoutItem(int index){
+    return Card(
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            workouts[index].getMonth().toString()+"/"+workouts[index].getDay().toString()+"/"+workouts[index].getYear().toString(),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            "Name: "+workouts[index].getName(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Sets: "+workouts[index].getSets().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Reps: "+workouts[index].getReps().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            "Weight: "+workouts[index].getWeight().toString(),
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*
+  Box effect for list view
+  decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+   */
 
   Widget getIdleScreenWidget(){
     return Container(
@@ -764,4 +1160,6 @@ class PenguinAnimate extends AnimatedWidget {
         });
   }
 }
+
+
 
