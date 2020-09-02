@@ -245,7 +245,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
     if (await FirebaseAuth.instance.currentUser() != null) {
       print("currently logged in.");
       Navigator.push(context,MaterialPageRoute(
-          builder: (context) => TestClass())
+          builder: (context) => HomeScreen())
       );
     } else {
       print("NOT logged in,");

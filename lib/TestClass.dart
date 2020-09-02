@@ -67,6 +67,21 @@ class TestClassState extends State<TestClass> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _searchFoodController.dispose();
+    _timeController.dispose();
+    _calorieController.dispose();
+    _measurementController.dispose();
+    _searchFoodController.dispose();
+    _calorieCalendarController.dispose();
+    _servingSizeController.dispose();
+    _brandNameController.dispose();
+    _foodNameController.dispose();
+    _addFoodEntryController.dispose();
+    super.dispose();
+  }
+
   void _onEntry(Event e) {
     setState(() {});
   }
@@ -85,15 +100,6 @@ class TestClassState extends State<TestClass> {
 
     //update list on items being added
     entryRef.child("My Entries").onChildAdded.listen(_onEntry);
-
-    testEntry = new FoodData(
-        calories: 100,
-        foodType: "potato",
-        measurement: "Cup",
-        quantity: 1,
-        time: DateFormat('yyyy-MM-dd').format(new DateTime(2020, 8, 26)));
-
-    //doStuff1();
   }
 
   @override
@@ -200,10 +206,7 @@ class TestClassState extends State<TestClass> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
-                              subtitle: Text(
-                                  curEntry.quantity.toInt().toString() +
-                                      ", " +
-                                      curEntry.measurement),
+                              subtitle: Text(curEntry.brandName != null  && curEntry.brandName != ""? "[" + curEntry.brandName + "] " + curEntry.quantity.toInt().toString() + ", " + curEntry.measurement : curEntry.quantity.toInt().toString() + ", " + curEntry.measurement),
                               trailing: Container(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -962,11 +965,22 @@ class TestClassState extends State<TestClass> {
         "time": DateFormat('hh:mm a').format(DateTime.now()).toString(),
         "portionSize": portionSize,
         "portionUnit": portionUnit,
+        "brandName": curEntry.brandName,
       });
       return true;
     } else {
       return false;
     }
+  }
+
+
+
+  double wpad(double percent) {
+    return _width * percent / 100;
+  }
+
+  double hpad(double percent) {
+    return _height * percent / 100;
   }
 
   void doStuff1() {
@@ -988,13 +1002,5 @@ class TestClassState extends State<TestClass> {
       "quantity": testEntry.quantity,
       "time": testEntry.time,
     });
-  }
-
-  double wpad(double percent) {
-    return _width * percent / 100;
-  }
-
-  double hpad(double percent) {
-    return _height * percent / 100;
   }
 }
