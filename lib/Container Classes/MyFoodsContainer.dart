@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'CalorieTrackerEntry.dart';
+import 'FoodData.dart';
 
 class MyFoodsContainer {
-  List<CalorieTrackerEntry> entryHolder = new List<CalorieTrackerEntry>();
+  List<FoodData> entryHolder = new List<FoodData>();
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference entryRef;
@@ -27,15 +27,15 @@ class MyFoodsContainer {
   }
 
   _onEntry(Event event) {
-    entryHolder.add(CalorieTrackerEntry.fromSnapshot(event.snapshot));
+    entryHolder.add(FoodData.fromSnapshot(event.snapshot));
   }
 
   _onChange(Event event) {
     var old = entryHolder.singleWhere((entry) {
       return entry.key == event.snapshot.key;
     });
-    entryHolder[entryHolder.indexOf(old)] = CalorieTrackerEntry.fromSnapshot(event.snapshot);
+    entryHolder[entryHolder.indexOf(old)] = FoodData.fromSnapshot(event.snapshot);
   }
 }
 
-// entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.snapshot.key))].add(CalorieTrackerEntry.fromSnapshot(event.snapshot));
+// entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.snapshot.key))].add(FoodData.fromSnapshot(event.snapshot));

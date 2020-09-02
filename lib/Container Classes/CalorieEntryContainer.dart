@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
-import 'CalorieTrackerEntry.dart';
+import 'FoodData.dart';
 
 class CalorieEntryContainer {
   List<DatedEntryList> entryHolder = new List<DatedEntryList>();
@@ -41,18 +41,18 @@ class CalorieEntryContainer {
       entryHolder[dateIndex].entries.clear();
       for (var key in KEYS) {
         print(key.toString());
-        entryHolder[dateIndex].add(new CalorieTrackerEntry(
-            key,
-            DATA[key]['calories'].toDouble(),
-            DATA[key]['foodType'],
-            DATA[key]['brandName'],
-            DATA[key]['measurement'],
-            DATA[key]['quantity'].toDouble(),
-            DATA[key]['time']));
+        entryHolder[dateIndex].add(new FoodData(
+            key: key,
+            calories: DATA[key]['calories'].toDouble(),
+            foodType: DATA[key]['foodType'],
+            brandName: DATA[key]['brandName'],
+            measurement: DATA[key]['measurement'],
+            quantity: DATA[key]['quantity'].toDouble(),
+            time: DATA[key]['time']));
       }
     });
 
-    // entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.snapshot.key))].add(CalorieTrackerEntry.fromSnapshot(event.snapshot));
+    // entryHolder[getAndCreateIndexOfDate(DateTime.parse(event.snapshot.key))].add(FoodData.fromSnapshot(event.snapshot));
   }
 
   /*_onEntryChanged(Event event) {
@@ -113,7 +113,7 @@ class CalorieEntryContainer {
 
 class DatedEntryList {
   DateTime date;
-  List<CalorieTrackerEntry> entries = new List<CalorieTrackerEntry>();
+  List<FoodData> entries = new List<FoodData>();
 
   DatedEntryList(this.date);
 
@@ -121,7 +121,7 @@ class DatedEntryList {
     return date.compareTo(b.date);
   }
 
-  void add(CalorieTrackerEntry entry) {
+  void add(FoodData entry) {
     entries.add(entry);
   }
 

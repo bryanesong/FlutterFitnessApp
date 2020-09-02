@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:FlutterFitnessApp/Container%20Classes/CalorieTrackerEntry.dart';
+import 'package:FlutterFitnessApp/Container%20Classes/FoodData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +19,8 @@ enum CalorieTrackerState {
   myFood,
   searchFood,
   addMyFood,
-  addEntry
+  addEntry,
+  editEntry
 }
 
 class TestClass extends StatefulWidget {
@@ -47,12 +48,13 @@ class TestClassState extends State<TestClass> {
       _servingSizeController = new TextEditingController(),
       _measurementController = new TextEditingController(),
       _calorieController = new TextEditingController(),
+      _timeController = new TextEditingController(),
       _searchFoodController = new TextEditingController();
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference entryRef;
 
-  CalorieTrackerEntry testEntry;
+  FoodData testEntry;
 
   var _calorieState = CalorieTrackerState.log;
 
@@ -84,8 +86,12 @@ class TestClassState extends State<TestClass> {
     //update list on items being added
     entryRef.child("My Entries").onChildAdded.listen(_onEntry);
 
-    testEntry = new CalorieTrackerEntry("", 100, "potato", "", "Cup", 1,
-        DateFormat('yyyy-MM-dd').format(new DateTime(2020, 8, 26)));
+    testEntry = new FoodData(
+        calories: 100,
+        foodType: "potato",
+        measurement: "Cup",
+        quantity: 1,
+        time: DateFormat('yyyy-MM-dd').format(new DateTime(2020, 8, 26)));
 
     //doStuff1();
   }
@@ -116,9 +122,6 @@ class TestClassState extends State<TestClass> {
     );
   }
 
-  void _onDaySelected(DateTime day, List events) {
-    setState(() {});
-  }
 
   Widget getContainer() {
     switch (_calorieState) {
@@ -132,14 +135,18 @@ class TestClassState extends State<TestClass> {
         return searchFoodPage();
       case CalorieTrackerState.addMyFood:
         return addMyFoodPage();
+      case CalorieTrackerState.editEntry:
+        return editEntryPage();
       default:
         return null;
     }
   }
 
   //<-------------------------------------------------FoodEntryPage------------------------------------------------->
+  DateTime selectedDateTime;
   Widget foodEntryPage() {
     DatedEntryList listOfCurDay;
+    //if selected day is not null, get entries of the day
     if (_calorieCalendarController.selectedDay != null) {
       listOfCurDay =
           entries.getDateEntries(_calorieCalendarController.selectedDay);
@@ -151,6 +158,7 @@ class TestClassState extends State<TestClass> {
           children: [
             TableCalendar(
               calendarController: _calorieCalendarController,
+              initialSelectedDay: selectedDateTime != null ? selectedDateTime : DateTime.now(),
               initialCalendarFormat: CalendarFormat.week,
               formatAnimation: FormatAnimation.slide,
               startingDayOfWeek: StartingDayOfWeek.sunday,
@@ -160,9 +168,7 @@ class TestClassState extends State<TestClass> {
               },
               onDaySelected: _onDaySelected,
             ),
-            Container(
-                padding:
-                    EdgeInsets.fromLTRB(0, wpad(2), 0, wpad(2)),
+            Expanded(
                 child: listOfCurDay != null
                     ? ListView.builder(
                         scrollDirection: Axis.vertical,
@@ -170,11 +176,26 @@ class TestClassState extends State<TestClass> {
                         //get list of entries of current day
                         itemCount: listOfCurDay.length(),
                         itemBuilder: (BuildContext context, int index) {
-                          CalorieTrackerEntry curEntry =
-                              listOfCurDay.entries[index];
+                          FoodData curEntry = listOfCurDay.entries[index];
                           return ListTile(
-                              title: Text(
-                                curEntry.foodType,
+                          onTap: () {
+                            //set global variable to current entry so editEntry widget knows which entry to edit
+                            editEntry = curEntry;
+
+                            //set the controllers to show  the entry data
+                            _foodNameController.text = editEntry.foodType;
+                            _brandNameController.text = editEntry.brandName;
+                            _servingSizeController.text = editEntry.quantity.toInt().toString();
+                            _measurementController.text = editEntry.measurement;
+                            _calorieController.text = editEntry.calories.toString();
+                            _timeController.text = editEntry.time;
+                            _calorieState = CalorieTrackerState.editEntry;
+                            setState(() {
+
+                            });
+                          },
+                          title: Text(
+                          curEntry.foodType,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
@@ -217,65 +238,6 @@ class TestClassState extends State<TestClass> {
                                   ],
                                 ),
                               ));
-
-                          /*Container(
-                            alignment: Alignment.centerLeft,
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        curEntry.foodType,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Text(curEntry.calories.toString()),
-                                      alignment: Alignment.centerRight,
-                                    ),
-                                    Container(
-                                        alignment: Alignment.centerRight,
-                                        child: FlatButton(
-                                          onPressed: () {
-                                            entryRef
-                                                .child("My Entries")
-                                                .child(DateFormat('yyyy-MM-dd')
-                                                    .format(
-                                                        _calorieCalendarController
-                                                            .selectedDay)
-                                                    .toString())
-                                                .child(entries
-                                                    .getDateEntries(
-                                                        _calorieCalendarController
-                                                            .focusedDay)
-                                                    .entries[index]
-                                                    .key)
-                                                .remove();
-                                            entries
-                                                .getDateEntries(
-                                                    _calorieCalendarController
-                                                        .focusedDay)
-                                                .entries
-                                                .removeAt(index);
-                                            setState(() {});
-                                          },
-                                          child: Icon(Icons.delete),
-                                        ))
-                                  ],
-                                ),
-                                Container(
-                                  child: Text(curEntry.quantity.toString() +
-                                      " " +
-                                      curEntry.measurement),
-                                  alignment: Alignment.centerLeft,
-                                ),
-                              ],
-                            ),
-                          )*/
                         },
                       )
                     : Text("No food entries found")),
@@ -298,8 +260,156 @@ class TestClassState extends State<TestClass> {
     );
   }
 
+  void _onDaySelected(DateTime day, List events) {
+    selectedDateTime = day;
+    //update widgets when new day is selected
+    setState(() {});
+  }
+
+  //<-------------------------------------------------EditEntryPage------------------------------------------------->
+  FoodData editEntry = new FoodData();
+  Widget editEntryPage() {
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(0, hpad(3), 0, 0),
+          child: Column(
+            children: [
+              createEditRow("Food Name", editEntry.foodType, _foodNameController, "text"),
+              createEditRow("Brand Name (not required)", editEntry.brandName,
+                  _brandNameController, "text"),
+              createEditRow("Serving Size", editEntry.quantity.toInt().toString(), _servingSizeController, "number"),
+              createEditRow("Measurement", editEntry.measurement, _measurementController, "text"),
+              createEditRow("Calories", editEntry.calories.toInt().toString(), _calorieController, "number"),
+              createEditRow("Time", editEntry.time, _timeController, "text"),
+            ],
+          ),
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          width: wpad(100),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                    child: FlatButton(
+                      onPressed: () {
+                        _calorieState = CalorieTrackerState.log;
+                        _errorTextBox = "";
+                        clearEditTextControllers();
+                        setState(() {});
+                      },
+                      child: Text("Cancel", style: TextStyle(color: Colors.blue)),
+                    ),
+                  )),
+              Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                    child: FlatButton(
+                      onPressed: () {
+                        submitChangeEntry();
+                        setState(() {});
+                      },
+                      child: Text("Change", style: TextStyle(color: Colors.blue)),
+                    ),
+                  )),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget createEditRow(String title, String currentText, TextEditingController controller,
+      String inputType) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(wpad(5), 0, wpad(5), hpad(1)),
+      child: Column(
+        children: [
+          Container(
+            width: wpad(90),
+            height: hpad(4),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Container(
+            width: wpad(90),
+            height: title == _errorTextBox ? hpad(6) : hpad(4),
+            child: TextField(
+              maxLines: 1,
+              decoration: InputDecoration(
+                errorText: title == _errorTextBox ? _errorMessage : null,
+                //counterText: " ",
+              ),
+              keyboardType: inputType == "number"
+                  ? TextInputType.number
+                  : TextInputType.text,
+              controller: controller,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void submitChangeEntry() {
+    if (_foodNameController.text == "") {
+      _errorTextBox = "Food Name";
+      _errorMessage = "Blank must be filled";
+    }
+    /*else if (_measurementController.text == "") {
+      _errorTextBox = "Brand Name";
+      _errorMessage = "Blank must be filled";
+    } */
+    else if (_servingSizeController.text == "") {
+      _errorTextBox = "Serving Size";
+      _errorMessage = "Blank must be filled";
+    } else if (_measurementController.text == "") {
+      _errorTextBox = "Measurement";
+      _errorMessage = "Blank must be filled";
+    } else if (_calorieController.text == "") {
+      _errorTextBox = "Calories";
+      _errorMessage = "Blank must be filled";
+    } else if (_timeController.text == "") {
+      _errorTextBox = "Time";
+      _errorMessage = "Blank must be filled";
+    } else {
+      print(editEntry.key);
+      entryRef.child("My Entries").child(DateFormat('yyyy-MM-dd').format(selectedDateTime)).child(editEntry.key).set({
+        "calories": double.parse(_calorieController.text),
+        "foodType": _foodNameController.text,
+        "brandName": _brandNameController.text,
+        "measurement": _measurementController.text,
+        "quantity": double.parse(_servingSizeController.text),
+        "time": _timeController.text,
+      });
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        clearEditTextControllers();
+        _errorTextBox = "";
+        _calorieState = CalorieTrackerState.log;
+        setState(() {});
+      });
+    }
+    setState(() {});
+  }
+
+  void clearEditTextControllers() {
+    _calorieController.clear();
+    _servingSizeController.clear();
+    _measurementController.clear();
+    _foodNameController.clear();
+    _brandNameController.clear();
+    _timeController.clear();
+  }
+
   //<-------------------------------------------------SearchFoodPage------------------------------------------------->
-  List<USDAEntry> searchEntries = new List<USDAEntry>();
+  List<FoodData> searchEntries = new List<FoodData>();
 
   Widget searchFoodPage() {
     return Stack(
@@ -308,6 +418,20 @@ class TestClassState extends State<TestClass> {
           children: [
             Row(
               children: [
+                //back button to go back to the log
+                Container(
+                  child: FlatButton(
+                    onPressed: () {
+                      _calorieState = CalorieTrackerState.log;
+                      _searchFoodController.clear();
+                      searchEntries.clear();
+                      setState(() {
+
+                      });
+                    },
+                    child: Icon(Icons.chevron_left),
+                  ),
+                ),
                 Expanded(
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), 0),
@@ -371,7 +495,7 @@ class TestClassState extends State<TestClass> {
                 itemCount: searchEntries.length,
                 itemBuilder: (BuildContext context, int index) {
                   //get list of entries of current day
-                  USDAEntry curEntry = searchEntries[index];
+                  FoodData curEntry = searchEntries[index];
                   return GestureDetector(
                       onTap: () {
                         _calorieState = CalorieTrackerState.addEntry;
@@ -381,7 +505,7 @@ class TestClassState extends State<TestClass> {
                           print("clicked");
                           addEntryDialog(curEntry);
                         },
-                        title: Text(curEntry.foodName,
+                        title: Text(curEntry.foodType,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18)),
                         subtitle: curEntry.brandName != null
@@ -425,17 +549,17 @@ class TestClassState extends State<TestClass> {
     setState(() {});
   }
 
-  Future<List<USDAEntry>> fetchData(String foodSearch) async {
+  Future<List<FoodData>> fetchData(String foodSearch) async {
     final responseMain = await http.get(
         "https://api.nal.usda.gov/fdc/v1/foods/list?api_key=OtpdWCaIaKlnq3DXBs5VcVorVDopFLNaVrGLWT6i&query=${foodSearch.replaceAll(" ", "%20")}");
-    List<USDAEntry> searchEntryList = new List<USDAEntry>();
+    List<FoodData> searchEntryList = new List<FoodData>();
     print(responseMain.statusCode);
 
     if (responseMain.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       for (Map i in jsonDecode(responseMain.body)) {
-        searchEntryList.add(USDAEntry.fromJson(i));
+        searchEntryList.add(FoodData.fromJson(i));
       }
     } else {
       // If the server did not return a 200 OK response,
@@ -454,6 +578,20 @@ class TestClassState extends State<TestClass> {
           children: [
             Row(
               children: [
+                //back button to go back to the log
+                Container(
+                  child: FlatButton(
+                    onPressed: () {
+                      _calorieState = CalorieTrackerState.log;
+                      _searchFoodController.clear();
+                      searchEntries.clear();
+                      setState(() {
+
+                      });
+                    },
+                    child: Icon(Icons.chevron_left),
+                  ),
+                ),
                 Expanded(
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), 0),
@@ -506,47 +644,42 @@ class TestClassState extends State<TestClass> {
                 itemCount: myFoods.entryHolder.length,
                 itemBuilder: (BuildContext context, int index) {
                   //get list of entries of current day
-                  CalorieTrackerEntry curEntry = myFoods.entryHolder[index];
-                  return GestureDetector(
-                      onTap: () {
-                        _calorieState = CalorieTrackerState.addEntry;
-                      },
-                      child: ListTile(
-                        onTap: () {
-                          print("tapped: " + index.toString());
-                        },
-                        title: Text(curEntry.foodType,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        subtitle: Text(curEntry.quantity.toString() +
-                            " " +
-                            curEntry.measurement),
-                        trailing: Container(
-                          width: wpad(20),
-                          child: Row(
-                            children: [
-                              Container(
-                                child: Text(
-                                  curEntry.calories.toString(),
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                              Expanded(
-                                  child: FlatButton(
-                                onPressed: () {
-                                  entryRef
-                                      .child("My Foods")
-                                      .child(myFoods.entryHolder[index].key)
-                                      .remove();
-                                  myFoods.entryHolder.removeAt(index);
-                                  setState(() {});
-                                },
-                                child: Icon(Icons.delete),
-                              ))
-                            ],
+                  FoodData curEntry = myFoods.entryHolder[index];
+                  return ListTile(
+                    onTap: () {
+                      addEntryDialog(curEntry);
+                    },
+                    title: Text(curEntry.foodType,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    subtitle: Text(curEntry.quantity.toInt().toString() +
+                        " " +
+                        curEntry.measurement),
+                    trailing: Container(
+                      width: wpad(20),
+                      child: Row(
+                        children: [
+                          Container(
+                            child: Text(
+                              curEntry.calories.toString(),
+                            ),
                           ),
-                        ),
-                      ));
+                          Expanded(
+                              child: FlatButton(
+                            onPressed: () {
+                              entryRef
+                                  .child("My Foods")
+                                  .child(myFoods.entryHolder[index].key)
+                                  .remove();
+                              myFoods.entryHolder.removeAt(index);
+                              setState(() {});
+                            },
+                            child: Icon(Icons.delete),
+                          ))
+                        ],
+                      ),
+                    ),
+                  );
                 },
               )
             : Text("No food entries found"));
@@ -687,11 +820,32 @@ class TestClassState extends State<TestClass> {
   //<-------------------------------------------------addEntryDialog------------------------------------------------->
   TextEditingController _addFoodEntryController = new TextEditingController();
 
-  void addEntryDialog(USDAEntry curEntry) async {
-    await curEntry.findPortions();
+  void addEntryDialog(FoodData curEntry) async {
+    //fill out foodEntryInfo in the same way as a USDA entry
+    if (!curEntry.isUSDAEntry) {
+      curEntry.clearArrays();
+      curEntry.portionNames.add(curEntry.quantity.toInt().toString() + " " + curEntry.measurement);
+      curEntry.portionUnits.add("g");
+      curEntry.portionSizes.add(100);
+    } else {
+      await curEntry.findPortions();
+    }
 
-    String selectedPortion = curEntry.portionNames[0];
-    double portionSize = curEntry.portionSizes[0];
+
+
+    List<String> combinedPortionNameSize = new List<String>();
+    for (int i = 0; i < curEntry.portionNames.length; i++) {
+      //combine portion name and portion sizes for dropdown list
+      if(curEntry.isUSDAEntry) {
+        combinedPortionNameSize.add(
+            curEntry.portionNames[i] + " (" + curEntry.portionSizes[i].toString() + curEntry.portionUnits[i] + ")");
+      } else {
+        combinedPortionNameSize.add(curEntry.portionNames[i]);
+      }
+    }
+
+    String selectedPortion = combinedPortionNameSize[0];
+    int pickedIndex = 0;
 
     _addFoodEntryController.text = "1";
 
@@ -699,7 +853,7 @@ class TestClassState extends State<TestClass> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text(curEntry.foodName),
+              title: Text(curEntry.foodType),
               actions: [
                 FlatButton(
                   onPressed: () {
@@ -709,8 +863,12 @@ class TestClassState extends State<TestClass> {
                 ),
                 FlatButton(
                   onPressed: () {
-                    if (addEntry(curEntry, _addFoodEntryController, portionSize,
-                        selectedPortion)) {
+                    if (addEntry(
+                        curEntry,
+                        _addFoodEntryController,
+                        curEntry.portionSizes[pickedIndex],
+                        curEntry.portionNames[pickedIndex],
+                        curEntry.portionUnits[pickedIndex])) {
                       Navigator.pop(context);
                     }
                   },
@@ -730,18 +888,18 @@ class TestClassState extends State<TestClass> {
                             setState(() {
                               selectedPortion = newVal;
 
-                              //locate portion size from selectedPortion variable
+                              //locate index from selectedPortion variable
                               for (int i = 0;
-                                  i < curEntry.portionNames.length;
+                                  i < combinedPortionNameSize.length;
                                   i++) {
                                 if (selectedPortion ==
-                                    curEntry.portionNames[i]) {
-                                  portionSize = curEntry.portionSizes[i];
+                                    combinedPortionNameSize[i]) {
+                                  pickedIndex = i;
                                 }
                               }
                             });
                           },
-                          items: curEntry.portionNames
+                          items: combinedPortionNameSize
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                                 value: value,
@@ -773,7 +931,7 @@ class TestClassState extends State<TestClass> {
                         Text(_addFoodEntryController.text != ""
                             ? "Servings = " +
                                 (double.parse(_addFoodEntryController.text) *
-                                        portionSize *
+                                        curEntry.portionSizes[pickedIndex] *
                                         (curEntry.calories / 100))
                                     .toStringAsFixed(2) +
                                 " cal"
@@ -786,22 +944,24 @@ class TestClassState extends State<TestClass> {
         });
   }
 
-  bool addEntry(USDAEntry curEntry, TextEditingController controller,
-      double portionSize, String selectedPortion) {
+  bool addEntry(FoodData curEntry, TextEditingController controller,
+      double portionSize, String portionName, String portionUnit) {
     if (controller.text != "") {
       entryRef
           .child("My Entries")
-          .child(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .child(DateFormat('yyyy-MM-dd').format(selectedDateTime))
           .push()
           .set({
         "calories": double.parse((double.parse(_addFoodEntryController.text) *
                 portionSize *
                 (curEntry.calories / 100))
             .toStringAsFixed(2)),
-        "foodType": curEntry.foodName,
-        "measurement": selectedPortion,
+        "foodType": curEntry.foodType,
+        "measurement": portionName,
         "quantity": double.parse(controller.text),
-        "time": DateFormat('hh:mm a').format(DateTime.now()).toString()
+        "time": DateFormat('hh:mm a').format(DateTime.now()).toString(),
+        "portionSize": portionSize,
+        "portionUnit": portionUnit,
       });
       return true;
     } else {
@@ -836,118 +996,5 @@ class TestClassState extends State<TestClass> {
 
   double hpad(double percent) {
     return _height * percent / 100;
-  }
-}
-
-class USDAEntry {
-  double protein;
-  double carbs;
-  double fats;
-  double calories;
-  String foodName;
-  String brandName;
-  List<String> portionNames = new List<String>();
-  List<double> portionSizes = new List<double>();
-  String id;
-
-  USDAEntry(
-      {this.protein,
-      this.carbs,
-      this.fats,
-      this.calories,
-      this.foodName,
-      this.brandName,
-      this.id});
-
-  factory USDAEntry.fromJson(Map<String, dynamic> json) {
-    double parsedProtein = 0;
-    double parsedCarbs = 0;
-    double parsedFats = 0;
-    double parsedCalories = 0;
-
-    for (Map i in json['foodNutrients']) {
-      if (i["name"] == "Protein") {
-        parsedProtein = i["amount"];
-      }
-      if (i["name"] == "Carbohydrate, by difference") {
-        parsedCarbs = i["amount"];
-      }
-      if (i["name"] == "Total lipid (fat)") {
-        parsedFats = i["amount"];
-      }
-      if (i["name"] == "Energy") {
-        parsedCalories = i["amount"];
-      }
-    }
-
-    return USDAEntry(
-      foodName: json['description'],
-      brandName: json['brandOwner'],
-      protein: double.parse(parsedProtein.toStringAsFixed(2)),
-      carbs: double.parse(parsedCarbs.toStringAsFixed(2)),
-      fats: double.parse(parsedFats.toStringAsFixed(2)),
-      calories: double.parse(parsedCalories.toStringAsFixed(2)),
-      id: json['fdcId'].toString(),
-    );
-  }
-
-  Future<int> findPortions() async {
-    portionNames.clear();
-    portionSizes.clear();
-    final responseSecondary = await http.get(
-        "https://api.nal.usda.gov/fdc/v1/food/" +
-            id +
-            "?api_key=OtpdWCaIaKlnq3DXBs5VcVorVDopFLNaVrGLWT6i");
-    print("dab");
-    print(id);
-    Map<String, dynamic> portionJson = jsonDecode(responseSecondary.body);
-
-    if (portionJson['foodPortions'].length == 0) {
-      //if no portion array is found, resort to householdServingText
-      if (portionJson['householdServingFullText'] != null &&
-          portionJson['servingSize'] != null &&
-          portionJson['servingSizeUnit'] != null) {
-        portionNames.add(portionJson['householdServingFullText'] +
-            " (" +
-            double.parse(portionJson['servingSize'].toStringAsFixed(2))
-                .toString() +
-            portionJson['servingSizeUnit'] + ")");
-        portionSizes
-            .add(double.parse(portionJson['servingSize'].toStringAsFixed(2)));
-      }
-    } else {
-      //locate the different portions in "foodPortions"
-      for (Map i in portionJson['foodPortions']) {
-        if (i['portionDescription'] != null && i['gramWeight'] != null) {
-          portionNames.add(i['portionDescription'] +
-              " (" +
-              double.parse(i['gramWeight'].toStringAsFixed(2)).toString() +
-              "g) ");
-          portionSizes.add(double.parse(i['gramWeight'].toStringAsFixed(2)));
-        } else if (i['modifier'] != null && i['gramWeight'] != null) {
-          print(i['modifier']);
-          portionNames.add(i['modifier'] +
-              " (" +
-              double.parse(i['gramWeight'].toStringAsFixed(2)).toString() +
-              "g) ");
-          portionSizes.add(double.parse(i['gramWeight'].toStringAsFixed(2)));
-        } else {
-          print("no portions found");
-        }
-      }
-    }
-
-    return 1;
-  }
-
-  String toString() {
-    return foodName +
-        " " + /* brandName + " " +*/ protein.toString() +
-        " " +
-        carbs.toString() +
-        " " +
-        fats.toString() +
-        " " +
-        calories.toString();
   }
 }
