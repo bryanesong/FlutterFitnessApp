@@ -25,6 +25,7 @@ import 'dart:math';
 
 import 'PinInformation.dart';
 
+
 animation.Animation penguinAnimation;
 Position _position = Position(256.0, 256.0);
 AnimationController _animationController;
@@ -205,8 +206,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
   double convertDegreeToRadians(double num){
     return num * (pi/180);
-  }
-
   }
 
   void changePosition() async {
@@ -415,6 +414,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
   Widget getCustomContainer() {
+    //make penguin disappear if not on dashboard page
+    if(selectedWidgetMarker == WidgetMarker.home) {
+      penguinSize = 150;
+    } else {
+      penguinSize = 0;
+    }
     switch (selectedWidgetMarker) {
       case WidgetMarker.home:
         return getIdleScreenWidget();
