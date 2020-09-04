@@ -16,7 +16,7 @@ class SignUpRoute extends StatefulWidget {
 }
 
 class SignUpState extends State<SignUpRoute> {
-  final DEBUGMODE = true;
+  final DEBUGMODE = false;
 
   TextField _username = new TextField(),
       _password1 = new TextField(),
@@ -341,7 +341,7 @@ class SignUpState extends State<SignUpRoute> {
         'UUID': uniqueKey,
         'Username': _usernameController.text
       });
-      await ref.child("Alpha Codes").orderByChild("userEmail").equalTo(curCode.userEmail).onChildAdded.listen((Event event) {
+      ref.child("Alpha Codes").orderByChild("userEmail").equalTo(curCode.userEmail).onChildAdded.listen((Event event) {
         ref.child("Alpha Codes").child(event.snapshot.key).child("inUse").set(true);
       });
     }

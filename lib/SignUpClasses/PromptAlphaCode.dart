@@ -35,8 +35,8 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
 
   _onEntryAdded(Event event) {
     codeList.add(AlphaCode.fromSnapshot(event.snapshot));
-    print(codeList[codeList.length - 1].userEmail);
-    print("added");
+    /*print(codeList[codeList.length - 1].userEmail);
+    print("added");*/
   }
 
   _onEntryChanged(Event event) {
@@ -156,8 +156,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
     bool codeFound = false;
     //locate code
     codeList.forEach((AlphaCode code) {
-      //COMMENTED OUT FOR TESTING PURPOSES
-      if (_inputtedCode == code.alphaCode /*&& !code.inUse && code.enabled*/) {
+      if (_inputtedCode == code.alphaCode) {
         codeFound = true;
         if (code.inUse) {
           errorFound = true;

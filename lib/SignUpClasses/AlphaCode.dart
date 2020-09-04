@@ -14,9 +14,9 @@ class AlphaCode {
   AlphaCode.fromSnapshot(DataSnapshot snapshot) : key = snapshot.key,
   alphaCode = snapshot.value["alphaCode"], userEmail = snapshot.value["userEmail"],
   inUse = snapshot.value["inUse"], enabled = snapshot.value["enabled"];
+}
 
-
-  toJson() {
+/*  toJson() {
     return {
       "alphaCode" : alphaCode,
       "userEmail" : userEmail,
@@ -27,5 +27,4 @@ class AlphaCode {
 
 
   @override
-  String toString() => "User<$userEmail>";
-}
+  String toString() => "User<$userEmail>";*/

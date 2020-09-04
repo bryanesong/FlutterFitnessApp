@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:FlutterFitnessApp/AnimationTest.dart';
 import 'package:FlutterFitnessApp/Login.dart';
+import 'package:FlutterFitnessApp/TestClass.dart';
 import 'SignUpClasses/PromptAlphaCode.dart';
 import 'SignUpClasses/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
