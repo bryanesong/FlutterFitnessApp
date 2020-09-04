@@ -25,6 +25,7 @@ import 'dart:math';
 
 import 'PinInformation.dart';
 //gays are legednary but i also find them relaxing
+//dab on the haters
 
 animation.Animation penguinAnimation;
 Position _position = Position(256.0, 256.0);
