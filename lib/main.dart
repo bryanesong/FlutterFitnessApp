@@ -1151,7 +1151,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
         "brandName": _brandNameController.text,
         "measurement": _measurementController.text,
         "quantity": double.parse(_servingSizeController.text),
-        "time": testEntry.time,
+        "time": DateFormat('hh:MM a').format(DateTime.now()),
       });
       clearTextControllers();
       Future.delayed(const Duration(milliseconds: 500), () {
