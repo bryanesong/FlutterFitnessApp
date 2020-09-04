@@ -159,7 +159,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     getWorkoutLog(); //load things in workout list
     checkLocation();
     
-    createPenguinAnimation();
+    //createPenguinAnimation();
     getCameraPosition(0,0);
     location.onLocationChanged.listen((LocationData cLoc) {
       // cLoc contains the lat and long of the
@@ -258,6 +258,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    createPenguinAnimation();
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
     logoutContext = context;
@@ -2263,7 +2264,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
         child: PenguinAnimate(animation: _animation));
   }
 
-  void createPenguinAnimation() {
+  void createPenguinAnimation() async{
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 6));
     _animation = IntTween(begin: 0, end: 9).animate(_animationController);
