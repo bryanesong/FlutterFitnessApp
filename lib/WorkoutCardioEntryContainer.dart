@@ -1,7 +1,10 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class WorkoutCardioEntryContainer{
   String name;
   double distance,time;
   DateTime dateTime;
+  Set<Polyline> polylines = {};
 
   WorkoutCardioEntryContainer(){
     name = "";
@@ -10,11 +13,12 @@ class WorkoutCardioEntryContainer{
     dateTime = new DateTime.now();
   }
 
-  WorkoutCardioEntryContainer.define(String name, double distance, double time, DateTime dateTime){
+  WorkoutCardioEntryContainer.define(String name, double distance, double time, DateTime dateTime,Set<Polyline> polylines){
     this.name = name;
     this.distance = distance;
     this.time = time;
     this.dateTime = dateTime;
+    this.polylines = polylines;
   }
 
   String getName(){
@@ -47,6 +51,14 @@ class WorkoutCardioEntryContainer{
 
   void setDateTime(DateTime dateTime){
     this.dateTime = dateTime;
+  }
+
+  Set<Polyline> getPolylines(){
+    return polylines;
+  }
+
+  void setPolylines(Set<Polyline> polylines){
+    this.polylines = polylines;
   }
 
 

@@ -14,6 +14,10 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'FancyButton.dart';
 import 'package:location/location.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'dart:math';
+
+import 'PinInformation.dart';
 
 animation.Animation penguinAnimation;
 Position _position = Position(256.0, 256.0);
@@ -99,6 +103,29 @@ BuildContext logoutContext;
 
 class HomeScreenState extends State<HomeScreen> {
 
+  //when this is true, the onLocationChanged will add to the polylines to track the user running
+  bool startLocationTracking = false;
+  double totalDistanceTraveled = 0;
+  LatLng previousCoordinates;
+
+  List<LatLng> latlng = List();
+
+  double pinPillPosition = -100;
+  PinInformation currentlySelectedPin = PinInformation(
+      pinPath: '',
+      avatarPath: '',
+      location: LatLng(0, 0),
+      locationName: '',
+      labelColor: Colors.grey);
+  PinInformation sourcePinInfo;
+  PinInformation destinationPinInfo;
+
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
   DateTime currentDayShown = DateTime.now();
 
   bool addWorkoutButtonVisibility = true;
@@ -133,6 +160,51 @@ class HomeScreenState extends State<HomeScreen> {
     getWorkoutLog(); //load things in workout list
     checkLocation();
     getCameraPosition(0,0);
+    location.onLocationChanged.listen((LocationData cLoc) {
+      // cLoc contains the lat and long of the
+      // current user's position in real time,
+      // so we're holding on to it
+      //print("CURRENT LOCATION: "+cLoc.toString());//this will continuously print lmfao so only uncomment when u need to debugg
+      //change camera position to follow the user on the map
+      getCameraPosition(cLoc.latitude,cLoc.longitude);
+      if(startLocationTracking){
+        getDistanceTraveled(cLoc.latitude, cLoc.longitude);
+        latlng.add(new LatLng(cLoc.latitude,cLoc.longitude));
+        print("Current polylines count: "+_polylines.length.toString());
+        print("Adding new polyline- $cLoc");
+        _polylines.add(new Polyline(
+          polylineId: PolylineId("TEMP ID"),
+          visible: true,
+          //latlng is List<LatLng>
+          points: latlng,
+          color: Colors.blue,
+        ));
+      }
+    });
+  }
+
+
+  //will take in new lat and lng coordinates and calculate the distance between the last known coordinates and add to them
+  void getDistanceTraveled(double lat, double lng){
+    if(previousCoordinates == null){
+      previousCoordinates = new LatLng(lat, lng);
+    }else{
+      //uses the Haversine formula to calculate distance between two lat/lng points and adds them to totalDistanceTraveled variable
+      double R = 6371; // Radius of the earth in km
+      double dLat = convertDegreeToRadians(lat-previousCoordinates.latitude);  // convertDegreeToRadians below
+      double dLon = convertDegreeToRadians(lng-previousCoordinates.longitude);
+      double a = sin(dLat/2) * sin(dLat/2) + cos(convertDegreeToRadians(previousCoordinates.latitude)) * cos(convertDegreeToRadians(lat)) * sin(dLon/2) * sin(dLon/2);
+      double c = 2 * atan2(sqrt(a), sqrt(1-a));
+      double distanceKm = R * c; // Distance in km
+      double distanceMiles = distanceKm * 0.62137119;
+      totalDistanceTraveled +=distanceMiles;
+      //set previous coordinates to current coordinates
+      previousCoordinates = new LatLng(lat,lng);
+    }
+  }
+
+  double convertDegreeToRadians(double num){
+    return num * (pi/180);
   }
 
 
@@ -321,7 +393,7 @@ class HomeScreenState extends State<HomeScreen> {
       case WidgetMarker.calorie:
         return getIdleScreenWidget();
       case WidgetMarker.workout:
-        return getworkoutLogWidget();
+        return getWorkoutLogWidget();
       case WidgetMarker.inventory:
         return getInventoryWidget();
       case WidgetMarker.stats:
@@ -352,7 +424,8 @@ class HomeScreenState extends State<HomeScreen> {
 
   //main layout for the workout log when user presses the workout log button
   //consists of a 1 row calendar at the top while the bottom changes depending on what the user is doing
-  Widget getworkoutLogWidget() {
+  Widget getWorkoutLogWidget() {
+    print("Current workout state: $currentWorkoutState");
     if(currentWorkoutState == WorkoutState.addStrength || currentWorkoutState == WorkoutState.addCardio){
       return getWorkoutState();
     }else{
@@ -766,6 +839,7 @@ class HomeScreenState extends State<HomeScreen> {
           getCurrentCardioTime(),
           getCurrentCardioDistance(),
           getCurrentCardioPace(),
+          Padding(padding: EdgeInsets.all(5.0)),
           getCardioLogButtons(),
         ],
       ),
@@ -777,9 +851,14 @@ class HomeScreenState extends State<HomeScreen> {
   final _stopWatchTimer = StopWatchTimer(
     onChange: (value) {
       final displayTime = StopWatchTimer.getDisplayTime(value);
-      print('displayTime $displayTime');
+      //print('displayTime: '+displayTime.toString()); //used for debugging
     },
-    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+    //when the stop watch is going I also want to be checking every 5 seconds the lat/lng creating a polyline and adding to the polylines
+    onChangeRawSecond: (value){
+      if(value % 5 == 0 && value != 0){
+        print("THIS IS EVERY 5 SECONDS");
+      }
+    },
     onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
   );
 
@@ -811,11 +890,7 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Location location = new Location();
 
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
 
   void checkLocation() async{
     print("getting location data");
@@ -850,7 +925,52 @@ class HomeScreenState extends State<HomeScreen> {
     target: LatLng(lat, lng),
     zoom: 14.4746,
     );
-    print("finished setting _myLocation variable.");
+    //print("finished setting _myLocation variable."); //used to debugging
+  }
+
+  //will eventually need to set a current location marker when the user presses start
+  //and then another current location marker when the user presses end
+  Set<Marker> _locationMarker(){
+    return <Marker>[
+      Marker(
+        markerId: MarkerId("Current Location"),
+        position: LatLng(_locationData.latitude,_locationData.longitude),
+        icon: BitmapDescriptor.defaultMarker,
+        infoWindow: InfoWindow(title:"Current Location"),
+      ),
+    ].toSet();
+  }
+
+  //will hold markers for start and endpoints
+  Set<Marker> _markers = {};
+  //this is hold the polylines used to track each run
+  //will probably create a polyline every 5 seconds or something
+  Set<Polyline> _polylines = {};
+
+
+  // this will hold each polyline coordinate as Lat and Lng pairs
+  List<LatLng> polylineCoordinates = [];
+
+  // this is the key object - the PolylinePoints
+  // which generates every polyline between start and finish
+  PolylinePoints polylinePoints = PolylinePoints();
+
+  //will be used to set start and end markers or honestly any other markers that are needed
+  //marker is based off current _locationData lat and lng
+  Set<Marker> _setCurrentLocationMarker(String markerName){
+    return <Marker>[
+      Marker(
+        markerId: MarkerId("$markerName"),
+        position: LatLng(_locationData.latitude,_locationData.longitude),
+        icon: BitmapDescriptor.defaultMarker,
+        infoWindow: InfoWindow(title:"$markerName"),
+      ),
+    ].toSet();
+  }
+
+  //when the google map is intialized when the user loads it up in the widget
+  void onMapCreated(GoogleMapController controller) {
+    _controller.complete(controller);
   }
 
   Widget getCurrentCardioDistance(){
@@ -860,15 +980,16 @@ class HomeScreenState extends State<HomeScreen> {
     return new Column(
       children:<Widget>[
         Text("Location: latitude: "+_locationData.latitude.toString()+" longitude: "+_locationData.longitude.toString()),
+        Text("Total Distance Traveled: $totalDistanceTraveled miles"),
         SizedBox(
             width: MediaQuery.of(context).size.width,  // or use fixed size like 200
             height: MediaQuery.of(context).size.height/2,
             child: GoogleMap(
-              mapType: MapType.hybrid,
+              mapType: MapType.normal,
+              markers: _markers,
+              polylines: _polylines,
               initialCameraPosition: _myLocation,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
+              onMapCreated: onMapCreated,
             ),
         ),
       ],
@@ -884,39 +1005,151 @@ class HomeScreenState extends State<HomeScreen> {
   String startStop = "Start";
   Color startStopColor = Colors.green;
 
-  Widget getCardioLogButtons(){
-    return new Row(
-      children: [
-        FancyButton(
-          child: Text(
-            startStop,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-          size: 50,
-          color: startStopColor,
-          onPressed: () {
-            print("start stop button pressed.");
-            setState(() {
-              if(startStop == "Start"){
-                startStop="Stop";
-                startStopColor = Colors.red;
-                // Start
-                _stopWatchTimer.onExecute.add(StopWatchExecute.start);
-              }else{
-                startStop="Start";
-                startStopColor = Colors.green;
-                _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
-                _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-              }
+  String pauseResume = "Pause";
+  Color pauseResumeColor = Colors.orange;
 
-            });
-          },
+
+
+  //returns buttons to stop and start timer
+  //returns the layout depending on if the user has started tracking or not
+  Widget getCardioLogButtons(){
+    if(startLocationTracking){
+      return new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          getStartStopButton(),
+          Padding(padding: EdgeInsets.all(MediaQuery.of(context).size.width /15)),//made it relative so they buttons dont look stupid on devices of varying sizes lmfao
+          getPauseResumeButton(),
+        ],
+      );
+    }else{
+      return new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          getStartStopButton(),
+        ],
+      );
+    }
+  }
+
+  //returns the pause resume button for live cardio tracker
+  Widget getPauseResumeButton(){
+    return FancyButton(
+      child: Text(
+        pauseResume,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
         ),
-      ],
+      ),
+      size: 50,
+      color: pauseResumeColor,
+      onPressed: () {
+        setState(() {
+          if(pauseResume == "Pause"){
+            pauseResume = "Resume";
+            pauseResumeColor = Colors.grey;
+          }else{
+            pauseResume = "Pause";
+            pauseResumeColor = Colors.orange;
+          }
+        });
+      },
+    );
+  }
+
+  //returns the start top button for live cardio tracker
+  Widget getStartStopButton(){
+    return FancyButton(
+      child: Text(
+        startStop,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+        ),
+      ),
+      size: 50,
+      color: startStopColor,
+      onPressed: () {
+        print("start stop button pressed.");
+        setState(() {
+          if(startStop == "Start"){
+            startLocationTracking = true;
+            startStop="Stop";
+            startStopColor = Colors.red;
+
+            //reset the timer incase it wasn't reset before, in addition to resetting before starting LOL
+            _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+            // Start
+            _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+
+            //empty out all previous user run tracking information
+            _polylines.clear();
+            polylineCoordinates.clear();
+            latlng.clear();
+            totalDistanceTraveled = 0;
+            previousCoordinates = null;
+
+            _markers.add(new Marker(
+              markerId: MarkerId("Starting Point"),
+              position: LatLng(_locationData.latitude,_locationData.longitude),
+              icon: BitmapDescriptor.defaultMarker,
+              infoWindow: InfoWindow(title:"Starting Point"),
+            ));
+          }else{
+            startLocationTracking = false;
+            startStop="Start";
+            startStopColor = Colors.green;
+            _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+            print("polylines: "+_polylines.toString());
+            Alert(
+              context: context,
+              type: AlertType.info,
+              title: "Save Cardio Workout",
+              desc: "Would you like to save this workout?",
+              buttons: [
+                DialogButton(
+                  color: Colors.red,
+                  child: Text(
+                    "No",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      currentWorkoutState = WorkoutState.log;
+                      addWorkoutButtonVisibility = true;
+                      //will pop the current alert and get rid of the alert
+                      Navigator.pop(context);
+                    });
+                  },
+                  width: 120,
+                ),
+                DialogButton(
+                  color: Colors.green,
+                  child: Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      currentWorkoutState = WorkoutState.log;
+                      addWorkoutButtonVisibility = true;
+
+                      //add the cardio workout to the firebase
+
+                      //will pop the current alert and get rid of the alert
+                      Navigator.pop(context);
+                    });
+                  },
+                  width: 120,
+                )
+              ],
+            ).show();
+          }
+        });
+      },
     );
   }
 
@@ -932,8 +1165,6 @@ class HomeScreenState extends State<HomeScreen> {
     hold = uid;
     return uid;
   }
-
-
 
   Widget getWorkoutLog(){
     getUID();
@@ -1089,7 +1320,6 @@ class HomeScreenState extends State<HomeScreen> {
         child: PenguinAnimate(animation: _animation),
     );
   }
-
 
 }
 
