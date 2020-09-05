@@ -5,6 +5,7 @@ class WorkoutCardioEntryContainer{
   double distance,time;
   DateTime dateTime;
   Set<Polyline> polylines = {};
+  String type = "Strength";
 
   WorkoutCardioEntryContainer(){
     name = "";
@@ -59,6 +60,10 @@ class WorkoutCardioEntryContainer{
 
   void setPolylines(Set<Polyline> polylines){
     this.polylines = polylines;
+  }
+
+  String getType(){
+    return type;
   }
 
 

@@ -108,6 +108,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   double totalDistanceTraveled = 0;
   LatLng previousCoordinates;
 
+  Color polylineColor = Colors.blue;
+
   List<LatLng> latlng = List();
 
   double pinPillPosition = -100;
@@ -140,6 +142,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   TextEditingController strengthTextControllerWeight;
   TextEditingController strengthTextControllerName;
 
+  TextEditingController cardioTextName;
+
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   WidgetMarker selectedWidgetMarker = WidgetMarker.home;
   WorkoutState currentWorkoutState = WorkoutState.log;
@@ -149,10 +153,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
+    //init strength workout controllers
     strengthTextControllerReps = TextEditingController();
     strengthTextControllerSets = TextEditingController();
     strengthTextControllerWeight = TextEditingController();
     strengthTextControllerName = TextEditingController();
+    //init cardio workout controllers
+    cardioTextName = TextEditingController();
     //initializeStuff();
     _calendarController = CalendarController();
     changePosition();
@@ -179,7 +186,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
           visible: true,
           //latlng is List<LatLng>
           points: latlng,
-          color: Colors.blue,
+          color: polylineColor,
         ));
       }
     });
@@ -240,10 +247,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   @override
   dispose() {
     _calendarController.dispose();
+    //strength workout dipose
     strengthTextControllerReps.dispose();
     strengthTextControllerSets.dispose();
     strengthTextControllerWeight.dispose();
     strengthTextControllerName.dispose();
+    //cardio workout dipose
+    cardioTextName.dispose();
+
     _searchFoodController.dispose();
     _timeController.dispose();
     _calorieController.dispose();
@@ -1988,14 +1999,20 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
           if(pauseResume == "Pause"){
             pauseResume = "Resume";
             pauseResumeColor = Colors.grey;
+            _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+            polylineColor = Colors.red;
           }else{
             pauseResume = "Pause";
             pauseResumeColor = Colors.orange;
+            _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+            polylineColor = Colors.blue;
           }
         });
       },
     );
   }
+
+
 
   //returns the start top button for live cardio tracker
   Widget getStartStopButton(){
@@ -2017,6 +2034,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
             startLocationTracking = true;
             startStop="Stop";
             startStopColor = Colors.red;
+            polylineColor = Colors.blue;
 
             //reset the timer incase it wasn't reset before, in addition to resetting before starting LOL
             _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
@@ -2074,21 +2092,80 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                     setState(() {
                       currentWorkoutState = WorkoutState.log;
                       addWorkoutButtonVisibility = true;
-
                       //add the cardio workout to the firebase
-
                       //will pop the current alert and get rid of the alert
                       Navigator.pop(context);
+                      Alert(
+                        context:context,
+                        type: AlertType.info,
+                        title: "Name Your Workout",
+                        desc: "Name your workout:",
+                        buttons: [
+                          DialogButton(
+                            color: Colors.green,
+                            child: Text(
+                              "Save",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                addCardioWorkoutToDatabase();
+                                //will pop the current alert and get rid of the alert
+                                Navigator.pop(context);
+                              });
+                            },
+                            width: 120,
+                          ),
+                        ],
+                        content: TextField(
+                          controller: cardioTextName,
+                          decoration: InputDecoration(
+                            hintText: "workout name",
+
+                            //counterText: " ",
+                          ),
+                        ),
+                      ).show();
                     });
                   },
                   width: 120,
-                )
+                ),
               ],
             ).show();
           }
         });
       },
     );
+  }
+
+  //this method will add a cardio workout to database depending on the current information gathered
+  void addCardioWorkoutToDatabase() async{
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    final FirebaseUser user = await mAuth.currentUser();
+    final uid = user.uid;
+
+    String key = ref.child("Users").child(uid).child("Workout Log Data Cardio").push().key;
+    ref.child("Users").child(uid).child("Workout Log Data Cardio").child(key).set({
+      'Name': cardioTextName.text.trim().toString(),
+      'Distance':totalDistanceTraveled,
+      'Time': _stopWatchTimer.rawTime.value,
+      'DateTime': new DateTime.now().toString(),
+    });
+
+    print("KEY: "+key);
+    print("POLY LINES:");
+    int count = 0;
+
+    _polylines.forEach((element) {
+      ref.child("Users").child(uid).child("Workout Log Data Cardio").child(key).child("Polylines").child(count.toString()).set(element.points.toString());
+      print("Adding polyline: "+count.toString()+": "+element.points.toString());
+      count++;
+    });
+
+
+    cardioTextName.clear();
+    print("Cardio workout added to database for user: $uid");
+
   }
 
   DatabaseReference reference = FirebaseDatabase.instance.reference();
@@ -2104,7 +2181,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     return uid;
   }
 
+  Future<String> getCardioWorkouts() async {
+    getUID();
+    Map<dynamic,dynamic> values = (await FirebaseDatabase.instance.reference().child("Users").child(hold).child("Workout Log Data Cardio").once()).value;
+    print("READING FROM CARDIO workout LOG");
+    if(values == null){
+      print("No cardio workouts found...");
+      return null;
+    }
+    values.forEach((key, value) {
+      print("key: $key, value: $value");
+    });
+    return null;
+  }
+
+  //returns a listview of all of the workouts being logged for the current day selected in the workout log(assigned to bryan)
   Widget getWorkoutLog(){
+    getCardioWorkouts();
     getUID();
     //used to for testing to make sure getUID is invoked
     if (hold == "") {
@@ -2119,12 +2212,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
           Map<dynamic, dynamic> values = snapshot.data.value;
           if (values != null) {
             values.forEach((key, value) {
-              WorkoutStrengthEntryContainer temp =
-                  WorkoutStrengthEntryContainer.parse(value);
+              WorkoutStrengthEntryContainer temp = WorkoutStrengthEntryContainer.parse(value);
               //print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());//debugging purposes
-              if (temp.getYear() == currentDayShown.year &&
-                  temp.getMonth() == currentDayShown.month &&
-                  temp.getDay() == currentDayShown.day) {
+              if (temp.getYear() == currentDayShown.year && temp.getMonth() == currentDayShown.month && temp.getDay() == currentDayShown.day) {
                 //print("current day workout: "+temp.toString());//debugging purposes
                 workouts.add(new WorkoutStrengthEntryContainer.parse(value));
               }
