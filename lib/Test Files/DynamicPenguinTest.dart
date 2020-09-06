@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/src/scheduler/ticker.dart';
+
 class DynamicPenguinTest extends StatefulWidget {
   DynamicPenguinTestState createState() => DynamicPenguinTestState();
 }
@@ -10,7 +12,8 @@ final double REAL_PENGU_IMAGE_SIZE = 1000;
 String currentImage = "assets/images/firecracker.png";
 double penguinSize = 300;
 double cosmeticSize = 250;
-bool visibility = true;
+double right = 10;
+double left = 10;
 GlobalKey _penguinKey = new GlobalKey(), _stackKey = new GlobalKey();
 List<PositionCosmetics> leftArmInfo = new List<PositionCosmetics>();
 
@@ -66,7 +69,6 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest>
         title: Text("hehexd this is so troll"),
       ),
       body: Stack(
-        key: _stackKey,
         fit: StackFit.expand,
         children: [
           Align(
@@ -96,11 +98,26 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest>
 
                         });
                       }*/
+                    if (leftArmInfo[0].size == 250) {
+                      for (PositionCosmetics c in leftArmInfo) {
+                        c.size = c.size / 2;
+                      }
+                    } else {
+                      for (PositionCosmetics c in leftArmInfo) {
+                        c.size = c.size * 2;
+                      }
+                    }
 
-                    if (penguinSize == 100) {
+/*                    if (penguinSize == 100) {
                       penguinSize = 200;
                     } else {
                       penguinSize = 100;
+                    }*/
+
+                    if (left == 10) {
+                      left = 200;
+                    } else {
+                      left = 10;
                     }
                     setState(() {});
                   },
@@ -108,7 +125,11 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest>
                 ),
                 FlatButton(
                   onPressed: () {
-                    visibility = !visibility;
+                    if (right == 30) {
+                      right = 10;
+                    } else {
+                      right = 30;
+                    }
                     setState(() {});
                   },
                   child: Text("Toggle"),
@@ -116,24 +137,29 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest>
               ],
             ),
           ),
-          Container(
+          AnimatedPositioned(
+            key: _stackKey,
+            duration: Duration(seconds: 3),
+            curve: Curves.easeInOut,
+            left: left,
+            width: penguinSize,
+            height: penguinSize,
             child: Stack(
+              overflow: Overflow.visible,
+              key: _penguinKey,
               children: [
-                AnimatedPositioned(
-                  duration: Duration(seconds: 3),
-                  width: penguinSize,
-                  height: penguinSize,
-                  key: _penguinKey,
-                  child: PenguinAnimate(animation: _animation),
-                )
+                PenguinAnimate(animation: _animation),
+                buildPengu
+                    ? /*CosmeticAnimate(
+                        animation: _animation,
+                      )*/
+                    CosmeticAnimate(
+                        animation: _animation,
+                      )
+                    : Container()
               ],
             ),
           ),
-          buildPengu
-              ? CosmeticAnimate(
-                  animation: _animation,
-                )
-              : Container()
         ],
       ),
     );
@@ -154,6 +180,8 @@ class PenguinAnimate extends AnimatedWidget {
           String frame = animation.value.toString();
           return Image.asset(
             'assets/images/penguin${frame}.png',
+            width: penguinSize,
+            height: penguinSize,
             gaplessPlayback: true,
           );
         });
@@ -201,21 +229,26 @@ class PositionCosmetics {
 
     return Positioned(
       //math to determine where to place cosmetic:
-      //1. locate ratio of where item is normally placed in 1000 x 1000 grid ex: 388/1000, 500/1000
+      //1. locate ratio of where the cosmetic is normally placed in 1000 x 1000 grid ex: 388/1000, 500/1000
       //2. multiply by size of penguin
       //3. subtract by half the size of cosmetic to center
-      left: (realX / REAL_PENGU_IMAGE_SIZE) * penguinSize +
-          penguLocation.dx -
+      left: (realX / REAL_PENGU_IMAGE_SIZE) *
+              penguinSize /*+
+          penguLocation.dx*/
+          -
           size / 2,
-      top: (realY / REAL_PENGU_IMAGE_SIZE) * penguinSize +
-          penguLocation.dy -
+      top: (realY / REAL_PENGU_IMAGE_SIZE) *
+              penguinSize /*+
+          penguLocation.dy*/
+          -
           size / 2,
-      width: size,
-      height: size,
-      child: Transform.rotate(
-        angle: rotationAngle,
-        child: image,
-      ),
+      child: Container(
+          width: size,
+          height: size,
+          child: Transform.rotate(
+            angle: rotationAngle,
+            child: image,
+          )),
     );
   }
 }
