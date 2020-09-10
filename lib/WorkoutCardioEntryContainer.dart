@@ -2,10 +2,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WorkoutCardioEntryContainer{
   String name;
-  double distance,time;
+  double distance;
+  int time;
   DateTime dateTime;
   Set<Polyline> polylines = {};
-  String type = "Strength";
+  String type = "Cardio";
 
   WorkoutCardioEntryContainer(){
     name = "";
@@ -14,12 +15,25 @@ class WorkoutCardioEntryContainer{
     dateTime = new DateTime.now();
   }
 
-  WorkoutCardioEntryContainer.define(String name, double distance, double time, DateTime dateTime,Set<Polyline> polylines){
+  WorkoutCardioEntryContainer.define(String name, double distance, int time, DateTime dateTime,Set<Polyline> polylines){
     this.name = name;
     this.distance = distance;
     this.time = time;
     this.dateTime = dateTime;
     this.polylines = polylines;
+  }
+
+  //this will parse all the information except for polylines
+  WorkoutCardioEntryContainer.parse(Map<dynamic,dynamic> data){
+    this.name = data['Name'];
+    String temp = data['DateTime'];
+    this.dateTime = new DateTime(int.parse(temp.substring(0,4)),int.parse(temp.substring(5,7)),int.parse(temp.substring(8,10)));//year,month,day,hour,minute,millisecond,microsecond
+    if(data['Distance'] == 0){
+      this.distance = 0.0;
+    }else{
+      this.distance = data['Distance'];
+    }
+    this.time = data['Time'];
   }
 
   String getName(){
@@ -38,11 +52,11 @@ class WorkoutCardioEntryContainer{
     this.distance = distance;
   }
 
-  double getTime(){
+  int getTime(){
     return time;
   }
 
-  void setTime(double time){
+  void setTime(int time){
     this.time = time;
   }
 

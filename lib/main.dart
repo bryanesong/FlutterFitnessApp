@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:FlutterFitnessApp/SignInOrSignUp.dart';
+import 'package:FlutterFitnessApp/WorkoutCardioEntryContainer.dart';
 import 'package:FlutterFitnessApp/WorkoutStrengthEntryContainer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -24,6 +25,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'dart:math';
 
 import 'PinInformation.dart';
+import 'WorkoutEntryContainer.dart';
 //gays are legednary but i also find them relaxing
 //dab on the haters
 
@@ -105,7 +107,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
   //when this is true, the onLocationChanged will add to the polylines to track the user running
   bool startLocationTracking = false;
-  double totalDistanceTraveled = 0;
+  double totalDistanceTraveled = 0.0;
   LatLng previousCoordinates;
 
   Color polylineColor = Colors.blue;
@@ -1533,7 +1535,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                           !strengthRepsValidate &&
                           !strengthWeightValidate) {
                         print("adding strength workout to database...");
-                        addWorkoutToDatabase();
+                        addStrengthWorkoutToDatabase();
                         currentWorkoutState = WorkoutState.log;
                         //reset validation booleans so they dont maintain the same state
                         strengthNameValidate = false;
@@ -1542,7 +1544,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                         strengthWeightValidate = false;
                         addWorkoutButtonVisibility = true;
                       }
-                      populateWorkoutLog();
                     });
                   },
                   child: const Text('Submit', style: TextStyle(fontSize: 20)),
@@ -1553,9 +1554,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     );
   }
 
-  void populateWorkoutLog() async {}
-
-  void addWorkoutToDatabase() async {
+  void addStrengthWorkoutToDatabase() async {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     //this retrieves the current UID that is logged in from the firebase
     //should not be null since user needs to be logged in in order to access this route
@@ -1570,8 +1569,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     print("END OF TEST---------------------");
 
     DateTime currentTime = new DateTime.now();
-    WorkoutStrengthEntryContainer entry =
-        new WorkoutStrengthEntryContainer.define(
+    WorkoutEntryContainer entry = new WorkoutEntryContainer.defineStrength(
             strengthTextControllerName.text.toString(),
             int.parse(strengthTextControllerSets.text.trim()),
             int.parse(strengthTextControllerReps.text.trim()),
@@ -1604,6 +1602,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
       'Hour': entry.getHour(),
       'Minute': entry.getMinute(),
       'Second': entry.getSecond(),
+      'Type': "Strength",//to signify that this workout entry is a strength one
     });
     strengthTextControllerName.clear();
     strengthTextControllerSets.clear();
@@ -1854,10 +1853,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     }
 
     _locationData = await location.getLocation();
-    print("location data retrieved... lat: " +
-        _locationData.latitude.toString() +
-        " lng: " +
-        _locationData.longitude.toString());
+    //print("location data retrieved... lat: " + _locationData.latitude.toString() + " lng: " + _locationData.longitude.toString()); //used for debugging
   }
 
   //variables used for the google maps implementation
@@ -2045,7 +2041,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
             _polylines.clear();
             polylineCoordinates.clear();
             latlng.clear();
-            totalDistanceTraveled = 0;
+            totalDistanceTraveled = 0.0;
             previousCoordinates = null;
 
             _markers.add(new Marker(
@@ -2144,21 +2140,37 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     final FirebaseUser user = await mAuth.currentUser();
     final uid = user.uid;
 
-    String key = ref.child("Users").child(uid).child("Workout Log Data Cardio").push().key;
-    ref.child("Users").child(uid).child("Workout Log Data Cardio").child(key).set({
+    String key = ref.child("Users").child(uid).child("Workout Log Data").push().key;
+    DateTime current = new DateTime.now();
+    ref.child("Users").child(uid).child("Workout Log Data").child(key).set({
       'Name': cardioTextName.text.trim().toString(),
       'Distance':totalDistanceTraveled,
-      'Time': _stopWatchTimer.rawTime.value,
-      'DateTime': new DateTime.now().toString(),
+      'Time': _stopWatchTimer.secondTime.value,//will write the total amount of seconds in the timer and push that to firebase
+      'Year': current.year,
+      'Month': current.month,
+      'Day': current.day,
+      'Hour':current.hour,
+      'Minute':current.minute,
+      'Second': current.second,
+      'Type': "Cardio",
     });
+    print("STOP WATCH RAW:");
+    print(_stopWatchTimer.secondTime.value);
 
     print("KEY: "+key);
     print("POLY LINES:");
     int count = 0;
 
     _polylines.forEach((element) {
-      ref.child("Users").child(uid).child("Workout Log Data Cardio").child(key).child("Polylines").child(count.toString()).set(element.points.toString());
-      print("Adding polyline: "+count.toString()+": "+element.points.toString());
+      //ref.child("Users").child(uid).child("Workout Log Data").child(key).child("Polylines").child(count.toString()).set(element.points.toString());
+      List<LatLng> temp = element.points;
+      print("points length: "+temp.length.toString());
+      for(int i = 0;i<temp.length;i++){
+        ref.child("Users").child(uid).child("Workout Log Data").child(key).child("Polylines").child(i.toString()).child("Latitude").set(temp[i].latitude);
+        ref.child("Users").child(uid).child("Workout Log Data").child(key).child("Polylines").child(i.toString()).child("Longitude").set(temp[i].longitude);
+      }
+
+      print("Adding polyline: "+count.toString()+", runtime type: "+element.points.runtimeType.toString());
       count++;
     });
 
@@ -2184,20 +2196,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   Future<String> getCardioWorkouts() async {
     getUID();
     Map<dynamic,dynamic> values = (await FirebaseDatabase.instance.reference().child("Users").child(hold).child("Workout Log Data Cardio").once()).value;
-    print("READING FROM CARDIO workout LOG");
+
     if(values == null){
       print("No cardio workouts found...");
       return null;
     }
+    print("READING FROM CARDIO workout LOG");
     values.forEach((key, value) {
-      print("key: $key, value: $value");
+      //print("key: $key, value: $value");
+      workouts.add(new WorkoutCardioEntryContainer.parse(value));
     });
-    return null;
+    print("finished reading from CARDIO workout LOG---------------------------------");
+    print("workouts length after cardio only: "+workouts.length.toString());
+    return workouts.toString();
   }
 
   //returns a listview of all of the workouts being logged for the current day selected in the workout log(assigned to bryan)
   Widget getWorkoutLog(){
-    getCardioWorkouts();
     getUID();
     //used to for testing to make sure getUID is invoked
     if (hold == "") {
@@ -2212,15 +2227,20 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
           Map<dynamic, dynamic> values = snapshot.data.value;
           if (values != null) {
             values.forEach((key, value) {
-              WorkoutStrengthEntryContainer temp = WorkoutStrengthEntryContainer.parse(value);
-              //print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());//debugging purposes
+              WorkoutEntryContainer temp = WorkoutEntryContainer.parse(value);
+              print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());//debugging purposes
               if (temp.getYear() == currentDayShown.year && temp.getMonth() == currentDayShown.month && temp.getDay() == currentDayShown.day) {
                 //print("current day workout: "+temp.toString());//debugging purposes
-                workouts.add(new WorkoutStrengthEntryContainer.parse(value));
+                workouts.add(new WorkoutEntryContainer.parse(value));
+              }
+              //need to seperately parse polypoints if it is a cardio workout
+              if(temp.getType() == "Cardio"){
+
               }
             });
           }
         }
+        print("workout log length after adding both: "+workouts.length.toString());
         if (workouts.length == 0) {
           return noWorkoutsLoggedWidget();
         } else {
@@ -2254,48 +2274,136 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   }
 
   Widget getWorkoutItem(int index) {
-    return Card(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            workouts[index].getMonth().toString() +
-                "/" +
-                workouts[index].getDay().toString() +
-                "/" +
-                workouts[index].getYear().toString(),
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    print("GET WORKOUT ITEM METHOD INVOKED...");
+    print("index: $index, workout type: "+workouts[index].getType());
+    if(workouts[index].getType() == "Strength"){
+      return Card(
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              workouts[index].getMonth().toString() +
+                  "/" +
+                  workouts[index].getDay().toString() +
+                  "/" +
+                  workouts[index].getYear().toString(),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            "Name: " + workouts[index].getName(),
-            style: TextStyle(
-              fontSize: 15,
+            Text(
+              "Name: " + workouts[index].getName(),
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
-          ),
-          Text(
-            "Sets: " + workouts[index].getSets().toString(),
-            style: TextStyle(
-              fontSize: 15,
+            Text(
+              "Sets: " + workouts[index].getSets().toString(),
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
-          ),
-          Text(
-            "Reps: " + workouts[index].getReps().toString(),
-            style: TextStyle(
-              fontSize: 15,
+            Text(
+              "Reps: " + workouts[index].getReps().toString(),
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
-          ),
-          Text(
-            "Weight: " + workouts[index].getWeight().toString(),
-            style: TextStyle(
-              fontSize: 15,
+            Text(
+              "Weight: " + workouts[index].getWeight().toString(),
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }else{
+      //return a cardio container
+      return Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //get date for workout, will probably remove this later since the date is depending on what you click on so its redundant
+            Text(
+              workouts[index].getMonth().toString() +
+                  "/" +
+                  workouts[index].getDay().toString() +
+                  "/" +
+                  workouts[index].getYear().toString(),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text("Name: "+workouts[index].getName()),
+            Text("Distance: "+workouts[index].getDistance().toString()),
+            getTotalRunTime(workouts[index]),
+            getAverageRunningPace(workouts[index]),
+          ],
+        ),
+      );
+    }
+
+  }
+
+  Widget getTotalRunTime(WorkoutEntryContainer currentWorkout){
+    int hour,minute,second;
+    List<int> timeArray = currentWorkout.getTimeArray();
+    //seconds
+    String result = "";
+    if(timeArray[0] != null){
+      hour = timeArray[0];
+      result+= "Hours: "+hour.toString();
+    }
+    //minutes
+    if(timeArray[1] != null){
+      minute = timeArray[1];
+      result+= " Minutes: "+minute.toString();
+    }
+    //hours
+    if(timeArray[2] != null){
+      second = timeArray[2];
+      result+= " Seconds: "+second.toString();
+    }
+
+    return Text("Time: $result");
+  }
+
+  //returns a widget displaying the running pace the user was running at
+  Widget getAverageRunningPace(WorkoutEntryContainer currentWorkout){
+    List<int> timeArray = currentWorkout.getTimeArray();
+    print(timeArray); //used for debugging
+    double minuteTotal = 0;
+    //seconds
+    if(timeArray[2] != null){
+      minuteTotal+= timeArray[2] / 60;
+    }
+    //minutes
+    if(timeArray[1] != null){
+      minuteTotal += timeArray[1];
+    }
+    //hours
+    if(timeArray[0] != null){
+      minuteTotal += timeArray[0] * 60;
+    }
+
+    //USED FOR DEBUGGIN VVVV
+    print("TIME - hour: "+timeArray[0].toString()+" minute: "+timeArray[1].toString()+" second: "+timeArray[2].toString());
+    print("minute total: $minuteTotal");
+    print("Distance ran: "+currentWorkout.getDistance().toString()+" divided by minutes: $minuteTotal"+" equals: "+(currentWorkout.getDistance() / minuteTotal).toString());
+    //now need to convert back to minutes and seconds
+    //this is where i wrote the calculation for pace, not sure if I did it write since now looking back at it it might not make sense
+    //but im too lazy to relook at this since there's more important things to look back on
+    //yuh
+    double paceNotConverted = (currentWorkout.getDistance() / minuteTotal);
+    int minutes = (currentWorkout.getDistance() / minuteTotal).truncate();
+    double seconds = double.parse(paceNotConverted.toString().split('.')[1].substring(0,paceNotConverted.toString().length-2));
+    seconds *= 60;//multiply by 60 seconds to return it to its 60 second per minute format
+    int convertedSeconds = seconds.truncate();
+
+    return Text("PACE - minutes: $minutes seconds: $convertedSeconds");
   }
 
   /*

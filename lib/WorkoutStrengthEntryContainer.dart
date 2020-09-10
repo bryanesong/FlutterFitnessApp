@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class WorkoutStrengthEntryContainer{
   int sets,reps,weight;
   String name;
@@ -5,6 +7,13 @@ class WorkoutStrengthEntryContainer{
   //date time information
   int year,month,day;
   int hour,minute,second;
+
+  double distance;
+  int time;
+  DateTime dateTime;
+  Set<Polyline> polylines = {};
+  String type;
+
 
   WorkoutStrengthEntryContainer(){
     sets = 0;
@@ -14,7 +23,6 @@ class WorkoutStrengthEntryContainer{
   }
 
   WorkoutStrengthEntryContainer.define(String name, int sets, int reps, int weight, int year,int month,int day,int hour,int minute,int second){
-
     this.sets = sets;
     this.reps = reps;
     this.weight = weight;
@@ -129,6 +137,10 @@ class WorkoutStrengthEntryContainer{
 
   void setSecond(int second){
     this.second = second;
+  }
+
+  String getType(){
+    return type;
   }
 
 }
