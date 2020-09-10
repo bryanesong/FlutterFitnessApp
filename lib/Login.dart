@@ -7,7 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:nice_button/nice_button.dart';
 
-import 'HomeScreen.dart';
+import 'HomeScreenClasses/HomeScreen.dart';
 import 'main.dart';
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;

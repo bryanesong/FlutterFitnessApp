@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'CalorieTracker.dart';
+
 enum WidgetMarker { home, calorie, workout, stats, inventory, logCardio }
 
 WidgetMarker selectedWidgetMarker = WidgetMarker.home;
@@ -35,18 +37,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: Stack(
                   children: [
                     //content
-                    Container(
-                      alignment: Alignment.bottomCenter,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                        ),
-                        image: DecorationImage(
-                            image:
-                            AssetImage("assets/images/seattleBackground.jpg"),
-                            fit: BoxFit.fill),
-                      ),
-                    ),
+                    getCustomContainer(),
                     //top navigation bar
                     Align(
                       alignment: Alignment.topCenter,
@@ -227,14 +218,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
   Widget getCustomContainer() {
-    return Container();
+    return CalorieTracker();
     //make penguin disappear if not on dashboard page
-/*    if(selectedWidgetMarker == WidgetMarker.home) {
-      penguinSize = 150;
-    } else {
-      penguinSize = 0;
-    }
-    switch (selectedWidgetMarker) {
+/*    switch (selectedWidgetMarker) {
       case WidgetMarker.home:
         return getIdleScreenWidget();
       case WidgetMarker.calorie:
