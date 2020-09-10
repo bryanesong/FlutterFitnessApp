@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import 'Container Classes/CalorieEntryContainer.dart';
-import 'Container Classes/MyFoodsContainer.dart';
+import '../Container Classes/CalorieEntryContainer.dart';
+import '../Container Classes/MyFoodsContainer.dart';
 
 import 'package:http/http.dart' as http;
 

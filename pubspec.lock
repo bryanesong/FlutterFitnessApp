@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.6"
+  carousel_slider:
+    dependency: "direct main"
+    description:
+      name: carousel_slider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
   characters:
     dependency: transitive
     description:
@@ -462,13 +469,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-  spritewidget:
-    dependency: "direct main"
-    description:
-      name: spritewidget
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.24"
   stack_trace:
     dependency: transitive
     description:
