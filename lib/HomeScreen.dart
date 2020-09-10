@@ -28,185 +28,197 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
-        body: Column(
-          children: [
-            Stack(
-              children: [
-                //content
-                Expanded(
-                    child: /*getCustomContainer(),*/ Image
-                        .asset("assets/images/japanBackground.jpg")),
-
-                //top navigation bar
-                SafeArea(
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: wpad(12),
-                              child: FlatButton(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                onPressed: () {},
-                                child: Image.asset(
-                                  "assets/images/HomeScreenBackArrow.png",
-                                ),
-                              ),
-                            ),
-                          ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    //content
+                    Container(
+                      alignment: Alignment.bottomCenter,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.black,
                         ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: wpad(8),
-                              child: FlatButton(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                onPressed: () {},
-                                child: Image.asset(
-                                  "assets/images/hamburger.png",
+                        image: DecorationImage(
+                            image:
+                            AssetImage("assets/images/seattleBackground.jpg"),
+                            fit: BoxFit.fill),
+                      ),
+                    ),
+                    //top navigation bar
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child:Container(
+                        height: hpad(9),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: SizedBox(
+                                  width: wpad(12),
+                                  child: FlatButton(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    onPressed: () {},
+                                    child: Image.asset(
+                                      "assets/images/HomeScreenBackArrow.png",
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerRight,
+                                child: SizedBox(
+                                  width: wpad(8),
+                                  child: FlatButton(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    onPressed: () {},
+                                    child: Image.asset(
+                                      "assets/images/hamburger.png",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        padding:
+                        EdgeInsets.fromLTRB(wpad(2), wpad(1), wpad(2), 0),
+                      ),
                     ),
-                    padding:
-                    EdgeInsets.fromLTRB(wpad(2), wpad(1), wpad(2), 0),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-
-            //bottom nav bar
-            /*Container(
-              decoration: BoxDecoration(
-                  border:
-                  Border.all(width: 4.0, color: Colors.blueAccent)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  MaterialButton(
-                    padding: EdgeInsets.all(0),
-                    minWidth: 5,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                            width: 1, //this is the side of the border
-                            color: Colors.blue,
-                            style: BorderStyle.solid)),
-                    child: SizedBox(
-                      width: buttonWidth,
-                      height: buttonHeight,
-                      child: new Image.asset(
-                        'assets/images/calorieButton.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        print("set state invoked for calorie.");
-                        selectedWidgetMarker = WidgetMarker.calorie;
-                      });
-                    },
-                  ),
-                  MaterialButton(
-                    padding: EdgeInsets.all(0),
-                    minWidth: 5,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                            width: 1, //this is the side of the border
-                            color: Colors.blue,
-                            style: BorderStyle.solid)),
-                    child: SizedBox(
-                      width: buttonWidth,
-                      height: buttonHeight,
-                      child: new Image.asset(
-                        'assets/images/workoutButton.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        print("set state invoked for workout.");
-                        selectedWidgetMarker = WidgetMarker.workout;
-                      });
-                    },
-                  ),
-                  MaterialButton(
-                    padding: EdgeInsets.all(0),
-                    minWidth: 5,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                            width: 1, //this is the side of the border
-                            color: Colors.blue,
-                            style: BorderStyle.solid)),
-                    child: SizedBox(
-                      width: buttonWidth,
-                      height: buttonHeight,
-                      child: new Image.asset(
-                        'assets/images/inventoryButton.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        print("set state invoked for inventory.");
-                        selectedWidgetMarker = WidgetMarker.inventory;
-                      });
-                    },
-                  ),
-                  MaterialButton(
-                    padding: EdgeInsets.all(0),
-                    minWidth: 5,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                            width: 1, //this is the side of the border
-                            color: Colors.blue,
-                            style: BorderStyle.solid)),
-                    child: SizedBox(
-                      width: buttonWidth,
-                      height: buttonHeight,
-                      child: new Image.asset(
-                        'assets/images/statsButton.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        print("set state invoked for stats.");
-                        selectedWidgetMarker = WidgetMarker.stats;
-                      });
-                    },
-                  ),
-                  MaterialButton(
-                    padding: EdgeInsets.all(0),
-                    minWidth: 5,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                            width: 1, //this is the side of the border
-                            color: Colors.blue,
-                            style: BorderStyle.solid)),
-                    child: SizedBox(
-                      width: buttonWidth,
-                      height: buttonHeight,
-                      child: new Image.asset(
-                        'assets/images/homeButtonTEMP.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        selectedWidgetMarker = WidgetMarker.home;
-                      });
-                    },
-                  ),
-                ],
               ),
-            ),*/
-          ],
+              //bottom nav bar
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(width: 4.0, color: Colors.blueAccent)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    MaterialButton(
+                      padding: EdgeInsets.all(0),
+                      minWidth: 5,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, //this is the side of the border
+                              color: Colors.blue,
+                              style: BorderStyle.solid)),
+                      child: SizedBox(
+                        width: buttonWidth,
+                        height: buttonHeight,
+                        child: new Image.asset(
+                          'assets/images/calorieButton.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          print("set state invoked for calorie.");
+                          selectedWidgetMarker = WidgetMarker.calorie;
+                        });
+                      },
+                    ),
+                    MaterialButton(
+                      padding: EdgeInsets.all(0),
+                      minWidth: 5,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, //this is the side of the border
+                              color: Colors.blue,
+                              style: BorderStyle.solid)),
+                      child: SizedBox(
+                        width: buttonWidth,
+                        height: buttonHeight,
+                        child: new Image.asset(
+                          'assets/images/workoutButton.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          print("set state invoked for workout.");
+                          selectedWidgetMarker = WidgetMarker.workout;
+                        });
+                      },
+                    ),
+                    MaterialButton(
+                      padding: EdgeInsets.all(0),
+                      minWidth: 5,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, //this is the side of the border
+                              color: Colors.blue,
+                              style: BorderStyle.solid)),
+                      child: SizedBox(
+                        width: buttonWidth,
+                        height: buttonHeight,
+                        child: new Image.asset(
+                          'assets/images/inventoryButton.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          print("set state invoked for inventory.");
+                          selectedWidgetMarker = WidgetMarker.inventory;
+                        });
+                      },
+                    ),
+                    MaterialButton(
+                      padding: EdgeInsets.all(0),
+                      minWidth: 5,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, //this is the side of the border
+                              color: Colors.blue,
+                              style: BorderStyle.solid)),
+                      child: SizedBox(
+                        width: buttonWidth,
+                        height: buttonHeight,
+                        child: new Image.asset(
+                          'assets/images/statsButton.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          print("set state invoked for stats.");
+                          selectedWidgetMarker = WidgetMarker.stats;
+                        });
+                      },
+                    ),
+                    MaterialButton(
+                      padding: EdgeInsets.all(0),
+                      minWidth: 5,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, //this is the side of the border
+                              color: Colors.blue,
+                              style: BorderStyle.solid)),
+                      child: SizedBox(
+                        width: buttonWidth,
+                        height: buttonHeight,
+                        child: new Image.asset(
+                          'assets/images/homeButtonTEMP.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedWidgetMarker = WidgetMarker.home;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         )
     );
   }
@@ -241,9 +253,11 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 }
 
 double wpad(double percent) {
+  //print("wpad called: " + (_width * percent / 100).toString());
   return _width * percent / 100;
 }
 
 double hpad(double percent) {
+ // print("hpad called: " + (_height * percent / 100).toString());
   return _height * percent / 100;
 }
