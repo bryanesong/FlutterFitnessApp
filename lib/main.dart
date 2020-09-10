@@ -96,14 +96,14 @@ enum CalorieTrackerState {
   editEntry
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreenOld extends StatefulWidget {
   @override
-  HomeScreenState createState() => HomeScreenState();
+  HomeScreenStateOld createState() => HomeScreenStateOld();
 }
 
 BuildContext logoutContext;
 
-class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
+class HomeScreenStateOld extends State<HomeScreenOld> with TickerProviderStateMixin{
 
   //when this is true, the onLocationChanged will add to the polylines to track the user running
   bool startLocationTracking = false;

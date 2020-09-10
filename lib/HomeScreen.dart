@@ -1,137 +1,249 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flame/util.dart';
-import 'package:flame/widgets/animation_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:nice_button/nice_button.dart';
-import 'package:flame/animation.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:FlutterFitnessApp/main.dart';
-import 'package:flame/animation.dart' as animation;
-import 'AnimationTest.dart';
-import 'main.dart';
 
-/*
+enum WidgetMarker { home, calorie, workout, stats, inventory, logCardio }
+
+WidgetMarker selectedWidgetMarker = WidgetMarker.home;
+
 final double buttonWidth = 65;
 final double buttonHeight = 65;
 
-class HomeScreen extends StatelessWidget{
+double _width;
+double _height;
+
+class HomeScreen extends StatefulWidget {
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+BuildContext logoutContext;
+
+class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
+
+    logoutContext = context;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/backgroundTemp.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                width: 200,
-                height: 200,
-                child: AnimationWidget(animation: _animation),
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 4.0,color: Colors.blueAccent)
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Stack(
               children: [
-                ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.red, // inkwell color
-                      child: SizedBox(
-                          width: buttonWidth,
-                          height: buttonHeight,
-                          child: Icon(Icons.menu)),
-                      onTap: () {},
+                //content
+                Expanded(
+                    child: /*getCustomContainer(),*/ Image
+                        .asset("assets/images/japanBackground.jpg")),
+
+                //top navigation bar
+                SafeArea(
+                  child: Container(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: wpad(12),
+                              child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                onPressed: () {},
+                                child: Image.asset(
+                                  "assets/images/HomeScreenBackArrow.png",
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.centerRight,
+                            child: SizedBox(
+                              width: wpad(8),
+                              child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                onPressed: () {},
+                                child: Image.asset(
+                                  "assets/images/hamburger.png",
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  ),
-                ),
-                ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.red, // inkwell color
-                      child: SizedBox(
-                          width: buttonWidth,
-                          height: buttonHeight,
-                          child: Icon(Icons.menu)),
-                      onTap: () {},
-                    ),
-                  ),
-                ),
-                ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.red, // inkwell color
-                      child: SizedBox(
-                          width: buttonWidth,
-                          height: buttonHeight,
-                          child: Icon(Icons.menu)),
-                      onTap: () {},
-                    ),
-                  ),
-                ),
-                ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.red, // inkwell color
-                      child: SizedBox(
-                          width: buttonWidth,
-                          height: buttonHeight,
-                          child: Icon(Icons.menu)),
-                      onTap: () {},
-                    ),
-                  ),
-                ),
-                ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.red, // inkwell color
-                      child: SizedBox(
-                          width: buttonWidth,
-                          height: buttonHeight,
-                          child: Icon(Icons.menu)),
-                      onTap: () {
-                        navigateAnimationTest(context);
-                      },
-                    ),
+                    padding:
+                    EdgeInsets.fromLTRB(wpad(2), wpad(1), wpad(2), 0),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
+
+            //bottom nav bar
+            /*Container(
+              decoration: BoxDecoration(
+                  border:
+                  Border.all(width: 4.0, color: Colors.blueAccent)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: new Image.asset(
+                        'assets/images/calorieButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for calorie.");
+                        selectedWidgetMarker = WidgetMarker.calorie;
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: new Image.asset(
+                        'assets/images/workoutButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for workout.");
+                        selectedWidgetMarker = WidgetMarker.workout;
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: new Image.asset(
+                        'assets/images/inventoryButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for inventory.");
+                        selectedWidgetMarker = WidgetMarker.inventory;
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: new Image.asset(
+                        'assets/images/statsButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for stats.");
+                        selectedWidgetMarker = WidgetMarker.stats;
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: new Image.asset(
+                        'assets/images/homeButtonTEMP.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedWidgetMarker = WidgetMarker.home;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),*/
+          ],
+        )
     );
   }
 
-  Future navigateAnimationTest(context) async{
-    Navigator.push(context,MaterialPageRoute(
-        builder: (context) => AnimationTest())
-    );
-  }
+  //_scaffoldKey.currentState.openEndDrawer();
 
+  //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
+  Widget getCustomContainer() {
+    return Container();
+    //make penguin disappear if not on dashboard page
+/*    if(selectedWidgetMarker == WidgetMarker.home) {
+      penguinSize = 150;
+    } else {
+      penguinSize = 0;
+    }
+    switch (selectedWidgetMarker) {
+      case WidgetMarker.home:
+        return getIdleScreenWidget();
+      case WidgetMarker.calorie:
+        return getCalorieWidget();
+      case WidgetMarker.workout:
+        return getWorkoutLogWidget();
+      case WidgetMarker.inventory:
+        return getInventoryWidget();
+      case WidgetMarker.stats:
+        return getStatsWidget();
+      case WidgetMarker.logCardio:
+        return logNewCardioWidget();
+    }
+    return getGraphWidget();*/
+  }
 }
-*/
+
+double wpad(double percent) {
+  return _width * percent / 100;
+}
+
+double hpad(double percent) {
+  return _height * percent / 100;
+}
