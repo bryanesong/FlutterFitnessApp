@@ -1,5 +1,5 @@
 import 'package:FlutterFitnessApp/AnimationTest.dart';
-import 'file:///C:/Users/talk2/Documents/FlutterFitnessApp/lib/HomeScreenClasses/HomeScreen.dart';
+import 'package:FlutterFitnessApp/HomeScreenClasses/HomeScreen.dart';
 import 'package:FlutterFitnessApp/main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';

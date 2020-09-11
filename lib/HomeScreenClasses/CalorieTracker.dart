@@ -26,8 +26,7 @@ enum CalorieTrackerScreen {
   editEntry
 }
 
-class CalorieTrackerState extends State<CalorieTracker>
-    with TickerProviderStateMixin {
+class CalorieTrackerState extends State<CalorieTracker> with TickerProviderStateMixin {
   FirebaseUser user;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -64,6 +63,21 @@ class CalorieTrackerState extends State<CalorieTracker>
   void initState() {
     getCurUser();
     super.initState();
+  }
+
+  @override
+  dispose() {
+    _searchFoodController.dispose();
+    _timeController.dispose();
+    _calorieController.dispose();
+    _measurementController.dispose();
+    _searchFoodController.dispose();
+    _calorieCalendarController.dispose();
+    _servingSizeController.dispose();
+    _brandNameController.dispose();
+    _foodNameController.dispose();
+    _addFoodEntryController.dispose();
+    super.dispose();
   }
 
   void getCurUser() async {
