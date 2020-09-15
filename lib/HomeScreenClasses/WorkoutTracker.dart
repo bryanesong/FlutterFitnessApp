@@ -96,13 +96,16 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
         latlng.add(new LatLng(cLoc.latitude,cLoc.longitude));
         print("Current polylines count: "+_polylines.length.toString());
         print("Adding new polyline- $cLoc");
-        _polylines.add(new Polyline(
-          polylineId: PolylineId("TEMP ID"),
-          visible: true,
-          //latlng is List<LatLng>
-          points: latlng,
-          color: polylineColor,
-        ));
+        setState(() {
+          _polylines.add(new Polyline(
+            polylineId: PolylineId("TEMP ID"),
+            visible: true,
+            //latlng is List<LatLng>
+            points: latlng,
+            color: polylineColor,
+          ));
+        });
+
       }
     });
   }
@@ -970,15 +973,12 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
           Map<dynamic, dynamic> values = snapshot.data.value;
           if (values != null) {
             values.forEach((key, value) {
-              WorkoutEntryContainer temp = WorkoutEntryContainer.parse(value);
+              WorkoutEntryContainer temp = WorkoutEntryContainer.parse(value,key);
+              print("key: "+key);
               print("Year compare: "+temp.getYear().toString() +" and "+currentDayShown.year.toString());//debugging purposes
               if (temp.getYear() == currentDayShown.year && temp.getMonth() == currentDayShown.month && temp.getDay() == currentDayShown.day) {
                 //print("current day workout: "+temp.toString());//debugging purposes
-                workouts.add(new WorkoutEntryContainer.parse(value));
-              }
-              //need to seperately parse polypoints if it is a cardio workout
-              if(temp.getType() == "Cardio"){
-
+                workouts.add(new WorkoutEntryContainer.parse(value,key));
               }
             });
           }
@@ -1021,74 +1021,116 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
     print("index: $index, workout type: "+workouts[index].getType());
     if(workouts[index].getType() == "Strength"){
       return Card(
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: new Row(
           children: [
-            Text(
-              workouts[index].getMonth().toString() +
-                  "/" +
-                  workouts[index].getDay().toString() +
-                  "/" +
-                  workouts[index].getYear().toString(),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  workouts[index].getMonth().toString() +
+                      "/" +
+                      workouts[index].getDay().toString() +
+                      "/" +
+                      workouts[index].getYear().toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Name: " + workouts[index].getName(),
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  "Sets: " + workouts[index].getSets().toString(),
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  "Reps: " + workouts[index].getReps().toString(),
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  "Weight: " + workouts[index].getWeight().toString(),
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              "Name: " + workouts[index].getName(),
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
-            Text(
-              "Sets: " + workouts[index].getSets().toString(),
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
-            Text(
-              "Reps: " + workouts[index].getReps().toString(),
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
-            Text(
-              "Weight: " + workouts[index].getWeight().toString(),
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
+            Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        workouts.removeAt(index);
+                      });
+                    },
+                    child: Icon(Icons.delete),
+                  ),
+                ),
+            )
           ],
         ),
       );
     }else{
       //return a cardio container
       return Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: new Row(
           children: [
-            //get date for workout, will probably remove this later since the date is depending on what you click on so its redundant
-            Text(
-              workouts[index].getMonth().toString() +
-                  "/" +
-                  workouts[index].getDay().toString() +
-                  "/" +
-                  workouts[index].getYear().toString(),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //get date for workout, will probably remove this later since the date is depending on what you click on so its redundant
+                Text(
+                  workouts[index].getMonth().toString() +
+                      "/" +
+                      workouts[index].getDay().toString() +
+                      "/" +
+                      workouts[index].getYear().toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text("Name: "+workouts[index].getName()),
+                Text("Distance: "+workouts[index].getDistance().toString()),
+                getTotalRunTime(workouts[index]),
+                getAverageRunningPace(workouts[index]),
+              ],
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      removeWorkout(workouts[index]);
+                    });
+                  },
+                  child: Icon(Icons.delete),
+                ),
               ),
             ),
-            Text("Name: "+workouts[index].getName()),
-            Text("Distance: "+workouts[index].getDistance().toString()),
-            getTotalRunTime(workouts[index]),
-            getAverageRunningPace(workouts[index]),
           ],
         ),
       );
     }
+  }
 
+  void removeWorkout(WorkoutEntryContainer workout) async{
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    final FirebaseUser user = await mAuth.currentUser();
+    final uid = user.uid;
+
+    ref.child("Users").child(uid).child("Workout Log Data").child(workout.getKey()).remove();
+    print("REMOVED WORKOUT NAMED: "+workout.getName());
   }
 
   Widget getTotalRunTime(WorkoutEntryContainer currentWorkout){

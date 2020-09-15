@@ -10,6 +10,7 @@ class WorkoutEntryContainer{
   String name,type;
   int year,month,day;
   int hour,minute,second;
+  String key;
 
   //variables specific for strength
   int sets,reps,weight;
@@ -49,7 +50,8 @@ class WorkoutEntryContainer{
     this.second = second;
   }
 
-  WorkoutEntryContainer.parse(Map<dynamic,dynamic> data){
+  WorkoutEntryContainer.parse(Map<dynamic,dynamic> data, String key){
+    this.key = key;
     if(data['Type']=="Strength"){
       this.type = "Strength";
 
@@ -274,6 +276,10 @@ class WorkoutEntryContainer{
 
   List getTimeArray(){
     return this.timeArray;
+  }
+
+  String getKey(){
+    return this.key;
   }
 
 }
