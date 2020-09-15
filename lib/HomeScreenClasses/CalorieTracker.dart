@@ -71,7 +71,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     _timeController.dispose();
     _calorieController.dispose();
     _measurementController.dispose();
-    _searchFoodController.dispose();
+    //_searchFoodController.dispose();
     _calorieCalendarController.dispose();
     _servingSizeController.dispose();
     _brandNameController.dispose();

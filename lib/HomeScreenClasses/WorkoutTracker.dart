@@ -118,6 +118,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
     //cardio workout dipose
     cardioTextName.dispose();
     super.dispose();
+    print("called dispose");
   }
 
   @override
