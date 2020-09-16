@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
 import 'package:FlutterFitnessApp/Container%20Classes/CalorieEntryContainer.dart';
 import 'package:FlutterFitnessApp/Container%20Classes/FoodData.dart';
 import 'package:FlutterFitnessApp/Container%20Classes/MyFoodsContainer.dart';
@@ -12,6 +13,10 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 
 class CalorieTracker extends StatefulWidget {
+  final Function(AppState appState) onAppStateChange;
+
+  CalorieTracker({@required this.onAppStateChange});
+
   @override
   CalorieTrackerState createState() => CalorieTrackerState();
 }

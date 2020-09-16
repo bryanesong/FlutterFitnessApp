@@ -1,3 +1,4 @@
+import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
 
 //seperate enum states per major button
+//enum state for the home screen
+AppState currentAppState = AppState.HomeScreen_Idle;
 
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -33,13 +36,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _height = MediaQuery.of(context).size.height;
     logoutContext = context;
     return Scaffold(
-        key: _scaffoldKey,
-        endDrawer: AppDrawer(),
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: false,
-        body: Builder(
-          builder: (context) =>
-              SafeArea(
+      key: _scaffoldKey,
+      endDrawer: AppDrawer(),
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: Builder(
+          builder: (context) => SafeArea(
                 child: Column(
                   children: [
                     Expanded(
@@ -50,7 +52,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           //top navigation bar
                           Align(
                             alignment: Alignment.topCenter,
-                            child:Container(
+                            child: Container(
                               height: hpad(9),
                               child: Row(
                                 children: [
@@ -60,7 +62,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       child: SizedBox(
                                         width: wpad(12),
                                         child: FlatButton(
-                                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
                                           onPressed: () {},
                                           child: Image.asset(
                                             "assets/images/HomeScreenBackArrow.png",
@@ -75,9 +78,11 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       child: SizedBox(
                                         width: wpad(8),
                                         child: FlatButton(
-                                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
                                           onPressed: () {
-                                            Scaffold.of(context).openEndDrawer();
+                                            Scaffold.of(context)
+                                                .openEndDrawer();
                                           },
                                           child: Image.asset(
                                             "assets/images/hamburger.png",
@@ -88,8 +93,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   )
                                 ],
                               ),
-                              padding:
-                              EdgeInsets.fromLTRB(wpad(2), wpad(1), wpad(2), 0),
+                              padding: EdgeInsets.fromLTRB(
+                                  wpad(2), wpad(1), wpad(2), 0),
                             ),
                           ),
                           //PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.pilgrimHat, PenguinShirt.usaTShirt, PenguinArm.firecracker, PenguinShoes.mcdonaldShoes ), scale: 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
@@ -99,7 +104,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     //bottom nav bar
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(width: 4.0, color: Colors.blueAccent)),
+                          border:
+                              Border.all(width: 4.0, color: Colors.blueAccent)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -222,8 +228,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-              )
-        ),
+              )),
     );
   }
 
@@ -231,13 +236,17 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
   Widget getCustomContainer() {
-
     //make penguin disappear if not on dashboard page
-   switch (selectedWidgetMarker) {
+    switch (selectedWidgetMarker) {
       case WidgetMarker.home:
         return Container();
       case WidgetMarker.calorie:
-        return CalorieTracker();
+        return CalorieTracker(
+
+          onAppStateChange: (AppState appState) {
+            setAppState(appState);
+          },
+        );
       case WidgetMarker.workout:
         return WorkoutTracker();
       case WidgetMarker.inventory:
@@ -249,6 +258,15 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     return Container();
   }
+
+  void setAppState(AppState appState) {
+    currentAppState = appState;
+  }
+
+  void changeContainer(AppState appState) {
+    //clear stack here
+    currentAppState = appState;
+  }
 }
 
 double wpad(double percent) {
@@ -257,7 +275,7 @@ double wpad(double percent) {
 }
 
 double hpad(double percent) {
- // print("hpad called: " + (_height * percent / 100).toString());
+  // print("hpad called: " + (_height * percent / 100).toString());
   return _height * percent / 100;
 }
 
