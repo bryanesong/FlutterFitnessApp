@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:FlutterFitnessApp/PenguinCreator.dart';
 import 'CalorieTracker.dart';
 import 'WorkoutTracker.dart';
 
@@ -28,7 +28,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
-
     logoutContext = context;
     return Scaffold(
         key: _scaffoldKey,
@@ -90,6 +89,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               EdgeInsets.fromLTRB(wpad(2), wpad(1), wpad(2), 0),
                             ),
                           ),
+                          PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.pilgrimHat, PenguinShirt.usaTShirt, PenguinArm.firecracker, PenguinShoes.mcdonaldShoes ), scale: 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
                         ],
                       ),
                     ),

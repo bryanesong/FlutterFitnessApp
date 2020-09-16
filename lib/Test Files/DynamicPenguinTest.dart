@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/services.dart';
 
 class DynamicPenguinTest extends StatefulWidget {
   DynamicPenguinTestState createState() => DynamicPenguinTestState();
@@ -14,8 +17,6 @@ double scale = 1;
 class DynamicPenguinTestState extends State<DynamicPenguinTest> {
   @override
   void initState() {
-    
-    
     super.initState();
   }
 
@@ -23,11 +24,11 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(title: Text("xd"),),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          CarouselSlider(
+        appBar: AppBar(
+          title: Text("xd"),
+        ),
+        body: Stack(fit: StackFit.expand, children: [
+          /*CarouselSlider(
             options: CarouselOptions(height: 400.0),
             items: [1,2,3,4,5].map((i) {
               return Builder(
@@ -43,9 +44,14 @@ class DynamicPenguinTestState extends State<DynamicPenguinTest> {
                 },
               );
             }).toList(),
-          )
-        ])
+          )*/
 
-    );
+          FlatButton(
+            onPressed: () async {
+              final path = "assets/images/arm/firecracker.png1";
+              print(await rootBundle.load(path));
+            }, child: Text("dab"),
+          )
+        ]));
   }
 }

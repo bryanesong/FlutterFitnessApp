@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Test Files/DynamicPenguinTest.dart';
 
@@ -7,12 +10,102 @@ import 'dart:math' as math;
 
 const double PENGUIN_IMAGE_SIZE = 1000;
 
-enum PenguinAnimationType {
-  wave
-}
-penguinAnimationData wave_animation;
+enum PenguinAnimationType { wave }
 
-penguinAnimationData currentPenguinAnimation;
+enum PenguinHat {
+  pilgrimHat,
+  sailorHat,
+}
+
+extension PenguinHatTypeExtension on PenguinHat {
+  String describeEnum() {
+    switch (this) {
+      case PenguinHat.pilgrimHat:
+        return ("pilgrimHat");
+      case PenguinHat.sailorHat:
+        return ("sailorHat");
+      default:
+        return null;
+    }
+  }
+
+  List<String> get() {
+    List<String> enumValues = new List<String>();
+    for(PenguinHat hat in PenguinHat.values) {
+      enumValues.add(hat.toString().substring(hat.toString().indexOf('.') + 1));
+    }
+    return enumValues;
+  }
+}
+
+enum PenguinShirt { usaTShirt }
+
+extension PenguinShirtTypeExtension on PenguinShirt {
+  String describeEnum() {
+    switch (this) {
+      case PenguinShirt.usaTShirt:
+        return "usaTShirt";
+      default:
+        return null;
+    }
+  }
+
+  List<String> get() {
+    List<String> enumValues = new List<String>();
+    for(PenguinShirt shirt in PenguinShirt.values) {
+      enumValues.add(shirt.toString().substring(shirt.toString().indexOf('.') + 1));
+    }
+    return enumValues;
+  }
+}
+
+enum PenguinArm { koala, firecracker }
+
+extension PenguinArmTypeExtension on PenguinArm {
+  String describeEnum() {
+    switch (this) {
+      case PenguinArm.koala:
+        return "koala";
+      case PenguinArm.firecracker:
+        return "firecracker";
+      default:
+        return null;
+    }
+  }
+
+  List<String> get() {
+    List<String> enumValues = new List<String>();
+    for(PenguinArm arm in PenguinArm.values) {
+      enumValues.add(arm.toString().substring(arm.toString().indexOf('.') + 1));
+    }
+    return enumValues;
+  }
+}
+
+enum PenguinShoes { mcdonaldShoes }
+
+extension PenguinShoeTypeExtension on PenguinShoes {
+  String describeEnum() {
+    switch (this) {
+      case PenguinShoes.mcdonaldShoes:
+        return "mcdonaldShoes";
+      default:
+        return null;
+    }
+  }
+
+  List<String> get() {
+    List<String> enumValues = new List<String>();
+    for(PenguinShoes shoes in PenguinShoes.values) {
+      enumValues.add(shoes.toString().substring(shoes.toString().indexOf('.') + 1));
+    }
+    return enumValues;
+  }
+}
+
+PenguinAnimationData wave_animation;
+
+PenguinAnimationData currentPenguinAnimation;
 
 //to instantiate a penguin, create a PenguinCreator object inside of a stack
 //for example:
@@ -22,6 +115,7 @@ penguinAnimationData currentPenguinAnimation;
 //change values while calling setstate and the penguin will update
 
 double penguinSize = 0;
+
 class PenguinCreator extends StatefulWidget {
   final double centerXCoord;
   final double centerYCoord;
@@ -31,7 +125,12 @@ class PenguinCreator extends StatefulWidget {
   final PenguinCosmetics cosmetics;
 
   PenguinCreator(
-      {@required this.centerXCoord, @required this.centerYCoord, @required this.penguinSize, @required this.scale, @required this.penguinAnimationType, @required this.cosmetics});
+      {@required this.centerXCoord,
+      @required this.centerYCoord,
+      @required this.penguinSize,
+      @required this.scale,
+      @required this.penguinAnimationType,
+      @required this.cosmetics});
 
   @override
   _PenguinCreatorState createState() => _PenguinCreatorState();
@@ -92,14 +191,17 @@ class _PenguinCreatorState extends State<PenguinCreator>
       curY = widget.centerYCoord;
     }
 
+    //update animation if a new one takes place
     if (curAnimationType != widget.penguinAnimationType) {
       print("different animations");
       changeAnimationType();
-      
-      _animationController.duration = Duration(seconds: currentPenguinAnimation.seconds);
+
+      _animationController.duration =
+          Duration(seconds: currentPenguinAnimation.seconds);
       _animationController.stop();
       _animationController.repeat();
-      _animation = IntTween(begin: 0, end: currentPenguinAnimation.frames).animate(_animationController);
+      _animation = IntTween(begin: 1, end: currentPenguinAnimation.frames)
+          .animate(_animationController);
     }
 
     return AnimatedPositioned(
@@ -120,28 +222,44 @@ class _PenguinCreatorState extends State<PenguinCreator>
                 children: [
                   PenguinAnimate(
                     animation: _animation,
-                    animationName: "penguin",
+                    animationName: currentPenguinAnimation.animationName,
                   ),
 
                   //hat
-                  widget.cosmetics.hat != null && penguinKey.currentContext != null
+                  widget.cosmetics.penguinHat != null &&
+                          penguinKey.currentContext != null
                       ? CosmeticAnimate(
-                          animation: _animation, image: widget.cosmetics.hat, positionData: currentPenguinAnimation.hatData,)
+                          animation: _animation,
+                          cosmeticName: widget.cosmetics.penguinHat.describeEnum(),
+                          imageList: currentPenguinAnimation.hatData,
+                        )
                       : Container(),
                   //shirt
-                  widget.cosmetics.shirt != null && penguinKey.currentContext != null
+                  widget.cosmetics.penguinShirt != null &&
+                          penguinKey.currentContext != null
                       ? CosmeticAnimate(
-                      animation: _animation, image: widget.cosmetics.shirt, positionData: currentPenguinAnimation.shirtData,)
+                          animation: _animation,
+                          cosmeticName: widget.cosmetics.penguinShirt.describeEnum(),
+                          imageList: currentPenguinAnimation.shirtData,
+                        )
                       : Container(),
                   //arm
-                  widget.cosmetics.arm != null && penguinKey.currentContext != null
+                  widget.cosmetics.penguinArm != null &&
+                          penguinKey.currentContext != null
                       ? CosmeticAnimate(
-                      animation: _animation, image: widget.cosmetics.arm, positionData: currentPenguinAnimation.armData,)
+                          animation: _animation,
+                          cosmeticName: widget.cosmetics.penguinArm.describeEnum(),
+                          imageList: currentPenguinAnimation.armData,
+                        )
                       : Container(),
                   //feet
-                  widget.cosmetics.shoes != null && penguinKey.currentContext != null
+                  widget.cosmetics.penguinShoes != null &&
+                          penguinKey.currentContext != null
                       ? CosmeticAnimate(
-                      animation: _animation, image: widget.cosmetics.shoes, positionData: currentPenguinAnimation.shoeData,)
+                          animation: _animation,
+                          cosmeticName: widget.cosmetics.penguinShoes.describeEnum(),
+                          imageList: currentPenguinAnimation.shoeData,
+                        )
                       : Container(),
                 ],
               )),
@@ -149,8 +267,8 @@ class _PenguinCreatorState extends State<PenguinCreator>
   }
 
   void changeAnimationType() {
-    switch(curAnimationType) {
-      case(PenguinAnimationType.wave):
+    switch (curAnimationType) {
+      case (PenguinAnimationType.wave):
         currentPenguinAnimation = wave_animation;
         break;
       default:
@@ -180,8 +298,8 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //penguin frame animation
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 7));
-    _animation = IntTween(begin: 0, end: 9).animate(_animationController);
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    _animation = IntTween(begin: 1, end: 10).animate(_animationController);
 
     _animationController.repeat().whenComplete(() {
       // put here the stuff you wanna do when animation completed!
@@ -202,6 +320,11 @@ class _PenguinCreatorState extends State<PenguinCreator>
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _sizeLength = Tween<double>(begin: 0, end: 0.005).animate(_sizeController);
     _sizeController.addListener(() {
+      setState(() {});
+    });
+
+    //redraw penguin with cosmetics after initially drawing penguin
+    Future.delayed(const Duration(milliseconds: 50), () {
       setState(() {});
     });
     super.initState();
@@ -236,35 +359,45 @@ class _PenguinCreatorState extends State<PenguinCreator>
     //9
     hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
 
-
     List<PositionCosmetics> armInfo = new List<PositionCosmetics>();
     double armLowAngle = -math.pi * 2 / 10;
     double armHighAngle = -math.pi * 2 / 16;
 
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //1
-    armInfo.add(PositionCosmetics(239, 507, armHighAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
     //2
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //3
-    armInfo.add(PositionCosmetics(239, 507, armHighAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
     //4
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //5
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //6
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //7
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //8
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //9
-    armInfo.add(PositionCosmetics(262, 528, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
 
-    wave_animation = new penguinAnimationData(hatData: hatInfo, shirtData: null, armData: armInfo, shoeData: null, animationName: "penguin", frames: 9, seconds: 7);
+    List<PositionCosmetics> shirtInfo = new List<PositionCosmetics>();
+    shirtInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize));
+
+    List<PositionCosmetics> shoeInfo = new List<PositionCosmetics>();
+    shoeInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize));
+
+    wave_animation = new PenguinAnimationData(
+        hatData: hatInfo,
+        shirtData: shirtInfo,
+        armData: armInfo,
+        shoeData: shoeInfo,
+        animationName: "waveAnimation",
+        frames: 10,
+        seconds: 7);
   }
-
-
 }
 
 class PenguinAnimate extends AnimatedWidget {
@@ -283,7 +416,7 @@ class PenguinAnimate extends AnimatedWidget {
         builder: (BuildContext context, Widget child) {
           String frame = animation.value.toString();
           return Image.asset(
-            'assets/images/$animationName$frame.png',
+            'assets/images/$animationName/$frame.png',
             gaplessPlayback: true,
           );
         });
@@ -292,13 +425,13 @@ class PenguinAnimate extends AnimatedWidget {
 
 //
 class CosmeticAnimate extends AnimatedWidget {
-  final String image;
-  final List<PositionCosmetics> positionData;
+  final String cosmeticName;
+  final ImageList imageList;
 
   CosmeticAnimate(
       {@required Animation<int> animation,
-      @required this.image,
-      @required this.positionData})
+      @required this.cosmeticName,
+      @required this.imageList})
       : super(listenable: animation);
 
   @override
@@ -308,8 +441,7 @@ class CosmeticAnimate extends AnimatedWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
-        return positionData[int.parse(animation.value.toString())]
-            .placeCosmetic(context, image);
+        return imageList.get(cosmeticName, int.parse(animation.value.toString()), context);
       },
     );
   }
@@ -334,7 +466,6 @@ class PositionCosmetics {
     Offset penguLocation = pengBox.localToGlobal(Offset(
         -scaffoldBox.localToGlobal(Offset.zero).dx,
         -scaffoldBox.localToGlobal(Offset.zero).dy));
-    print(penguLocation.dx.toString() + " " + penguLocation.dy.toString());
 
     return Positioned(
       //math to determine where to place cosmetic:
@@ -352,7 +483,8 @@ class PositionCosmetics {
           height: size,
           child: Transform.rotate(
             angle: rotationAngle,
-            child: Image.asset("assets/images/$image.png"),
+            child: Image.asset("assets/images/$image",
+              gaplessPlayback: true,),
           )),
     );
   }
@@ -360,31 +492,123 @@ class PositionCosmetics {
 
 //store cosmetic data
 class PenguinCosmetics {
-  String hat = "";
-  String shirt = "";
-  String arm = "";
-  String shoes = "";
+  PenguinHat penguinHat;
+  PenguinShirt penguinShirt;
+  PenguinArm penguinArm;
+  PenguinShoes penguinShoes;
 
   PenguinCosmetics(
-      this.hat, this.shirt, this.arm, this.shoes);
+      this.penguinHat, this.penguinShirt, this.penguinArm, this.penguinShoes);
 }
 
-class penguinAnimationData {
+class PenguinAnimationData {
   //hold all the info for a specific animation
-  List<PositionCosmetics> hatData = new List<PositionCosmetics>();
-  List<PositionCosmetics> shirtData = new List<PositionCosmetics>();
-  List<PositionCosmetics> armData = new List<PositionCosmetics>();
-  List<PositionCosmetics> shoeData = new List<PositionCosmetics>();
+  ImageList hatData = new ImageList();
+  ImageList shirtData = new ImageList();
+  ImageList armData = new ImageList();
+  ImageList shoeData = new ImageList();
   String animationName;
   int frames;
   int seconds;
 
-  penguinAnimationData(
-      {@required this.hatData,
-      @required this.shirtData,
-      @required this.armData,
-      @required this.shoeData,
+  PenguinAnimationData(
+      {@required List<PositionCosmetics> hatData,
+      @required List<PositionCosmetics> shirtData,
+      @required List<PositionCosmetics> armData,
+      @required List<PositionCosmetics> shoeData,
       @required this.animationName,
       @required this.frames,
-      @required this.seconds});
+      @required this.seconds}) {
+    this.hatData.data = hatData;
+    this.shirtData.data = shirtData;
+    this.armData.data = armData;
+    this.shoeData.data = shoeData;
+
+    //picked random hat to get all values of enum
+    this.hatData.initiate(animationName, "hats", PenguinHat.pilgrimHat.get(), frames);
+    this.shirtData.initiate(animationName, "shirts", PenguinShirt.usaTShirt.get(), frames);
+    this.armData.initiate(animationName, "arm", PenguinArm.firecracker.get(), frames);
+    this.shoeData.initiate(animationName, "shoes", PenguinShoes.mcdonaldShoes.get(), frames);
+  }
+}
+
+class ImageList {
+  List<PositionCosmetics> data = new List<PositionCosmetics>();
+  CosmeticFrameDictionary frameDictionary = new CosmeticFrameDictionary();
+  String type = "";
+
+  Widget get(String cosmeticName, int frame, BuildContext context) {
+    String image = "";
+    //if special animation for cosmetic exists, access dictionary
+    if(frameDictionary.get(cosmeticName) != null) {
+      image = frameDictionary.get(cosmeticName)[frame-1];
+    } else {
+      //resort to generic image
+      image = type + "/" + cosmeticName + ".png";
+    }
+
+    //if frame doesn't have animation data
+    if(frame-1 < data.length) {
+      return data[frame-1].placeCosmetic(context, image);
+    } else {
+      //resort to frame 1 data
+      return data[0].placeCosmetic(context, image);
+    }
+  }
+
+  void initiate(String animationName, String type, List<String> cosmeticList, int frameCount) async {
+    this.type = type;
+
+    //iterate through all cosmetics and look for cosmetics that change images during the animation
+    for(int i = 0; i < cosmeticList.length; i++) {
+      bool customImageFound = false;
+      List<String> customImageList = new List<String>();
+      for (int j = 0; j < frameCount; j++) {
+        String specialImagePath = type + "/" + animationName + "/" + cosmeticList[i] + "(" + (j+1).toString() + ").png";
+
+        //if image can be found add to image list
+        if(await loadImage(specialImagePath) != null) {
+          customImageList.add(specialImagePath);
+          customImageFound = true;
+        } else {
+          //add regular image
+          customImageList.add(type + "/" + animationName + "/" + cosmeticList[i] + ".png");
+        }
+
+      }
+      //if custom image was found, add list to dictionary
+      if(customImageFound) {
+        frameDictionary.add(customImageList, cosmeticList[i]);
+      }
+      //else don't add. imageList will return the default image if no customImageList is found for the current image
+    }
+  }
+
+  Future loadImage(String path) async {
+    try {
+      return await rootBundle.load("assets/images/" + path);
+    } catch(e) {
+      return null;
+    }
+  }
+}
+
+class CosmeticFrameDictionary {
+  //dictionary to hold the frames of custom cosmetics
+  List<List<String>> dictionary = new List<List<String>>();
+  List<String> labels = new List<String>();
+
+  void add(List<String> pathList, String label) {
+    dictionary.add(pathList);
+    labels.add(label);
+  }
+
+  List<String> get(String label) {
+    for(int i = 0; i < labels.length; i++) {
+      if(labels[i] == label) {
+        return dictionary[i];
+      }
+    }
+    return null;
+  }
 }

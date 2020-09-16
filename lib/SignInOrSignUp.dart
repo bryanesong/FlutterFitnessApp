@@ -39,7 +39,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
     
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 6));
-    _animation = IntTween(begin: 0, end: 9).animate(_animationController);
+    _animation = IntTween(begin: 1, end: 10).animate(_animationController);
 
     _animationController.repeat().whenComplete(() {
       // put here the stuff you wanna do when animation completed!
@@ -53,6 +53,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
         curve: Curves.easeInOutBack,
         reverseCurve: Curves.easeInOutBack);
     _waddleAngle = Tween<double>(begin: 0, end: 0.005).animate(curvedAnimation);
+
   }
 
   @override
@@ -277,7 +278,7 @@ class PenguinAnimate extends AnimatedWidget {
         builder: (BuildContext context, Widget child) {
           String frame = animation.value.toString();
           return new Image.asset(
-            'assets/images/penguin${frame}.png',
+            'assets/images/waveAnimation/${frame}.png',
             gaplessPlayback: true,
           );
         });
