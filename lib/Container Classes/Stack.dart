@@ -53,6 +53,10 @@ class Stack{
     }
     return false;
   }
+  
+  void clear(){
+    head = null;
+  }
 
 
 }
