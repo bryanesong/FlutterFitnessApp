@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class EnumStack{
   Node head;
 
-  Stack(){
+  EnumStack(){
     head = null;
   }
 
@@ -21,6 +21,22 @@ class EnumStack{
   }
 
   AppState pop(){
+    if(head == null){
+      return null;
+    }else{
+      Node current = head;
+      Node next = current.next;
+      while(next.next != null){
+        current = next;
+        next = current.next;
+      }
+      AppState saved = current.data;
+      current = null;
+      return saved; //return last node
+    }
+  }
+
+  AppState peek(){
     if(head == null){
       return null;
     }else{
