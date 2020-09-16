@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:FlutterFitnessApp/PenguinCreator.dart';
 import 'CalorieTracker.dart';
 import 'WorkoutTracker.dart';
+import 'package:FlutterFitnessApp/Container Classes/EnumStack.dart';
 
 enum WidgetMarker { home, calorie, workout, stats, inventory, logCardio }
 
@@ -25,8 +26,12 @@ final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
 
 //seperate enum states per major button
+
 //enum state for the home screen
 AppState currentAppState = AppState.HomeScreen_Idle;
+
+//stack for back arrow enum implementation
+EnumStack appEnumStack = new EnumStack();
 
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -261,9 +266,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void setAppState(AppState appState) {
     currentAppState = appState;
+    setState(() {
+
+    });
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
+    
     //clear stack here
     currentAppState = appState;
     selectedWidgetMarker = widgetMarker;

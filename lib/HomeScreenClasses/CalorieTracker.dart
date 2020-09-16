@@ -493,7 +493,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                   FoodData curEntry = searchEntries[index];
                   return GestureDetector(
                       onTap: () {
-                        _calorieState = CalorieTrackerScreen.addEntry;
+                        widget.onAppStateChange(AppState.Calorie_AddEntry);
                       },
                       child: ListTile(
                         onTap: () {
@@ -588,11 +588,11 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(15), wpad(2), wpad(2), 0),
                   child: FlatButton(
-                    color: _calorieState == CalorieTrackerScreen.searchFood
+                    color: widget.appState == AppState.Calorie_SearchFood
                         ? Colors.lightBlueAccent
                         : Colors.blue,
                     onPressed: () {
-                      _calorieState = CalorieTrackerScreen.searchFood;
+                      widget.onAppStateChange(AppState.Calorie_SearchFood);
                       setState(() {});
                     },
                     child: Text("Search Food"),
@@ -602,7 +602,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(2), wpad(2), wpad(15), 0),
                   child: FlatButton(
-                    color: _calorieState == CalorieTrackerScreen.myFood
+                    color: widget.appState == AppState.Calorie_MyFood
                         ? Colors.lightBlueAccent
                         : Colors.blue,
                     onPressed: () {},
@@ -619,7 +619,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             onPressed: () {
-              _calorieState = CalorieTrackerScreen.addMyFood;
+              widget.onAppStateChange(AppState.Calorie_AddMyFood);
               setState(() {});
             },
             child: Icon(Icons.add),
@@ -704,7 +704,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
                 child: FlatButton(
                   onPressed: () {
-                    _calorieState = CalorieTrackerScreen.myFood;
+                    widget.onAppStateChange(AppState.Calorie_MyFood);
                     clearTextControllers();
                     setState(() {});
                   },
@@ -794,7 +794,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
       });
       clearTextControllers();
       Future.delayed(const Duration(milliseconds: 500), () {
-        _calorieState = CalorieTrackerScreen.myFood;
+        widget.onAppStateChange(AppState.Calorie_MyFood);
         setState(() {});
       });
     }

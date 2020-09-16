@@ -1,7 +1,7 @@
 import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
 import 'package:flutter/material.dart';
 
-class Stack{
+class EnumStack{
   Node head;
 
   Stack(){
