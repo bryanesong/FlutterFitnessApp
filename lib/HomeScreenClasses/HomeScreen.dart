@@ -127,7 +127,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for calorie.");
-                                selectedWidgetMarker = WidgetMarker.calorie;
+                                changeContainer(AppState.Calorie_Log, WidgetMarker.calorie);
                               });
                             },
                           ),
@@ -150,7 +150,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for workout.");
-                                selectedWidgetMarker = WidgetMarker.workout;
+                                changeContainer(AppState.Workout_Log, WidgetMarker.workout);
                               });
                             },
                           ),
@@ -173,7 +173,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for inventory.");
-                                selectedWidgetMarker = WidgetMarker.inventory;
+                                changeContainer(AppState.Cosmetics_Home, WidgetMarker.inventory);
                               });
                             },
                           ),
@@ -196,7 +196,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for stats.");
-                                selectedWidgetMarker = WidgetMarker.stats;
+                                changeContainer(AppState.Statistics_Home, WidgetMarker.stats);
                               });
                             },
                           ),
@@ -218,7 +218,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             ),
                             onPressed: () {
                               setState(() {
-                                selectedWidgetMarker = WidgetMarker.home;
+                                changeContainer(AppState.HomeScreen_Idle, WidgetMarker.home);
                               });
                             },
                           ),
@@ -241,7 +241,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Container();
       case WidgetMarker.calorie:
         return CalorieTracker(
-
+          appState: currentAppState,
           onAppStateChange: (AppState appState) {
             setAppState(appState);
           },
@@ -262,9 +262,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     currentAppState = appState;
   }
 
-  void changeContainer(AppState appState) {
+  void changeContainer(AppState appState, WidgetMarker widgetMarker) {
     //clear stack here
     currentAppState = appState;
+    selectedWidgetMarker = widgetMarker;
   }
 }
 

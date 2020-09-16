@@ -14,22 +14,14 @@ import 'package:http/http.dart' as http;
 
 class CalorieTracker extends StatefulWidget {
   final Function(AppState appState) onAppStateChange;
+  final AppState appState;
 
-  CalorieTracker({@required this.onAppStateChange});
+  CalorieTracker({@required this.appState, @required this.onAppStateChange});
 
   @override
   CalorieTrackerState createState() => CalorieTrackerState();
 }
 
-enum CalorieTrackerScreen {
-  log,
-  addFood,
-  myFood,
-  searchFood,
-  addMyFood,
-  addEntry,
-  editEntry
-}
 
 class CalorieTrackerState extends State<CalorieTracker> with TickerProviderStateMixin {
   FirebaseUser user;
@@ -59,8 +51,6 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   DatabaseReference entryRef;
 
   FoodData testEntry;
-
-  var _calorieState = CalorieTrackerScreen.log;
 
   double _width, _height;
 
@@ -109,16 +99,16 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
 
-    switch (_calorieState) {
-      case CalorieTrackerScreen.log:
+    switch (widget.appState) {
+      case AppState.Calorie_Log:
         return foodEntryPage();
-      case CalorieTrackerScreen.myFood:
+      case AppState.Calorie_MyFood:
         return myFoodPage();
-      case CalorieTrackerScreen.searchFood:
+      case AppState.Calorie_SearchFood:
         return searchFoodPage();
-      case CalorieTrackerScreen.addMyFood:
+      case AppState.Calorie_AddMyFood:
         return addMyFoodPage();
-      case CalorieTrackerScreen.editEntry:
+      case AppState.Calorie_EditEntry:
         return editEntryPage();
       default:
         return null;
@@ -177,7 +167,9 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                                 _calorieController.text =
                                     editEntry.calories.toString();
                                 _timeController.text = editEntry.time;
-                                _calorieState = CalorieTrackerScreen.editEntry;
+
+                                //set state
+                                widget.onAppStateChange(AppState.Calorie_EditEntry);
                                 setState(() {});
                               },
                               title: Text(
@@ -241,7 +233,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             onPressed: () {
-              _calorieState = CalorieTrackerScreen.searchFood;
+              widget.onAppStateChange(AppState.Calorie_SearchFood);
               setState(() {});
             },
             child: Icon(Icons.restaurant),
@@ -296,7 +288,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
                 child: FlatButton(
                   onPressed: () {
-                    _calorieState = CalorieTrackerScreen.log;
+                    widget.onAppStateChange(AppState.Calorie_Log);
                     _errorTextBox = "";
                     clearEditTextControllers();
                     setState(() {});
@@ -397,7 +389,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
       Future.delayed(const Duration(milliseconds: 500), () {
         clearEditTextControllers();
         _errorTextBox = "";
-        _calorieState = CalorieTrackerScreen.log;
+        widget.onAppStateChange(AppState.Calorie_Log);
         setState(() {});
       });
     }
@@ -439,7 +431,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(15), wpad(2), wpad(2), 0),
                   child: FlatButton(
-                    color: _calorieState == CalorieTrackerScreen.searchFood
+                    color: widget.appState == AppState.Calorie_SearchFood
                         ? Colors.lightBlueAccent
                         : Colors.blue,
                     onPressed: () {},
