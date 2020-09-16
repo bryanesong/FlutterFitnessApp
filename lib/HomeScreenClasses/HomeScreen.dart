@@ -278,11 +278,18 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
-    enumStack.clear();
-    enumStack.push(AppState.HomeScreen_Idle);
-    enumStack.push(appState);
     //clear stack here
+    enumStack.clear();
+
+    enumStack.push(AppState.HomeScreen_Idle);
+    print(enumStack);
+    enumStack.push(appState);
+    print(enumStack);
+
     selectedWidgetMarker = widgetMarker;
+    setState(() {
+
+    });
   }
 
   void onBack() {
@@ -290,6 +297,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if(enumStack.peek() == AppState.HomeScreen_Idle) {
       selectedWidgetMarker = WidgetMarker.home;
     }
+
     setState(() {
 
     });
