@@ -8,7 +8,7 @@ class EnumStack{
     head = null;
   }
 
-  void push(data){
+  void push(AppState data){
     if(head == null){
       head = new Node(data);
     }else{

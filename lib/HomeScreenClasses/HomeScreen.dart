@@ -27,14 +27,18 @@ BuildContext logoutContext;
 
 //seperate enum states per major button
 
-//enum state for the home screen
-AppState currentAppState = AppState.HomeScreen_Idle;
-
 //stack for back arrow enum implementation
 EnumStack enumStack = new EnumStack();
 
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  @override
+  void initState() {
+    enumStack.push(AppState.HomeScreen_Idle);
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
@@ -69,7 +73,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         child: FlatButton(
                                           padding:
                                               EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            onBack();
+                                          },
                                           child: Image.asset(
                                             "assets/images/HomeScreenBackArrow.png",
                                           ),
@@ -247,7 +253,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Container();
       case WidgetMarker.calorie:
         return CalorieTracker(
-          appState: currentAppState,
+          appState: enumStack.peek(),
           onAppStateChange: (AppState appState) {
             setAppState(appState);
           },
@@ -265,17 +271,28 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void setAppState(AppState appState) {
-    currentAppState = appState;
+    enumStack.push(appState);
     setState(() {
 
     });
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
-    appEnumStack
+    enumStack.clear();
+    enumStack.push(AppState.HomeScreen_Idle);
+    enumStack.push(appState);
     //clear stack here
-    currentAppState = appState;
     selectedWidgetMarker = widgetMarker;
+  }
+
+  void onBack() {
+    enumStack.pop();
+    if(enumStack.peek() == AppState.HomeScreen_Idle) {
+      selectedWidgetMarker = WidgetMarker.home;
+    }
+    setState(() {
+
+    });
   }
 }
 
