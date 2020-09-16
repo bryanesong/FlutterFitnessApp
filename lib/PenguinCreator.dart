@@ -298,7 +298,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //penguin frame animation
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 7));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _animation = IntTween(begin: 1, end: 10).animate(_animationController);
 
     _animationController.repeat().whenComplete(() {
