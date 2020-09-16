@@ -281,10 +281,11 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
     //clear stack here
     enumStack.clear();
+
     enumStack.push(AppState.HomeScreen_Idle);
-    print(enumStack.toString());
+    print("1: "+ enumStack.toString());
     enumStack.push(appState);
-    print(enumStack.toString());
+    print("2: "+enumStack.toString());
 
     selectedWidgetMarker = widgetMarker;
     setState(() {});

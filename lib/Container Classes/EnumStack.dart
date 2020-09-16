@@ -14,10 +14,10 @@ class EnumStack{
       head = new Node(data);
     }else{
       Node current = head;
-      while(current != null){
+      while(current.next != null){
         current = current.next;
       }
-      current = new Node(data);
+      current.next = new Node(data);
     }
   }
 
