@@ -10,6 +10,7 @@ class EnumStack{
 
   void push(AppState data){
     if(head == null){
+      print("head is null");
       head = new Node(data);
     }else{
       Node current = head;
