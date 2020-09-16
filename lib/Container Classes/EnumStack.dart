@@ -21,32 +21,32 @@ class EnumStack{
   }
 
   AppState pop(){
-    if(head == null){
+    Node current = head;
+    if (current == null)
       return null;
-    }else{
-      Node current = head;
-      Node next = current.next;
-      while(next.next != null){
-        current = next;
-        next = current.next;
-      }
-      AppState saved = current.data;
-      current = null;
-      return saved; //return last node
+
+    if (current.next == null) {
+      return null;
     }
+
+    Node secondLast = current;
+    while (secondLast.next.next != null)
+      secondLast = secondLast.next;
+
+    secondLast.next = null;
+    return current.data;
   }
 
   AppState peek(){
-    if(head == null){
+    Node current = head;
+    if (current == null){
+      print("empty stack");
       return null;
     }else{
-      Node current = head;
-      Node next = current.next;
-      while(next.next != null){
-        current = next;
-        next = current.next;
+      while(current.next!=null){
+        current = current.next;
       }
-      return current.data; //return last node
+      return current.data;
     }
   }
 
