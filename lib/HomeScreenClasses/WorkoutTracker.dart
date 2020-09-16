@@ -23,13 +23,11 @@ class WorkoutTracker extends StatefulWidget {
 }
 
 enum WorkoutState { log, addStrength, addCardio,logCardio }
-enum WidgetMarker { home, calorie, workout, stats, inventory }
 
 class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderStateMixin {
 
   //init enum values
   WorkoutState currentWorkoutState = WorkoutState.log;
-  WidgetMarker selectedWidgetMarker = WidgetMarker.home;
 
 
   var _calendarController = CalendarController();

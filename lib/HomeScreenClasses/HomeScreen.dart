@@ -23,6 +23,9 @@ class HomeScreen extends StatefulWidget {
 final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
 
+//seperate enum states per major button
+
+
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
