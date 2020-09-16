@@ -442,11 +442,11 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(2), wpad(2), wpad(15), 0),
                   child: FlatButton(
-                    color: _calorieState == CalorieTrackerScreen.myFood
+                    color: widget.appState == AppState.Calorie_MyFood
                         ? Colors.lightBlueAccent
                         : Colors.blue,
                     onPressed: () {
-                      _calorieState = CalorieTrackerScreen.myFood;
+                      widget.onAppStateChange(AppState.Calorie_MyFood);
                       setState(() {});
                     },
                     child: Text("My Food"),
