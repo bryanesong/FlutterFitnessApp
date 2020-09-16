@@ -98,7 +98,17 @@ flutter:
     - assets/images/penguinTest.png
     - assets/images/hats/sailorHat.png
     - assets/images/hats/pilgrimHat.png
-    - assets/images/shirts/t-shirt (usa) 1.png
+    - assets/images/shirts/usaTShirt.png
+    - assets/images/shirts/waveAnimation/usaTShirt(1).png
+    - assets/images/shirts/waveAnimation/usaTShirt(2).png
+    - assets/images/shirts/waveAnimation/usaTShirt(3).png
+    - assets/images/shirts/waveAnimation/usaTShirt(4).png
+    - assets/images/shirts/waveAnimation/usaTShirt(5).png
+    - assets/images/shirts/waveAnimation/usaTShirt(6).png
+    - assets/images/shirts/waveAnimation/usaTShirt(7).png
+    - assets/images/shirts/waveAnimation/usaTShirt(8).png
+    - assets/images/shirts/waveAnimation/usaTShirt(9).png
+    - assets/images/shirts/waveAnimation/usaTShirt(10).png
     - assets/images/HomeScreenBackArrow.png
     - assets/images/hamburger.png
     - assets/images/shoes/mcdonaldShoes.png

@@ -53,6 +53,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> with TickerProviderState
         curve: Curves.easeInOutBack,
         reverseCurve: Curves.easeInOutBack);
     _waddleAngle = Tween<double>(begin: 0, end: 0.005).animate(curvedAnimation);
+
   }
 
   @override
