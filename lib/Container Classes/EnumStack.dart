@@ -58,6 +58,7 @@ class EnumStack{
       Node current = head;
       while(current != null){
         str+= current.data.toString() +" ";
+        current = current.next;
       }
       return str;
     }
