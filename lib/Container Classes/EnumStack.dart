@@ -10,6 +10,7 @@ class EnumStack{
 
   void push(AppState data){
     if(head == null){
+      print("head is null");
       head = new Node(data);
     }else{
       Node current = head;
@@ -58,6 +59,7 @@ class EnumStack{
       Node current = head;
       while(current != null){
         str+= current.data.toString() +" ";
+        current = current.next;
       }
       return str;
     }

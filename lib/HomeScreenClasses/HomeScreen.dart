@@ -30,14 +30,12 @@ BuildContext logoutContext;
 //stack for back arrow enum implementation
 EnumStack enumStack = new EnumStack();
 
-
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     enumStack.push(AppState.HomeScreen_Idle);
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +137,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for calorie.");
-                                changeContainer(AppState.Calorie_Log, WidgetMarker.calorie);
+                                changeContainer(
+                                    AppState.Calorie_Log, WidgetMarker.calorie);
                               });
                             },
                           ),
@@ -162,7 +161,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for workout.");
-                                changeContainer(AppState.Workout_Log, WidgetMarker.workout);
+                                changeContainer(
+                                    AppState.Workout_Log, WidgetMarker.workout);
                               });
                             },
                           ),
@@ -185,7 +185,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for inventory.");
-                                changeContainer(AppState.Cosmetics_Home, WidgetMarker.inventory);
+                                changeContainer(AppState.Cosmetics_Home,
+                                    WidgetMarker.inventory);
                               });
                             },
                           ),
@@ -208,7 +209,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             onPressed: () {
                               setState(() {
                                 print("set state invoked for stats.");
-                                changeContainer(AppState.Statistics_Home, WidgetMarker.stats);
+                                changeContainer(AppState.Statistics_Home,
+                                    WidgetMarker.stats);
                               });
                             },
                           ),
@@ -230,7 +232,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             ),
                             onPressed: () {
                               setState(() {
-                                changeContainer(AppState.HomeScreen_Idle, WidgetMarker.home);
+                                changeContainer(AppState.HomeScreen_Idle,
+                                    WidgetMarker.home);
                               });
                             },
                           ),
@@ -272,35 +275,28 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void setAppState(AppState appState) {
     enumStack.push(appState);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
     //clear stack here
     enumStack.clear();
-
     enumStack.push(AppState.HomeScreen_Idle);
-    print(enumStack);
+    print(enumStack.toString());
     enumStack.push(appState);
-    print(enumStack);
+    print(enumStack.toString());
 
     selectedWidgetMarker = widgetMarker;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void onBack() {
     enumStack.pop();
-    if(enumStack.peek() == AppState.HomeScreen_Idle) {
+    if (enumStack.peek() == AppState.HomeScreen_Idle) {
       selectedWidgetMarker = WidgetMarker.home;
     }
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 }
 
