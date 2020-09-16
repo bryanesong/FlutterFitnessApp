@@ -31,7 +31,7 @@ BuildContext logoutContext;
 AppState currentAppState = AppState.HomeScreen_Idle;
 
 //stack for back arrow enum implementation
-EnumStack appEnumStack = new EnumStack();
+EnumStack enumStack = new EnumStack();
 
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -272,7 +272,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
-    
+    appEnumStack
     //clear stack here
     currentAppState = appState;
     selectedWidgetMarker = widgetMarker;
