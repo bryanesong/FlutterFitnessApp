@@ -24,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
 
+//seperate enum states per major button
 //enum state for the home screen
 AppState currentAppState = AppState.HomeScreen_Idle;
 
