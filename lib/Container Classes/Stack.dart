@@ -1,0 +1,66 @@
+import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
+import 'package:flutter/material.dart';
+
+class Stack{
+  Node head;
+
+  Stack(){
+    head = null;
+  }
+
+  void push(data){
+    if(head == null){
+      head = new Node(data);
+    }else{
+      Node current = head;
+      while(current != null){
+        current = current.next;
+      }
+      current = new Node(data);
+    }
+  }
+
+  AppState pop(){
+    if(head == null){
+      return null;
+    }else{
+      Node current = head;
+      Node next = current.next;
+      while(next.next != null){
+        current = next;
+        next = current.next;
+      }
+      return current.data; //return last node
+    }
+  }
+
+  String toString(){
+    if(head == null){
+      return "EMPTY STACK!";
+    }else{
+      String str = "";
+      Node current = head;
+      while(current != null){
+        str+= current.data.toString() +" ";
+      }
+      return str;
+    }
+  }
+
+  bool isEmpty(){
+    if(head == null){
+      return true;
+    }
+    return false;
+  }
+
+
+}
+
+class Node{
+  AppState data;
+  Node next;
+  Node(AppState data){
+    this.data = data;
+  }
+}
