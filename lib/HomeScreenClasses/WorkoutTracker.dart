@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +19,10 @@ import 'package:FlutterFitnessApp/WorkoutEntryContainer.dart';
 
 
 class WorkoutTracker extends StatefulWidget {
+  final Function(AppState appState) onAppStateChange;
+  final AppState appState;
+
+  WorkoutTracker({@required this.appState, @required this.onAppStateChange});
   @override
   WorkoutTrackerState createState() => WorkoutTrackerState();
 }

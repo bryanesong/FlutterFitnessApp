@@ -274,15 +274,21 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void setAppState(AppState appState) {
-    enumStack.push(appState);
+    if((appState == AppState.Calorie_SearchFood && enumStack.peek() == AppState.Calorie_MyFood) || (appState == AppState.Calorie_MyFood && enumStack.peek() == AppState.Calorie_SearchFood)) {
+      enumStack.pop();
+      enumStack.push(appState);
+    } else {
+      enumStack.push(appState);
+    }
     setState(() {});
   }
 
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
     //clear stack here
     enumStack.clear();
-
-    enumStack.push(AppState.HomeScreen_Idle);
+    if(appState != AppState.HomeScreen_Idle) {
+      enumStack.push(AppState.HomeScreen_Idle);
+    }
     print("1: "+ enumStack.toString());
     enumStack.push(appState);
     print("2: "+enumStack.toString());
@@ -292,12 +298,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void onBack() {
-    enumStack.pop();
-    if (enumStack.peek() == AppState.HomeScreen_Idle) {
-      selectedWidgetMarker = WidgetMarker.home;
-    }
+    if(!enumStack.isEmpty()) {
+      enumStack.pop();
+      if (enumStack.peek() == AppState.HomeScreen_Idle) {
+        selectedWidgetMarker = WidgetMarker.home;
+      }
 
-    setState(() {});
+      setState(() {});
+    }
   }
 }
 
