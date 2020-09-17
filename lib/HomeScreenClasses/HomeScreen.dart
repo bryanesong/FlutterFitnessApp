@@ -262,7 +262,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           },
         );
       case WidgetMarker.workout:
-        return WorkoutTracker();
+        return WorkoutTracker(
+          appState: enumStack.peek(),
+          onAppStateChange: (AppState appState) {
+            setAppState(appState);
+          },
+        );
       case WidgetMarker.inventory:
         return Container();
       case WidgetMarker.stats:
@@ -274,8 +279,16 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void setAppState(AppState appState) {
-    if((appState == AppState.Calorie_SearchFood && enumStack.peek() == AppState.Calorie_MyFood) || (appState == AppState.Calorie_MyFood && enumStack.peek() == AppState.Calorie_SearchFood)) {
+    //when switching between searchfood and my food in calorie tracker
+    if ((appState == AppState.Calorie_SearchFood &&
+            enumStack.peek() == AppState.Calorie_MyFood) ||
+        (appState == AppState.Calorie_MyFood &&
+            enumStack.peek() == AppState.Calorie_SearchFood)) {
       enumStack.pop();
+      enumStack.push(appState);
+    } else if(appState == AppState.Workout_Log){
+      enumStack.clear();
+      enumStack.push(AppState.HomeScreen_Idle);
       enumStack.push(appState);
     } else {
       enumStack.push(appState);
@@ -286,19 +299,19 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void changeContainer(AppState appState, WidgetMarker widgetMarker) {
     //clear stack here
     enumStack.clear();
-    if(appState != AppState.HomeScreen_Idle) {
+    if (appState != AppState.HomeScreen_Idle) {
       enumStack.push(AppState.HomeScreen_Idle);
     }
-    print("1: "+ enumStack.toString());
+    print("1: " + enumStack.toString());
     enumStack.push(appState);
-    print("2: "+enumStack.toString());
+    print("2: " + enumStack.toString());
 
     selectedWidgetMarker = widgetMarker;
     setState(() {});
   }
 
   void onBack() {
-    if(!enumStack.isEmpty()) {
+    if (!enumStack.isEmpty()) {
       enumStack.pop();
       if (enumStack.peek() == AppState.HomeScreen_Idle) {
         selectedWidgetMarker = WidgetMarker.home;

@@ -27,12 +27,9 @@ class WorkoutTracker extends StatefulWidget {
   WorkoutTrackerState createState() => WorkoutTrackerState();
 }
 
-enum WorkoutState { log, addStrength, addCardio,logCardio }
 
 class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderStateMixin {
 
-  //init enum values
-  WorkoutState currentWorkoutState = WorkoutState.log;
 
 
   var _calendarController = CalendarController();
@@ -129,8 +126,8 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    print("Current workout state: $currentWorkoutState");
-    if(currentWorkoutState == WorkoutState.addStrength || currentWorkoutState == WorkoutState.addCardio || currentWorkoutState == WorkoutState.logCardio){
+    print("Current workout state: " + widget.appState.toString());
+    if(widget.appState == AppState.Workout_AddStrength || widget.appState == AppState.Workout_AddCardio || widget.appState == AppState.Workout_LogCardio){
       return getWorkoutState();
     }else {
       return Container(
@@ -163,15 +160,18 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
   }
 
   Widget getWorkoutState() {
-    switch (currentWorkoutState) {
-      case WorkoutState.log:
+    switch (widget.appState) {
+      case AppState.Workout_Log:
         return getWorkoutLog();
-      case WorkoutState.addStrength:
+      case AppState.Workout_AddStrength:
         return getWorkoutAddStrength();
-      case WorkoutState.addCardio:
+      case AppState.Workout_AddCardio:
         return getWorkoutAddCardioButtons();
-      case WorkoutState.logCardio:
+      case AppState.Workout_LogCardio:
         return logNewCardioWidget();
+      default:
+        print("invalid workout state");
+        return null;
     }
     return getWorkoutLog();
   }
@@ -204,7 +204,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                     ),
                     onPressed: () {
                       setState(() {
-                        currentWorkoutState = WorkoutState.addCardio;
+                        widget.onAppStateChange(AppState.Workout_AddCardio);
                         addWorkoutButtonVisibility = false;
                         Navigator.pop(context);
                       });
@@ -218,7 +218,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                     ),
                     onPressed: () {
                       setState(() {
-                        currentWorkoutState = WorkoutState.addStrength;
+                        widget.onAppStateChange(AppState.Workout_AddStrength);
                         addWorkoutButtonVisibility = false;
                         Navigator.pop(context);
                       });
@@ -262,7 +262,6 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                   textColor: Colors.red,
                   onPressed: () {
                     setState(() {
-                      currentWorkoutState = WorkoutState.log;
                       //reset validation booleans so they dont maintain the same state
                       strengthNameValidate = false;
                       strengthSetsValidate = false;
@@ -304,7 +303,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                           !strengthWeightValidate) {
                         print("adding strength workout to database...");
                         addStrengthWorkoutToDatabase();
-                        currentWorkoutState = WorkoutState.log;
+                        widget.onAppStateChange(AppState.Workout_Log);
                         //reset validation booleans so they dont maintain the same state
                         strengthNameValidate = false;
                         strengthSetsValidate = false;
@@ -531,7 +530,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                   onPressed: () {
                     print("Button pressed to log new cardio workout.");
                     setState(() {
-                      currentWorkoutState = WorkoutState.logCardio;
+                      widget.onAppStateChange(AppState.Workout_LogCardio);
                     });
                   },
                 ),
@@ -838,7 +837,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                   ),
                   onPressed: () {
                     setState(() {
-                      currentWorkoutState = WorkoutState.log;
+                      widget.onAppStateChange(AppState.Workout_Log);
                       addWorkoutButtonVisibility = true;
                       //will pop the current alert and get rid of the alert
                       Navigator.pop(context);
@@ -854,7 +853,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                   ),
                   onPressed: () {
                     setState(() {
-                      currentWorkoutState = WorkoutState.log;
+                      widget.onAppStateChange(AppState.Workout_Log);
                       addWorkoutButtonVisibility = true;
                       //add the cardio workout to the firebase
                       //will pop the current alert and get rid of the alert
