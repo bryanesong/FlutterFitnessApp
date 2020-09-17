@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
-
+bool hidePenguin = false;
 //seperate enum states per major button
 
 //stack for back arrow enum implementation
@@ -106,7 +106,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   wpad(2), wpad(1), wpad(2), 0),
                             ),
                           ),
-                          //PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.pilgrimHat, PenguinShirt.usaTShirt, PenguinArm.firecracker, PenguinShoes.mcdonaldShoes ), scale: 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
+                          PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.pilgrimHat, PenguinShirt.usaTShirt, PenguinArm.firecracker, PenguinShoes.mcdonaldShoes ), scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
                         ],
                       ),
                     ),
@@ -301,6 +301,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     enumStack.clear();
     if (appState != AppState.HomeScreen_Idle) {
       enumStack.push(AppState.HomeScreen_Idle);
+      hidePenguin = true;
+    } else {
+      hidePenguin = false;
     }
     print("1: " + enumStack.toString());
     enumStack.push(appState);

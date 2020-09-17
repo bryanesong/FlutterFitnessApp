@@ -178,10 +178,11 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //detect scale change
     if (curScale != widget.scale) {
+      curScale = widget.scale;
       _sizeLength = Tween<double>(begin: curScale, end: widget.scale)
           .animate(_sizeController);
       _sizeController.forward(from: 0);
-      curScale = widget.scale;
+
     }
 
     //detect if x or y coords have changed
@@ -298,7 +299,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //penguin frame animation
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+        AnimationController(vsync: this, duration: Duration(seconds: 7));
     _animation = IntTween(begin: 1, end: 10).animate(_animationController);
 
     _animationController.repeat().whenComplete(() {
