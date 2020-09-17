@@ -178,10 +178,11 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //detect scale change
     if (curScale != widget.scale) {
-      curScale = widget.scale;
       _sizeLength = Tween<double>(begin: curScale, end: widget.scale)
           .animate(_sizeController);
       _sizeController.forward(from: 0);
+
+      curScale = widget.scale;
 
     }
 
@@ -214,7 +215,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
         height: widget.penguinSize,
         duration: Duration(seconds: 3),
         child: Transform.scale(
-          scale: _sizeLength.value != 0 ? _sizeLength.value : widget.scale,
+          scale: _sizeLength.value,
           child: RotationTransition(
               turns: _waddleAngle,
               child: Stack(
@@ -291,7 +292,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
     setWaveAnimationPositionalData();
 
     //initialize variables that detect changes
-    curScale = widget.scale;
+    curScale = scale+0.001;
     curX = widget.centerXCoord;
     curY = widget.centerYCoord;
     curAnimationType = widget.penguinAnimationType;

@@ -54,6 +54,11 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     Expanded(
                       child: Stack(
                         children: [
+                          !hidePenguin ? Image.asset("assets/images/seattleBackground.jpg",
+                            width: wpad(100),
+                            height: hpad(100),
+                            fit: BoxFit.fill,
+                          ) : Container(),
                           //content
                           getCustomContainer(),
                           //top navigation bar
@@ -318,6 +323,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       enumStack.pop();
       if (enumStack.peek() == AppState.HomeScreen_Idle) {
         selectedWidgetMarker = WidgetMarker.home;
+        hidePenguin = false;
       }
 
       setState(() {});
