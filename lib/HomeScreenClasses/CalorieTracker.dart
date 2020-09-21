@@ -116,7 +116,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   }
 
   //<-------------------------------------------------FoodEntryPage------------------------------------------------->
-  DateTime selectedDateTime;
+  DateTime selectedDateTime = DateTime.now();
 
   Widget foodEntryPage() {
     DatedEntryList listOfCurDay;
@@ -573,17 +573,6 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           children: [
             Row(
               children: [
-/*                Container(
-                  child: FlatButton(
-                    onPressed: () {
-                      _calorieState = CalorieTrackerScreen.log;
-                      _searchFoodController.clear();
-                      searchEntries.clear();
-                      setState(() {});
-                    },
-                    child: Icon(Icons.chevron_left),
-                  ),
-                ),*/
                 Expanded(
                     child: Padding(
                   padding: EdgeInsets.fromLTRB(wpad(15), wpad(2), wpad(2), 0),

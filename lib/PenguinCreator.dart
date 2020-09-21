@@ -219,7 +219,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
           child: RotationTransition(
               turns: _waddleAngle,
               child: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 fit: StackFit.expand,
                 children: [
                   PenguinAnimate(
