@@ -30,10 +30,15 @@ bool hidePenguin = false;
 //stack for back arrow enum implementation
 EnumStack enumStack = new EnumStack();
 
+//temp handheld variable
+int currentInt = 0;
+List<PenguinArm> heldItem = PenguinArm.values;
+
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     enumStack.push(AppState.HomeScreen_Idle);
+
     super.initState();
   }
 
@@ -111,7 +116,16 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   wpad(2), wpad(1), wpad(2), 0),
                             ),
                           ),
-                          PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.pilgrimHat, PenguinShirt.usaTShirt, PenguinArm.firecracker, PenguinShoes.mcdonaldShoes ), scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
+                          PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.samuraiHat, PenguinShirt.samuraiArmor, heldItem[currentInt], PenguinShoes.clogs, PenguinShadow.circular ), scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
+                          Container(
+                            alignment: Alignment.bottomCenter,
+                            child: FlatButton(
+                              onPressed: () {
+                                swapItem();
+                              },
+                              child: Icon(Icons.navigate_next),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -251,7 +265,16 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  //_scaffoldKey.currentState.openEndDrawer();
+  void swapItem() {
+    if(currentInt < heldItem.length-1) {
+      currentInt++;
+    } else {
+      currentInt = 0;
+    }
+    setState(() {
+
+    });
+  }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
   Widget getCustomContainer() {

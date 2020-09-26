@@ -73,12 +73,6 @@ flutter:
     - assets/images/waveAnimation/2.png
     - assets/images/waveAnimation/3.png
     - assets/images/waveAnimation/4.png
-    - assets/images/waveAnimation/5.png
-    - assets/images/waveAnimation/6.png
-    - assets/images/waveAnimation/7.png
-    - assets/images/waveAnimation/8.png
-    - assets/images/waveAnimation/9.png
-    - assets/images/waveAnimation/10.png
     - assets/images/backgroundTemp.png
     - assets/images/seattleBackgroundTEMP.jpg
     - assets/images/calorieButton.png
@@ -93,25 +87,38 @@ flutter:
     - assets/images/japanBackground.jpg
     - assets/images/comicTEMP.png
     - assets/images/homeButtonTEMP.png
+    -
     - assets/images/arm/firecracker.png
     - assets/images/arm/koala.png
-    - assets/images/penguinTest.png
+    - assets/images/arm/baguettee.png
+    - assets/images/arm/katana.png
+    - assets/images/arm/boomerang.png
+    - assets/images/arm/ivoryFan.png
+    - assets/images/arm/jollyMeal.png
+    - assets/images/arm/kbbqSkewer.png
+    - assets/images/arm/pelletDrum.png
+    - assets/images/arm/wineBottle.png
+    - assets/images/arm/yoyooyoy.png
+
     - assets/images/hats/sailorHat.png
     - assets/images/hats/pilgrimHat.png
-    - assets/images/shirts/usaTShirt.png
+    - assets/images/hats/samuraiHat.png
+
     - assets/images/shirts/waveAnimation/usaTShirt(1).png
     - assets/images/shirts/waveAnimation/usaTShirt(2).png
     - assets/images/shirts/waveAnimation/usaTShirt(3).png
     - assets/images/shirts/waveAnimation/usaTShirt(4).png
-    - assets/images/shirts/waveAnimation/usaTShirt(5).png
-    - assets/images/shirts/waveAnimation/usaTShirt(6).png
-    - assets/images/shirts/waveAnimation/usaTShirt(7).png
-    - assets/images/shirts/waveAnimation/usaTShirt(8).png
-    - assets/images/shirts/waveAnimation/usaTShirt(9).png
-    - assets/images/shirts/waveAnimation/usaTShirt(10).png
+    - assets/images/shirts/waveAnimation/samuraiArmor(1).png
+    - assets/images/shirts/waveAnimation/samuraiArmor(2).png
+    - assets/images/shirts/waveAnimation/samuraiArmor(3).png
+    - assets/images/shirts/waveAnimation/samuraiArmor(4).png
+    - assets/images/shoes/mcdonaldShoes.png
+    - assets/images/shoes/clogs.png
+
+    - assets/images/shadows/circular.png
+
     - assets/images/HomeScreenBackArrow.png
     - assets/images/hamburger.png
-    - assets/images/shoes/mcdonaldShoes.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
