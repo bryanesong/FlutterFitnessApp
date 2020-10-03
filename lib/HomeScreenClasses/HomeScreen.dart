@@ -1,4 +1,5 @@
 import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/Container%20Classes/PenguinCosmeticRealtime.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ EnumStack enumStack = new EnumStack();
 //temp handheld variable
 int currentInt = 0;
 List<PenguinArm> heldItem = PenguinArm.values;
+PenguinCosmeticRealtime updateRealTime = new PenguinCosmeticRealtime();
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
@@ -116,12 +118,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   wpad(2), wpad(1), wpad(2), 0),
                             ),
                           ),
-                          PenguinCreator(cosmetics: PenguinCosmetics(PenguinHat.samuraiHat, PenguinShirt.samuraiArmor, heldItem[currentInt], PenguinShoes.clogs, PenguinShadow.circular ), scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
+                          PenguinCreator(cosmetics: PenguinCosmeticRealtime, scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
                           Container(
                             alignment: Alignment.bottomCenter,
                             child: FlatButton(
                               onPressed: () {
                                 swapItem();
+                                PenguinCosmeticRealtime.pushCosmetics(PenguinCosmeticRealtime.equipped, arm: heldItem[currentInt]);
                               },
                               child: Icon(Icons.navigate_next),
                             ),

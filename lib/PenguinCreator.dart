@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ const double PENGUIN_IMAGE_SIZE = 1000;
 enum PenguinAnimationType { wave }
 
 enum PenguinHat {
+  NONE,
   pilgrimHat,
   sailorHat,
   samuraiHat,
@@ -29,9 +31,19 @@ extension PenguinHatTypeExtension on PenguinHat {
     }
     return enumValues;
   }
+
+  PenguinHat toEnum(String enumName) {
+    for (PenguinHat hat in PenguinHat.values) {
+      if(enumName == hat.toString().substring(hat.toString().indexOf('.') + 1)) {
+        return hat;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
 }
 
-enum PenguinShirt { usaTShirt, samuraiArmor }
+enum PenguinShirt { NONE, usaTShirt, samuraiArmor }
 
 extension PenguinShirtTypeExtension on PenguinShirt {
   //return string value of selected enum value
@@ -47,9 +59,32 @@ extension PenguinShirtTypeExtension on PenguinShirt {
     }
     return enumValues;
   }
+
+  PenguinShirt toEnum(String enumName) {
+    for (PenguinShirt shirt in PenguinShirt.values) {
+      if(enumName == shirt.toString().substring(shirt.toString().indexOf('.') + 1)) {
+        return shirt;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
 }
 
-enum PenguinArm { koala, firecracker, baguettee, katana, boomerang, ivoryFan, jollyMeal, kbbqSkewer, pelletDrum, wineBottle, yoyooyoy }
+enum PenguinArm {
+  NONE,
+  koala,
+  firecracker,
+  baguettee,
+  katana,
+  boomerang,
+  ivoryFan,
+  jollyMeal,
+  kbbqSkewer,
+  pelletDrum,
+  wineBottle,
+  yoyooyoy
+}
 
 extension PenguinArmTypeExtension on PenguinArm {
   //return string value of selected enum value
@@ -64,9 +99,20 @@ extension PenguinArmTypeExtension on PenguinArm {
     }
     return enumValues;
   }
+
+  PenguinArm toEnum(String enumName) {
+    for (PenguinArm arm in PenguinArm.values) {
+      if(enumName == arm.toString().substring(arm.toString().indexOf('.') + 1)) {
+        return arm;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
+
 }
 
-enum PenguinShoes { mcdonaldShoes, clogs }
+enum PenguinShoes { NONE, mcdonaldShoes, clogs }
 
 extension PenguinShoeTypeExtension on PenguinShoes {
   //return string value of selected enum value
@@ -82,9 +128,19 @@ extension PenguinShoeTypeExtension on PenguinShoes {
     }
     return enumValues;
   }
+
+  PenguinShoes toEnum(String enumName) {
+    for (PenguinShoes shoes in PenguinShoes.values) {
+      if(enumName == shoes.toString().substring(shoes.toString().indexOf('.') + 1)) {
+        return shoes;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
 }
 
-enum PenguinShadow { circular }
+enum PenguinShadow { NONE, circular }
 
 extension PenguinShadowTypeExtension on PenguinShadow {
   //return string value of selected enum value
@@ -221,7 +277,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
                 fit: StackFit.expand,
                 children: [
                   //shadow
-                  widget.cosmetics.penguinShadow != null &&
+                  widget.cosmetics.penguinShadow != PenguinShadow.NONE &&
                           penguinKey.currentContext != null
                       ? CosmeticAnimate(
                           animation: _animation,
@@ -237,7 +293,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
                   ),
 
                   //shirt
-                  widget.cosmetics.penguinShirt != null &&
+                  widget.cosmetics.penguinShirt != PenguinShirt.NONE &&
                           penguinKey.currentContext != null
                       ? CosmeticAnimate(
                           animation: _animation,
@@ -248,7 +304,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
                       : Container(),
 
                   //hat
-                  widget.cosmetics.penguinHat != null &&
+                  widget.cosmetics.penguinHat != PenguinHat.NONE &&
                           penguinKey.currentContext != null
                       ? CosmeticAnimate(
                           animation: _animation,
@@ -259,7 +315,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
                       : Container(),
 
                   //feet
-                  widget.cosmetics.penguinShoes != null &&
+                  widget.cosmetics.penguinShoes != PenguinShoes.NONE &&
                           penguinKey.currentContext != null
                       ? CosmeticAnimate(
                           animation: _animation,
@@ -270,7 +326,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
                       : Container(),
 
                   //arm
-                  widget.cosmetics.penguinArm != null &&
+                  widget.cosmetics.penguinArm != PenguinArm.NONE &&
                           penguinKey.currentContext != null
                       ? CosmeticAnimate(
                           animation: _animation,
@@ -520,14 +576,20 @@ class PositionCosmetics {
 
 //store cosmetic data
 class PenguinCosmetics {
-  PenguinHat penguinHat;
-  PenguinShirt penguinShirt;
-  PenguinArm penguinArm;
-  PenguinShoes penguinShoes;
-  PenguinShadow penguinShadow;
+  PenguinHat penguinHat = PenguinHat.NONE;
+  PenguinShirt penguinShirt = PenguinShirt.NONE;
+  PenguinArm penguinArm = PenguinArm.NONE;
+  PenguinShoes penguinShoes = PenguinShoes.NONE;
+  PenguinShadow penguinShadow = PenguinShadow.circular;
 
-  PenguinCosmetics(this.penguinHat, this.penguinShirt, this.penguinArm,
-      this.penguinShoes, this.penguinShadow);
+  PenguinCosmetics({@required this.penguinHat, @required this.penguinShirt, @required this.penguinArm,
+    @required this.penguinShoes, @required this.penguinShadow});
+
+  PenguinCosmetics.fromSnapshot(DataSnapshot snapshot)
+      : penguinHat = PenguinHat.samuraiHat.toEnum(snapshot.value["hat"]),
+        penguinShirt = PenguinShirt.usaTShirt.toEnum(snapshot.value["shirt"]),
+        penguinArm = PenguinArm.koala.toEnum(snapshot.value["arm"]),
+        penguinShoes = PenguinShoes.mcdonaldShoes.toEnum(snapshot.value["shoes"]);
 }
 
 class PenguinAnimationData {
