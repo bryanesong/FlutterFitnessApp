@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/AppStateEnum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';

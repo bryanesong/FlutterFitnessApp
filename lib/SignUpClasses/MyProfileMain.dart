@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
 
 import 'package:flutter/services.dart';
 
@@ -23,7 +24,6 @@ class MyProfileMain extends StatefulWidget {
 }
 
 class MyProfileMainState extends State<MyProfileMain> {
-  double _width, _height;
   AutoSizeGroup _textFitGroup = new AutoSizeGroup(),
       _reviewTextGroup = new AutoSizeGroup();
 
@@ -97,8 +97,6 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   @override
   Widget build(BuildContext context) {
-    _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
 
     //decrease window size for MyProfileInfo list view
     if (MediaQuery.of(context).viewInsets.bottom != 0) {
@@ -165,11 +163,11 @@ class MyProfileMainState extends State<MyProfileMain> {
     return Row(
       children: [
         createColInRow(
-            "Goals", "", EdgeInsets.fromLTRB(wpad(16), 0, 0, 0), _goalsKey),
+            "Goals", "", EdgeInsets.fromLTRB(PSize.wPix(16), 0, 0, 0), _goalsKey),
         createColInRow("Personal", "Info",
-            EdgeInsets.fromLTRB(wpad(8), 0, wpad(8), 0), _personalInfoKey),
+            EdgeInsets.fromLTRB(PSize.wPix(8), 0, PSize.wPix(8), 0), _personalInfoKey),
         createColInRow(
-            "Review", "", EdgeInsets.fromLTRB(0, 0, wpad(16), 0), _reviewKey),
+            "Review", "", EdgeInsets.fromLTRB(0, 0, PSize.wPix(16), 0), _reviewKey),
       ],
     );
   }
@@ -178,15 +176,15 @@ class MyProfileMainState extends State<MyProfileMain> {
       String label1, String label2, EdgeInsets insets, GlobalKey key) {
     return Flexible(
       child: Container(
-          height: wpad(18),
+          height: PSize.wPix(18),
           alignment: Alignment.center,
           padding: insets,
           child: Column(
             children: [
               Container(
                 key: key,
-                width: wpad(10),
-                height: wpad(10),
+                width: PSize.wPix(10),
+                height: PSize.wPix(10),
                 child: Image.asset("assets/images/transparentCircle.png"),
               ),
               Expanded(
@@ -221,8 +219,8 @@ class MyProfileMainState extends State<MyProfileMain> {
       color: Colors.black,
       height: 20,
       thickness: 2,
-      indent: wpad(25),
-      endIndent: wpad(25),
+      indent: PSize.wPix(25),
+      endIndent: PSize.wPix(25),
     );
   }
 
@@ -297,7 +295,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createGoalsListView() {
     return Container(
-        height: hpad(40),
+        height: PSize.hPix(40),
         child: Scrollbar(
             isAlwaysShown: true,
             controller: _scrollController,
@@ -360,8 +358,8 @@ class MyProfileMainState extends State<MyProfileMain> {
   Widget createInfoListView() {
     return Container(
         key: listViewKey,
-        width: wpad(80),
-        height: hpad(40) - decreaseListviewHeightBy,
+        width: PSize.wPix(80),
+        height: PSize.hPix(40) - decreaseListviewHeightBy,
         child: Scrollbar(
             isAlwaysShown: true,
             controller: _scrollController,
@@ -379,7 +377,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createAgeRow() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        padding: EdgeInsets.fromLTRB(0, PSize.hPix(2), 0, 0),
         child: Row(
           children: [
             Expanded(
@@ -389,9 +387,9 @@ class MyProfileMainState extends State<MyProfileMain> {
               maxLines: 1,
             )),
             Container(
-                padding: EdgeInsets.fromLTRB(wpad(1), 0, 0, 0),
-                width: wpad(67),
-                //height: hpad(8),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(1), 0, 0, 0),
+                width: PSize.wPix(67),
+                //height: PSize.hPix(8),
                 child: TextField(
                   controller: _ageController,
                   keyboardType: TextInputType.number,
@@ -406,7 +404,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createHeightRow() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        padding: EdgeInsets.fromLTRB(0, PSize.hPix(2), 0, 0),
         child: Row(
           children: [
             Expanded(
@@ -416,9 +414,9 @@ class MyProfileMainState extends State<MyProfileMain> {
               maxLines: 1,
             )),
             Container(
-                padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
-                width: wpad(52),
-                //height: hpad(8),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(1), 0, PSize.wPix(3), 0),
+                width: PSize.wPix(52),
+                //height: PSize.hPix(8),
                 child: TextField(
                   controller: _heightController,
                   keyboardType: TextInputType.numberWithOptions(),
@@ -429,8 +427,8 @@ class MyProfileMainState extends State<MyProfileMain> {
                       errorText: errorType == "Height" ? errorMessage : null),
                 )),
             Container(
-                width: wpad(15),
-                //height: hpad(8),
+                width: PSize.wPix(15),
+                //height: PSize.hPix(8),
                 child: DropdownButton<String>(
                   value: _heightMeasurement,
                   onChanged: (String value) {
@@ -452,7 +450,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createWeightRow(String textLabel, TextEditingController controller) {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+        padding: EdgeInsets.fromLTRB(0, PSize.hPix(2), 0, 0),
         child: Row(
           children: [
             Expanded(
@@ -462,9 +460,9 @@ class MyProfileMainState extends State<MyProfileMain> {
               maxLines: 2,
             )),
             Container(
-                padding: EdgeInsets.fromLTRB(wpad(1), 0, wpad(3), 0),
-                width: wpad(52),
-                //height: hpad(8),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(1), 0, PSize.wPix(3), 0),
+                width: PSize.wPix(52),
+                //height: PSize.hPix(8),
                 child: TextField(
                   controller: controller,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -474,8 +472,8 @@ class MyProfileMainState extends State<MyProfileMain> {
                   keyboardType: TextInputType.number,
                 )),
             Container(
-                width: wpad(15),
-                //height: hpad(8),
+                width: PSize.wPix(15),
+                //height: PSize.hPix(8),
                 child: DropdownButton<String>(
                   value: _weightMeasurement,
                   onChanged: (String value) {
@@ -497,12 +495,12 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createSedentaryLevels() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, hpad(3), 0, hpad(3)),
+      padding: EdgeInsets.fromLTRB(0, PSize.hPix(3), 0, PSize.hPix(3)),
       child: Column(
         children: [
           Container(
-              width: wpad(80),
-              height: hpad(3),
+              width: PSize.wPix(80),
+              height: PSize.hPix(3),
               child: AutoSizeText(
                 "Activity Level:",
                 group: rowLabels,
@@ -519,7 +517,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createFlatButton(String textLabel, int level) {
     return Container(
-        width: wpad(80),
+        width: PSize.wPix(80),
         child: FlatButton(
           color:
               _activityLevel == level ? Colors.lightBlueAccent : Colors.white,
@@ -541,8 +539,8 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createReviewListView() {
     return Container(
-      width: wpad(80),
-      height: hpad(40) - decreaseListviewHeightBy,
+      width: PSize.wPix(80),
+      height: PSize.hPix(40) - decreaseListviewHeightBy,
       child: Scrollbar(
           isAlwaysShown: true,
           controller: _scrollController,
@@ -574,8 +572,8 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createInfoRow(String textLabel, String info, int maxLines) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, hpad(1), 0, hpad(1)),
-      width: wpad(80),
+      padding: EdgeInsets.fromLTRB(0, PSize.hPix(1), 0, PSize.hPix(1)),
+      width: PSize.wPix(80),
       child: Row(
         children: [
           Expanded(
@@ -625,7 +623,7 @@ class MyProfileMainState extends State<MyProfileMain> {
   Widget createLeftArrow() {
     return Container(
         alignment: Alignment.bottomLeft,
-        padding: EdgeInsets.fromLTRB(wpad(5), 0, 0, hpad(5)),
+        padding: EdgeInsets.fromLTRB(PSize.wPix(5), 0, 0, PSize.hPix(5)),
         child: FlatButton(
             onPressed: () {
               backArrowPressed();
@@ -635,7 +633,7 @@ class MyProfileMainState extends State<MyProfileMain> {
                 transform: Matrix4.rotationY(math.pi),
                 child: Image.asset(
                   "assets/images/arrow.png",
-                  height: hpad(7),
+                  height: PSize.hPix(7),
                 ))));
   }
 
@@ -643,7 +641,7 @@ class MyProfileMainState extends State<MyProfileMain> {
     if (_selectedProfilePage == ProfilePageMarker.Review) {
       return Container(
           alignment: Alignment.bottomRight,
-          padding: EdgeInsets.fromLTRB(0, 0, hpad(5), hpad(5)),
+          padding: EdgeInsets.fromLTRB(0, 0, PSize.hPix(5), PSize.hPix(5)),
           child: FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -656,14 +654,14 @@ class MyProfileMainState extends State<MyProfileMain> {
     } else {
       return Container(
           alignment: Alignment.bottomRight,
-          padding: EdgeInsets.fromLTRB(0, 0, wpad(5), hpad(5)),
+          padding: EdgeInsets.fromLTRB(0, 0, PSize.wPix(5), PSize.hPix(5)),
           child: OutlineButton(
               onPressed: () {
                 nextArrowPressed();
               },
               child: Image.asset(
                 "assets/images/arrow.png",
-                height: hpad(7),
+                height: PSize.hPix(7),
               )));
     }
   }
@@ -773,14 +771,6 @@ class MyProfileMainState extends State<MyProfileMain> {
       returnString = returnString.substring(0, returnString.length - 2);
     }
     return returnString;
-  }
-
-  double wpad(double percent) {
-    return _width * percent / 100;
-  }
-
-  double hpad(double percent) {
-    return _height * percent / 100;
   }
 
   Future navigateToHomePage(context) async {

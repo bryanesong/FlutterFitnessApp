@@ -1,4 +1,4 @@
-import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/AppStateEnum.dart';
 import 'package:flutter/material.dart';
 
 class EnumStack{

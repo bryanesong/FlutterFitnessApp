@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
-import 'package:FlutterFitnessApp/Container%20Classes/CalorieEntryContainer.dart';
-import 'package:FlutterFitnessApp/Container%20Classes/FoodData.dart';
-import 'package:FlutterFitnessApp/Container%20Classes/MyFoodsContainer.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/CalorieEntryContainer.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/FoodData.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/MyFoodsContainer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
+import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
 
 class CalorieTracker extends StatefulWidget {
   final Function(AppState appState) onAppStateChange;
@@ -51,8 +52,6 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   DatabaseReference entryRef;
 
   FoodData testEntry;
-
-  double _width, _height;
 
 
   void initState() {
@@ -96,8 +95,6 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   }
 
   Widget build(BuildContext context) {
-    _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
 
     switch (widget.appState) {
       case AppState.Calorie_Log:
@@ -258,7 +255,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(0, hpad(3), 0, 0),
+          padding: EdgeInsets.fromLTRB(0, PSize.hPix(3), 0, 0),
           child: Column(
             children: [
               createEditRow(
@@ -280,12 +277,12 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
         ),
         Container(
           alignment: Alignment.bottomCenter,
-          width: wpad(100),
+          width: PSize.wPix(100),
           child: Row(
             children: [
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(2), 0, PSize.wPix(2), PSize.wPix(2)),
                 child: FlatButton(
                   onPressed: () {
                     widget.onAppStateChange(AppState.Calorie_Log);
@@ -298,7 +295,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
               )),
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(2), 0, PSize.wPix(2), PSize.wPix(2)),
                 child: FlatButton(
                   onPressed: () {
                     submitChangeEntry();
@@ -317,12 +314,12 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   Widget createEditRow(String title, String currentText,
       TextEditingController controller, String inputType) {
     return Container(
-      padding: EdgeInsets.fromLTRB(wpad(5), 0, wpad(5), hpad(1)),
+      padding: EdgeInsets.fromLTRB(PSize.wPix(5), 0, PSize.wPix(5), PSize.hPix(1)),
       child: Column(
         children: [
           Container(
-            width: wpad(90),
-            height: hpad(4),
+            width: PSize.wPix(90),
+            height: PSize.hPix(4),
             child: Text(
               title,
               style: TextStyle(
@@ -331,8 +328,8 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
             ),
           ),
           Container(
-            width: wpad(90),
-            height: title == _errorTextBox ? hpad(6) : hpad(4),
+            width: PSize.wPix(90),
+            height: title == _errorTextBox ? PSize.hPix(6) : PSize.hPix(4),
             child: TextField(
               maxLines: 1,
               decoration: InputDecoration(
@@ -429,7 +426,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 ),*/
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(wpad(15), wpad(2), wpad(2), 0),
+                  padding: EdgeInsets.fromLTRB(PSize.wPix(15), PSize.wPix(2), PSize.wPix(2), 0),
                   child: FlatButton(
                     color: widget.appState == AppState.Calorie_SearchFood
                         ? Colors.lightBlueAccent
@@ -440,7 +437,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 )),
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(wpad(2), wpad(2), wpad(15), 0),
+                  padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(15), 0),
                   child: FlatButton(
                     color: widget.appState == AppState.Calorie_MyFood
                         ? Colors.lightBlueAccent
@@ -457,7 +454,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
             Row(
               children: [
                 Container(
-                    //padding: EdgeInsets.fromLTRB(wpad(4), 0, wpad(4), 0),
+                    //padding: EdgeInsets.fromLTRB(PSize.wPix(4), 0, PSize.wPix(4), 0),
                     child: FlatButton(
                   onPressed: () {
                     searchDatabase(_searchFoodController.text);
@@ -466,7 +463,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 )),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(6), 0),
+                    padding: EdgeInsets.fromLTRB(PSize.wPix(2), 0, PSize.wPix(6), 0),
                     child: TextField(
                       controller: _searchFoodController,
                       decoration:
@@ -519,7 +516,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                                 " Carbs: " +
                                 curEntry.carbs.toString()),
                         trailing: Container(
-                          width: wpad(20),
+                          width: PSize.wPix(20),
                           child: Row(
                             children: [
                               Container(
@@ -535,7 +532,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 },
               )
             : Container(
-                padding: EdgeInsets.fromLTRB(0, hpad(2), 0, 0),
+                padding: EdgeInsets.fromLTRB(0, PSize.hPix(2), 0, 0),
                 child: Text("No food entries found")));
   }
 
@@ -575,7 +572,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
               children: [
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(wpad(15), wpad(2), wpad(2), 0),
+                  padding: EdgeInsets.fromLTRB(PSize.wPix(15), PSize.wPix(2), PSize.wPix(2), 0),
                   child: FlatButton(
                     color: widget.appState == AppState.Calorie_SearchFood
                         ? Colors.lightBlueAccent
@@ -589,7 +586,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                 )),
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(wpad(2), wpad(2), wpad(15), 0),
+                  padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(15), 0),
                   child: FlatButton(
                     color: widget.appState == AppState.Calorie_MyFood
                         ? Colors.lightBlueAccent
@@ -637,7 +634,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                         " " +
                         curEntry.measurement),
                     trailing: Container(
-                      width: wpad(20),
+                      width: PSize.wPix(20),
                       child: Row(
                         children: [
                           Container(
@@ -671,7 +668,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(0, hpad(3), 0, 0),
+          padding: EdgeInsets.fromLTRB(0, PSize.hPix(3), 0, 0),
           child: Column(
             children: [
               createRow("Food Name", "Pizza", _foodNameController, "text"),
@@ -685,12 +682,12 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
         ),
         Container(
           alignment: Alignment.bottomCenter,
-          width: wpad(100),
+          width: PSize.wPix(100),
           child: Row(
             children: [
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(2), 0, PSize.wPix(2), PSize.wPix(2)),
                 child: FlatButton(
                   onPressed: () {
                     widget.onAppStateChange(AppState.Calorie_MyFood);
@@ -702,7 +699,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
               )),
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(wpad(2), 0, wpad(2), wpad(2)),
+                padding: EdgeInsets.fromLTRB(PSize.wPix(2), 0, PSize.wPix(2), PSize.wPix(2)),
                 child: FlatButton(
                   onPressed: () {
                     submitAddMyFood();
@@ -721,12 +718,12 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   Widget createRow(String title, String hint, TextEditingController controller,
       String inputType) {
     return Container(
-      padding: EdgeInsets.fromLTRB(wpad(5), 0, wpad(5), hpad(1)),
+      padding: EdgeInsets.fromLTRB(PSize.wPix(5), 0, PSize.wPix(5), PSize.hPix(1)),
       child: Column(
         children: [
           Container(
-            width: wpad(90),
-            height: hpad(4),
+            width: PSize.wPix(90),
+            height: PSize.hPix(4),
             child: Text(
               title,
               style: TextStyle(
@@ -735,8 +732,8 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
             ),
           ),
           Container(
-            width: wpad(90),
-            height: title == _errorTextBox ? hpad(6) : hpad(4),
+            width: PSize.wPix(90),
+            height: title == _errorTextBox ? PSize.hPix(6) : PSize.hPix(4),
             child: TextField(
               decoration: InputDecoration(
                 hintText: hint,
@@ -887,7 +884,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                             return DropdownMenuItem<String>(
                                 value: value,
                                 child: new SizedBox(
-                                  width: wpad(60),
+                                  width: PSize.wPix(60),
                                   child: Text(
                                     value,
                                     overflow: TextOverflow.ellipsis,
@@ -900,8 +897,8 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     Row(
                       children: [
                         Container(
-                          width: wpad(10),
-                          padding: EdgeInsets.fromLTRB(0, 0, wpad(3), 0),
+                          width: PSize.wPix(10),
+                          padding: EdgeInsets.fromLTRB(0, 0, PSize.wPix(3), 0),
                           child: TextField(
                             keyboardType: TextInputType.number,
                             controller: _addFoodEntryController,
@@ -951,14 +948,6 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     } else {
       return false;
     }
-  }
-
-  double wpad(double percent) {
-    return _width * percent / 100;
-  }
-
-  double hpad(double percent) {
-    return _height * percent / 100;
   }
 
   //this will return the stats container widget although not yet implemented, still waiting on both calorie tracker / workout log integration

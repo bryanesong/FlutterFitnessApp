@@ -5,17 +5,36 @@ import 'package:intl/intl.dart';
 
 import 'FoodData.dart';
 
-final FirebaseDatabase database = FirebaseDatabase.instance;
+enum PengType{Penguin, BabyPenguin}
 
+extension PengTypeExtension on PengType {
+  //return string value of selected enum value
+  String describeEnum() {
+    return this.toString().substring(this.toString().indexOf('.') + 1);
+  }
+
+  PengType toEnum(String enumName) {
+    for (PengType type in PengType.values) {
+      if(enumName == type.toString().substring(type.toString().indexOf('.') + 1)) {
+        return type;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
+}
+
+final FirebaseDatabase database = FirebaseDatabase.instance;
 class PenguinCosmeticRealtime {
-  static PenguinCosmetics equipped = PenguinCosmetics(penguinHat: PenguinHat.NONE, penguinShirt: PenguinShirt.NONE, penguinArm: PenguinArm.NONE, penguinShoes: PenguinShoes.NONE, penguinShadow: PenguinShadow.circular);
+  PenguinCosmetics equipped = PenguinCosmetics(penguinHat: PenguinHat.NONE, penguinShirt: PenguinShirt.NONE, penguinArm: PenguinArm.NONE, penguinShoes: PenguinShoes.NONE, penguinShadow: PenguinShadow.circular);
   DatabaseReference cosmeticRef;
+  PengType pengType;
 
   //firebase user variables
   FirebaseUser user;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  PenguinCosmeticRealtime() {
+  PenguinCosmeticRealtime({this.pengType}) {
     getUser();
   }
 
@@ -26,7 +45,8 @@ class PenguinCosmeticRealtime {
         .child("Users")
         .child(user.uid)
         .child("Cosmetic Info")
-        .child("Currently Equipped");
+        .child("Currently Equipped")
+        .child(pengType.describeEnum());
     createFirebaseListener();
   }
 
@@ -47,29 +67,29 @@ class PenguinCosmeticRealtime {
 
   }
 
-  static pushCosmetics(PenguinCosmetics toEquip, {PenguinHat hat, PenguinShirt shirt, PenguinArm arm, PenguinShoes shoes, PenguinShadow shadow}) async {
+  pushCosmetics({PenguinHat hat, PenguinShirt shirt, PenguinArm arm, PenguinShoes shoes, PenguinShadow shadow}) async {
 
     final FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser user = await auth.currentUser();
 
     if(hat == null) {
-      hat = toEquip.penguinHat;
+      hat = equipped.penguinHat;
     }
 
     if(shirt == null) {
-      shirt = toEquip.penguinShirt;
+      shirt = equipped.penguinShirt;
     }
 
     if(arm == null) {
-      arm = toEquip.penguinArm;
+      arm = equipped.penguinArm;
     }
 
     if(shoes == null) {
-      shoes = toEquip.penguinShoes;
+      shoes = equipped.penguinShoes;
     }
 
     if(shadow == null) {
-      shadow = toEquip.penguinShadow;
+      shadow = equipped.penguinShadow;
     }
 
     print("hat: " + hat.describeEnum() + " shirt: " + shirt.describeEnum() + " arm: " + arm.describeEnum() + " shoes: " + shoes.describeEnum() + " shadow: " + shadow.describeEnum());
@@ -78,7 +98,8 @@ class PenguinCosmeticRealtime {
         .child("Users")
         .child(user.uid)
         .child("Cosmetic Info")
-        .child("Currently Equipped");
+        .child("Currently Equipped")
+        .child(pengType.describeEnum());
     cosmeticRef.set({
       "hat": hat.describeEnum(),
       "shirt": shoes.describeEnum(),

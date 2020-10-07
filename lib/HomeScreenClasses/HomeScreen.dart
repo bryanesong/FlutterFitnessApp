@@ -1,22 +1,18 @@
-import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
-import 'package:FlutterFitnessApp/Container%20Classes/PenguinCosmeticRealtime.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/PenguinCosmeticRealtime.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterFitnessApp/PenguinCreator.dart';
 import 'CalorieTracker.dart';
+import 'CosmeticSelector.dart';
 import 'WorkoutTracker.dart';
-import 'package:FlutterFitnessApp/Container Classes/EnumStack.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/EnumStack.dart';
 
 enum WidgetMarker { home, calorie, workout, stats, inventory, logCardio }
 
 WidgetMarker selectedWidgetMarker = WidgetMarker.home;
-
-final double buttonWidth = 65;
-final double buttonHeight = 65;
-
-double _width;
-double _height;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -34,7 +30,8 @@ EnumStack enumStack = new EnumStack();
 //temp handheld variable
 int currentInt = 0;
 List<PenguinArm> heldItem = PenguinArm.values;
-PenguinCosmeticRealtime updateRealTime = new PenguinCosmeticRealtime();
+PenguinCosmeticRealtime updateRealTime =
+    new PenguinCosmeticRealtime(pengType: PengType.Penguin);
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
@@ -46,8 +43,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
+    //set size of screen size
+    PSize.width = MediaQuery.of(context).size.width;
+    PSize.height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+
     logoutContext = context;
     return Scaffold(
       key: _scaffoldKey,
@@ -61,25 +60,20 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     Expanded(
                       child: Stack(
                         children: [
-                          !hidePenguin ? Image.asset("assets/images/seattleBackground.jpg",
-                            width: wpad(100),
-                            height: hpad(100),
-                            fit: BoxFit.fill,
-                          ) : Container(),
                           //content
                           getCustomContainer(),
                           //top navigation bar
                           Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                              height: hpad(9),
+                              height: PSize.hPix(9),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Container(
                                       alignment: Alignment.centerLeft,
                                       child: SizedBox(
-                                        width: wpad(12),
+                                        width: PSize.wPix(12),
                                         child: FlatButton(
                                           padding:
                                               EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -97,7 +91,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     child: Container(
                                       alignment: Alignment.centerRight,
                                       child: SizedBox(
-                                        width: wpad(8),
+                                        width: PSize.wPix(8),
                                         child: FlatButton(
                                           padding:
                                               EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -114,21 +108,33 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   )
                                 ],
                               ),
-                              padding: EdgeInsets.fromLTRB(
-                                  wpad(2), wpad(1), wpad(2), 0),
+                              padding: EdgeInsets.fromLTRB(PSize.wPix(2),
+                                  PSize.wPix(1), PSize.wPix(2), 0),
                             ),
                           ),
-                          PenguinCreator(cosmetics: PenguinCosmeticRealtime, scale: hidePenguin ? 0 : 1, penguinSize: 300, centerXCoord: wpad(50), penguinAnimationType: PenguinAnimationType.wave, centerYCoord: hpad(50),),
-                          Container(
+                          PenguinCreator(
+                            cosmetics: updateRealTime.equipped,
+                            scale: hidePenguin ? 0 : 1,
+                            penguinSize: 300,
+                            centerXCoord: PSize.wPix(50),
+                            penguinAnimationType: PenguinAnimationType.wave,
+                            centerYCoord: PSize.hPix(50),
+                          ),
+                          /*Container(
                             alignment: Alignment.bottomCenter,
                             child: FlatButton(
                               onPressed: () {
                                 swapItem();
-                                PenguinCosmeticRealtime.pushCosmetics(PenguinCosmeticRealtime.equipped, arm: heldItem[currentInt]);
+                                updateRealTime.pushCosmetics(
+                                    arm: heldItem[currentInt]);
+                                Future.delayed(
+                                    const Duration(milliseconds: 200), () {
+                                  setState(() {});
+                                });
                               },
                               child: Icon(Icons.navigate_next),
                             ),
-                          )
+                          )*/
                         ],
                       ),
                     ),
@@ -149,8 +155,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     color: Colors.blue,
                                     style: BorderStyle.solid)),
                             child: SizedBox(
-                              width: buttonWidth,
-                              height: buttonHeight,
+                              width: PSize.hPix(10),
+                              height: PSize.hPix(10),
                               child: new Image.asset(
                                 'assets/images/calorieButton.png',
                                 fit: BoxFit.fill,
@@ -173,8 +179,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     color: Colors.blue,
                                     style: BorderStyle.solid)),
                             child: SizedBox(
-                              width: buttonWidth,
-                              height: buttonHeight,
+                              width: PSize.hPix(10),
+                              height: PSize.hPix(10),
                               child: new Image.asset(
                                 'assets/images/workoutButton.png',
                                 fit: BoxFit.fill,
@@ -197,8 +203,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     color: Colors.blue,
                                     style: BorderStyle.solid)),
                             child: SizedBox(
-                              width: buttonWidth,
-                              height: buttonHeight,
+                              width: PSize.hPix(10),
+                              height: PSize.hPix(10),
                               child: new Image.asset(
                                 'assets/images/inventoryButton.png',
                                 fit: BoxFit.fill,
@@ -221,8 +227,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     color: Colors.blue,
                                     style: BorderStyle.solid)),
                             child: SizedBox(
-                              width: buttonWidth,
-                              height: buttonHeight,
+                              width: PSize.hPix(10),
+                              height: PSize.hPix(10),
                               child: new Image.asset(
                                 'assets/images/statsButton.png',
                                 fit: BoxFit.fill,
@@ -245,8 +251,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     color: Colors.blue,
                                     style: BorderStyle.solid)),
                             child: SizedBox(
-                              width: buttonWidth,
-                              height: buttonHeight,
+                              width: PSize.hPix(10),
+                              height: PSize.hPix(10),
                               child: new Image.asset(
                                 'assets/images/homeButtonTEMP.png',
                                 fit: BoxFit.fill,
@@ -269,14 +275,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void swapItem() {
-    if(currentInt < heldItem.length-1) {
+    if (currentInt < heldItem.length - 1) {
       currentInt++;
     } else {
       currentInt = 0;
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
@@ -284,7 +288,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     //make penguin disappear if not on dashboard page
     switch (selectedWidgetMarker) {
       case WidgetMarker.home:
-        return Container();
+        return Image.asset(
+          "assets/images/seattleBackground.jpg",
+          width: PSize.wPix(100),
+          height: PSize.hPix(100),
+          fit: BoxFit.fill,
+        );
       case WidgetMarker.calorie:
         return CalorieTracker(
           appState: enumStack.peek(),
@@ -300,7 +309,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           },
         );
       case WidgetMarker.inventory:
-        return Container();
+        return CosmeticSelector(
+          appState: enumStack.peek(),
+          onAppStateChange: (AppState appState) {
+            setAppState(appState);
+          },
+        );
       case WidgetMarker.stats:
         return Container();
       case WidgetMarker.logCardio:
@@ -317,7 +331,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             enumStack.peek() == AppState.Calorie_SearchFood)) {
       enumStack.pop();
       enumStack.push(appState);
-    } else if(appState == AppState.Workout_Log){
+    } else if (appState == AppState.Workout_Log) {
       enumStack.clear();
       enumStack.push(AppState.HomeScreen_Idle);
       enumStack.push(appState);
@@ -355,16 +369,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       setState(() {});
     }
   }
-}
-
-double wpad(double percent) {
-  //print("wpad called: " + (_width * percent / 100).toString());
-  return _width * percent / 100;
-}
-
-double hpad(double percent) {
-  // print("hpad called: " + (_height * percent / 100).toString());
-  return _height * percent / 100;
 }
 
 final FirebaseAuth mAuth = FirebaseAuth.instance;

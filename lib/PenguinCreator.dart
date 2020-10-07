@@ -192,11 +192,11 @@ class PenguinCreator extends StatefulWidget {
 }
 
 BuildContext scaffoldContext;
-GlobalKey penguinKey = new GlobalKey();
 bool drawCosmetic = false;
 
 class _PenguinCreatorState extends State<PenguinCreator>
     with TickerProviderStateMixin {
+  GlobalKey penguinKey = new GlobalKey();
   //penguin animation controller
   AnimationController _animationController;
   Animation _animation;
@@ -413,58 +413,58 @@ class _PenguinCreatorState extends State<PenguinCreator>
     double lowHatY = 184;
     double highHatY = 174;
     double vertical = 0;
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //1
-    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize, penguinKey));
     //2
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //3
-    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize, penguinKey));
     //4
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //5
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //6
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //7
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //8
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
     //9
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
 
     List<PositionCosmetics> armInfo = new List<PositionCosmetics>();
     double armLowAngle = -math.pi * 2 / 10;
     double armHighAngle = -math.pi * 2 / 16;
 
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //1
-    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize, penguinKey));
     //2
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //3
-    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize, penguinKey));
     //4
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //5
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //6
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //7
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //8
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
     //9
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
 
     List<PositionCosmetics> shirtInfo = new List<PositionCosmetics>();
-    shirtInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize));
+    shirtInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize, penguinKey));
 
     List<PositionCosmetics> shoeInfo = new List<PositionCosmetics>();
-    shoeInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize));
+    shoeInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize, penguinKey));
 
     List<PositionCosmetics> shadowInfo = new List<PositionCosmetics>();
-    shadowInfo.add(PositionCosmetics(388, 574, 0, widget.penguinSize));
+    shadowInfo.add(PositionCosmetics(388, 574, 0, widget.penguinSize, penguinKey));
 
     wave_animation = new PenguinAnimationData(
         hatData: hatInfo,
@@ -523,7 +523,7 @@ class CosmeticAnimate extends AnimatedWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
-        return imageList.get(cosmeticName, animation.value, context);
+          return imageList.get(cosmeticName, animation.value, context);
       },
     );
   }
@@ -534,8 +534,9 @@ class PositionCosmetics {
   double realY;
   double rotationAngle;
   double size;
+  GlobalKey penguinKey;
 
-  PositionCosmetics(this.realX, this.realY, this.rotationAngle, this.size);
+  PositionCosmetics(this.realX, this.realY, this.rotationAngle, this.size, this.penguinKey);
 
   Widget placeCosmetic(BuildContext context, String image) {
     //locate penguin

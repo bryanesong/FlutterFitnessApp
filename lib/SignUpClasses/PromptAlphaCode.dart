@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'AlphaCode.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
 
 
 class PromptAlphaCode extends StatefulWidget {
@@ -13,7 +14,6 @@ class PromptAlphaCode extends StatefulWidget {
 }
 
 class PromptAlphaCodeState extends State<PromptAlphaCode> {
-  double _width, _height;
   final _alphaCode1Controller = TextEditingController();
   final _alphaCode2Controller = TextEditingController();
   FocusNode _focusBox1 = new FocusNode(), _focusBox2 = new FocusNode();
@@ -58,9 +58,6 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
   @override
   Widget build(BuildContext context) {
 
-    _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
-
     return Scaffold(
         key: formKey,
         resizeToAvoidBottomInset: false,
@@ -72,7 +69,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
             Column(
               children: [
                 Container(
-                  padding: EdgeInsets.fromLTRB(0, hpad(1), 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, PSize.hPix(1), 0, 0),
                   alignment: Alignment.topCenter,
                   child: Text(
                     "Alpha Code",
@@ -86,7 +83,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
                 ),
                 alphaCodeInput(),
                 Container(
-                    padding: EdgeInsets.fromLTRB(0, hpad(5), 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
                     child: FlatButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -99,7 +96,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
               ],
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, hpad(3)),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, PSize.hPix(3)),
               alignment: Alignment.bottomCenter,
               child: Text("Request your alphacode at www.teampainpoints.com"),
             )
@@ -109,12 +106,12 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
 
   Widget alphaCodeInput() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, hpad(25), 0, 0),
+        padding: EdgeInsets.fromLTRB(0, PSize.hPix(25), 0, 0),
         child:Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: wpad(25),
+          width: PSize.wPix(25),
           child: TextField(
               controller: _alphaCode1Controller,
               onChanged: (String value) {
@@ -131,7 +128,7 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
         ),
         Text('-', style: TextStyle(fontSize: 20)),
         Container(
-          width: wpad(25),
+          width: PSize.wPix(25),
           child: TextField(
               controller: _alphaCode2Controller,
               onChanged: (String value) {
@@ -176,14 +173,6 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
       errorText = "No match found";
       setState(() {});
     }
-  }
-
-  double wpad(double percent) {
-    return _width * percent / 100;
-  }
-
-  double hpad(double percent) {
-    return _height * percent / 100;
   }
 
 }
