@@ -30,8 +30,6 @@ EnumStack enumStack = new EnumStack();
 //temp handheld variable
 int currentInt = 0;
 List<PenguinArm> heldItem = PenguinArm.values;
-PenguinCosmeticRealtime updateRealTime =
-    new PenguinCosmeticRealtime(pengType: PengType.Penguin);
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
@@ -113,28 +111,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             ),
                           ),
                           PenguinCreator(
-                            cosmetics: updateRealTime.equipped,
-                            scale: hidePenguin ? 0 : 1,
-                            penguinSize: 300,
-                            centerXCoord: PSize.wPix(50),
+                            penguinType: PenguinType.Penguin,
+                            size: hidePenguin ? 0 : 300,
+                            centerXCoord: PSize.wPix(40),
                             penguinAnimationType: PenguinAnimationType.wave,
-                            centerYCoord: PSize.hPix(50),
+                            centerYCoord: PSize.hPix(20),
                           ),
-                          /*Container(
+                          Container(
                             alignment: Alignment.bottomCenter,
                             child: FlatButton(
                               onPressed: () {
-                                swapItem();
-                                updateRealTime.pushCosmetics(
-                                    arm: heldItem[currentInt]);
-                                Future.delayed(
-                                    const Duration(milliseconds: 200), () {
-                                  setState(() {});
+                                setState(() {
+                                  swapItem();
                                 });
                               },
                               child: Icon(Icons.navigate_next),
                             ),
-                          )*/
+                          )
                         ],
                       ),
                     ),
@@ -280,7 +273,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } else {
       currentInt = 0;
     }
-    setState(() {});
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.Penguin, arm: heldItem[currentInt]);
   }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar

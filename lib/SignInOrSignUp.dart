@@ -26,7 +26,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
   GlobalKey signUpKey = GlobalKey();
   double penguinPositionX = -1;
   double penguinPositionY = -1;
-  double penguinSize = .5;
+  double penguinSize = 150;
   double iconSize = 125;
   String curLocation;
   bool setUpSizesInBuild = true;
@@ -44,7 +44,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
     if (setUpSizesInBuild) {
       iconSize = PSize.wPix(30);
-      penguinSize = .5;
+      penguinSize = 125;
       setUpSizesInBuild = false;
     }
 
@@ -103,8 +103,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     return PenguinCreator(
         centerXCoord: penguinPositionX,
         centerYCoord: penguinPositionY,
-        penguinSize: 300,
-        scale: penguinSize,
+        size: penguinSize,
         penguinAnimationType: PenguinAnimationType.wave,
         cosmetics: PenguinCosmetics(
             penguinHat: PenguinHat.NONE,
@@ -197,7 +196,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
       Offset position = box.localToGlobal(Offset.zero);
       penguinPositionX = position.dx + iconSize / 2;
       penguinPositionY = position.dy + iconSize / 2 - 50;
-      penguinSize = 1;
+      penguinSize = 300;
       setState(() {});
       Future.delayed(const Duration(seconds: 3), () {
         from == "Sign In"

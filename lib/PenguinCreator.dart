@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 
 import 'dart:math' as math;
 
+import 'ContainerClasses/PenguinCosmeticRealtime.dart';
+
 const double PENGUIN_IMAGE_SIZE = 1000;
 
 enum PenguinAnimationType { wave }
@@ -34,7 +36,8 @@ extension PenguinHatTypeExtension on PenguinHat {
 
   PenguinHat toEnum(String enumName) {
     for (PenguinHat hat in PenguinHat.values) {
-      if(enumName == hat.toString().substring(hat.toString().indexOf('.') + 1)) {
+      if (enumName ==
+          hat.toString().substring(hat.toString().indexOf('.') + 1)) {
         return hat;
       }
     }
@@ -62,7 +65,8 @@ extension PenguinShirtTypeExtension on PenguinShirt {
 
   PenguinShirt toEnum(String enumName) {
     for (PenguinShirt shirt in PenguinShirt.values) {
-      if(enumName == shirt.toString().substring(shirt.toString().indexOf('.') + 1)) {
+      if (enumName ==
+          shirt.toString().substring(shirt.toString().indexOf('.') + 1)) {
         return shirt;
       }
     }
@@ -102,14 +106,14 @@ extension PenguinArmTypeExtension on PenguinArm {
 
   PenguinArm toEnum(String enumName) {
     for (PenguinArm arm in PenguinArm.values) {
-      if(enumName == arm.toString().substring(arm.toString().indexOf('.') + 1)) {
+      if (enumName ==
+          arm.toString().substring(arm.toString().indexOf('.') + 1)) {
         return arm;
       }
     }
     print("invalid enum string name");
     return null;
   }
-
 }
 
 enum PenguinShoes { NONE, mcdonaldShoes, clogs }
@@ -131,7 +135,8 @@ extension PenguinShoeTypeExtension on PenguinShoes {
 
   PenguinShoes toEnum(String enumName) {
     for (PenguinShoes shoes in PenguinShoes.values) {
-      if(enumName == shoes.toString().substring(shoes.toString().indexOf('.') + 1)) {
+      if (enumName ==
+          shoes.toString().substring(shoes.toString().indexOf('.') + 1)) {
         return shoes;
       }
     }
@@ -156,6 +161,17 @@ extension PenguinShadowTypeExtension on PenguinShadow {
     }
     return enumValues;
   }
+
+  PenguinShadow toEnum(String enumName) {
+    for (PenguinShadow shadows in PenguinShadow.values) {
+      if (enumName ==
+          shadows.toString().substring(shadows.toString().indexOf('.') + 1)) {
+        return shadows;
+      }
+    }
+    print("invalid enum string name");
+    return null;
+  }
 }
 
 PenguinAnimationData wave_animation;
@@ -169,23 +185,24 @@ PenguinAnimationData currentPenguinAnimation;
 //PenguinCreator(centerXCoord: left, centerYCoord: 200, penguinSize: penguinSize, scale: scale, cosmetics: bigPenguCosmetics, penguinAnimationType: PenguinAnimationType.wave,)
 //change values while calling setstate and the penguin will update
 
-double penguinSize = 0;
-
 class PenguinCreator extends StatefulWidget {
   final double centerXCoord;
   final double centerYCoord;
-  final double penguinSize;
-  final double scale;
+  final double size;
   final PenguinAnimationType penguinAnimationType;
   final PenguinCosmetics cosmetics;
+  final PenguinType penguinType;
 
-  PenguinCreator(
-      {@required this.centerXCoord,
-      @required this.centerYCoord,
-      @required this.penguinSize,
-      @required this.scale,
-      @required this.penguinAnimationType,
-      @required this.cosmetics});
+  PenguinCreator({@required this.centerXCoord,
+    @required this.centerYCoord,
+    @required this.size,
+    @required this.penguinAnimationType,
+    this.cosmetics,
+    this.penguinType}) {
+    if(cosmetics == null && penguinType == null) {
+      print("ERROR COSMETICS FOR PENGUIN NOT DEFINED");
+    }
+  }
 
   @override
   _PenguinCreatorState createState() => _PenguinCreatorState();
@@ -196,7 +213,11 @@ bool drawCosmetic = false;
 
 class _PenguinCreatorState extends State<PenguinCreator>
     with TickerProviderStateMixin {
+
+  PenguinCosmetics penguinCosmetics = new PenguinCosmetics(penguinHat: PenguinHat.NONE, penguinShirt: PenguinShirt.NONE, penguinArm: PenguinArm.NONE, penguinShoes: PenguinShoes.NONE, penguinShadow: PenguinShadow.circular);
+
   GlobalKey penguinKey = new GlobalKey();
+
   //penguin animation controller
   AnimationController _animationController;
   Animation _animation;
@@ -216,155 +237,11 @@ class _PenguinCreatorState extends State<PenguinCreator>
   PenguinAnimationType curAnimationType;
 
   @override
-  void dispose() {
-    _animationController.dispose();
-    _waddleController.dispose();
-    _sizeController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    scaffoldContext = context;
-
-    //global penguin size is set so that even the cosmeticPosition class can access the info
-    penguinSize = widget.penguinSize;
-
-    //detect scale change
-    if (curScale != widget.scale) {
-      _sizeLength = Tween<double>(begin: curScale, end: widget.scale)
-          .animate(_sizeController);
-      _sizeController.forward(from: 0);
-
-      curScale = widget.scale;
-    }
-
-    //detect if x or y coords have changed
-    if (curX != widget.centerXCoord || curY != widget.centerYCoord) {
-      waddle();
-      curX = widget.centerXCoord;
-      curY = widget.centerYCoord;
-    }
-
-    //update animation if a new one takes place
-    if (curAnimationType != widget.penguinAnimationType) {
-      print("different animations");
-      changeAnimationType();
-
-      _animationController.duration =
-          Duration(seconds: currentPenguinAnimation.seconds);
-      _animationController.stop();
-      _animationController.repeat();
-      _animation = IntTween(begin: 1, end: currentPenguinAnimation.frameNum)
-          .animate(_animationController);
-    }
-
-    return AnimatedPositioned(
-        key: penguinKey,
-        //center penguin on this coord
-        left: widget.centerXCoord - widget.penguinSize / 2,
-        top: widget.centerYCoord - widget.penguinSize / 2,
-        width: widget.penguinSize,
-        height: widget.penguinSize,
-        duration: Duration(seconds: 3),
-        child: Transform.scale(
-          scale: _sizeLength.value,
-          child: RotationTransition(
-              turns: _waddleAngle,
-              child: Stack(
-                clipBehavior: Clip.none,
-                fit: StackFit.expand,
-                children: [
-                  //shadow
-                  widget.cosmetics.penguinShadow != PenguinShadow.NONE &&
-                          penguinKey.currentContext != null
-                      ? CosmeticAnimate(
-                          animation: _animation,
-                          cosmeticName:
-                              widget.cosmetics.penguinShadow.describeEnum(),
-                          imageList: currentPenguinAnimation.shadowData)
-                      : Container(),
-
-                  PenguinAnimate(
-                    animation: _animation,
-                    animationName: currentPenguinAnimation.animationName,
-                    frames: currentPenguinAnimation.frames,
-                  ),
-
-                  //shirt
-                  widget.cosmetics.penguinShirt != PenguinShirt.NONE &&
-                          penguinKey.currentContext != null
-                      ? CosmeticAnimate(
-                          animation: _animation,
-                          cosmeticName:
-                              widget.cosmetics.penguinShirt.describeEnum(),
-                          imageList: currentPenguinAnimation.shirtData,
-                        )
-                      : Container(),
-
-                  //hat
-                  widget.cosmetics.penguinHat != PenguinHat.NONE &&
-                          penguinKey.currentContext != null
-                      ? CosmeticAnimate(
-                          animation: _animation,
-                          cosmeticName:
-                              widget.cosmetics.penguinHat.describeEnum(),
-                          imageList: currentPenguinAnimation.hatData,
-                        )
-                      : Container(),
-
-                  //feet
-                  widget.cosmetics.penguinShoes != PenguinShoes.NONE &&
-                          penguinKey.currentContext != null
-                      ? CosmeticAnimate(
-                          animation: _animation,
-                          cosmeticName:
-                              widget.cosmetics.penguinShoes.describeEnum(),
-                          imageList: currentPenguinAnimation.shoeData,
-                        )
-                      : Container(),
-
-                  //arm
-                  widget.cosmetics.penguinArm != PenguinArm.NONE &&
-                          penguinKey.currentContext != null
-                      ? CosmeticAnimate(
-                          animation: _animation,
-                          cosmeticName:
-                              widget.cosmetics.penguinArm.describeEnum(),
-                          imageList: currentPenguinAnimation.armData,
-                        )
-                      : Container(),
-                ],
-              )),
-        ));
-  }
-
-  void changeAnimationType() {
-    switch (curAnimationType) {
-      case (PenguinAnimationType.wave):
-        currentPenguinAnimation = wave_animation;
-        break;
-      default:
-        print("no animation set! (no bueno)");
-    }
-  }
-
-  void waddle() {
-    _waddleController.addListener(() => setState(() {}));
-    TickerFuture tickerFuture = _waddleController.repeat();
-    tickerFuture.timeout(Duration(seconds: 3), onTimeout: () {
-      _waddleController.forward(from: 0);
-      _waddleController.stop(canceled: true);
-    });
-  }
-
-  @override
   void initState() {
     setWaveAnimationPositionalData();
 
     //initialize variables that detect changes
-    curScale = widget.scale + 0.001;
+    curScale = widget.size + 0.001;
     curX = widget.centerXCoord;
     curY = widget.centerYCoord;
     curAnimationType = widget.penguinAnimationType;
@@ -397,74 +274,232 @@ class _PenguinCreatorState extends State<PenguinCreator>
       setState(() {});
     });
 
-    //redraw penguin with cosmetics after initially drawing penguin
-    Future.delayed(const Duration(milliseconds: 50), () {
-      setState(() {});
-    });
+    //rebuild penguin creator internally if new cosmetics are found in firebase
+    if(widget.penguinType != null) {
+      PenguinCosmeticRealtime updateCosmetics = new PenguinCosmeticRealtime(penguinType: widget.penguinType, onNewCosmetics: () {setState(() {penguinCosmetics = PenguinCosmeticRealtime.listOfPenguinCosmetics[widget.penguinType.index];});});
+    } else {
+      penguinCosmetics = widget.cosmetics;
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _waddleController.dispose();
+    _sizeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    scaffoldContext = context;
+
+    //if widget cosmetics are not null, set them to be the penguin's cosmetics
+    if(widget.cosmetics != null) {
+      penguinCosmetics = widget.cosmetics;
+    }
+
+    //detect scale change
+    if (curScale != widget.size) {
+      _sizeLength =
+          Tween<double>(begin: curScale, end: widget.size / PENGUIN_IMAGE_SIZE)
+              .animate(_sizeController);
+      _sizeController.forward(from: 0);
+
+      curScale = widget.size;
+    }
+
+    //detect if x or y coords have changed
+    if (curX != widget.centerXCoord || curY != widget.centerYCoord) {
+      waddle();
+      curX = widget.centerXCoord;
+      curY = widget.centerYCoord;
+    }
+
+    //update animation if a new one takes place
+    if (curAnimationType != widget.penguinAnimationType) {
+      print("different animations");
+      changeAnimationType();
+
+      _animationController.duration =
+          Duration(seconds: currentPenguinAnimation.seconds);
+      _animationController.stop();
+      _animationController.repeat();
+      _animation = IntTween(begin: 1, end: currentPenguinAnimation.frameNum)
+          .animate(_animationController);
+    }
+
+    return AnimatedPositioned(
+      //to create sliding animation
+        key: penguinKey,
+        //center penguin on this coord
+        left: widget.centerXCoord - PENGUIN_IMAGE_SIZE / 2,
+        top: widget.centerYCoord - PENGUIN_IMAGE_SIZE / 2,
+        width: PENGUIN_IMAGE_SIZE,
+        height: PENGUIN_IMAGE_SIZE,
+        duration: Duration(seconds: 3),
+        child: Transform.scale(
+          //to resize
+          scale: _sizeLength.value,
+          child: RotationTransition(
+            //for waddle animation
+              turns: _waddleAngle,
+              child: Stack(
+                clipBehavior: Clip.none,
+                fit: StackFit.expand,
+                children: [
+                  //shadow
+                  penguinCosmetics.penguinShadow != PenguinShadow.NONE &&
+                      penguinKey.currentContext != null
+                      ? CosmeticAnimate(
+                    animation: _animation,
+                    cosmeticName:
+                    penguinCosmetics.penguinShadow.describeEnum(),
+                    imageList: currentPenguinAnimation.shadowData,
+                    penguinKey: penguinKey,
+                  )
+                      : Container(),
+
+                  PenguinAnimate(
+                    animation: _animation,
+                    animationName: currentPenguinAnimation.animationName,
+                    frames: currentPenguinAnimation.frames,
+                  ),
+
+                  //shirt
+                  penguinCosmetics.penguinShirt != PenguinShirt.NONE &&
+                      penguinKey.currentContext != null
+                      ? CosmeticAnimate(
+                    animation: _animation,
+                    cosmeticName:
+                    penguinCosmetics.penguinShirt.describeEnum(),
+                    imageList: currentPenguinAnimation.shirtData,
+                    penguinKey: penguinKey,
+                  )
+                      : Container(),
+
+                  //hat
+                  penguinCosmetics.penguinHat != PenguinHat.NONE &&
+                      penguinKey.currentContext != null
+                      ? CosmeticAnimate(
+                    animation: _animation,
+                    cosmeticName:
+                    penguinCosmetics.penguinHat.describeEnum(),
+                    imageList: currentPenguinAnimation.hatData,
+                    penguinKey: penguinKey,
+                  )
+                      : Container(),
+
+                  //feet
+                  penguinCosmetics.penguinShoes != PenguinShoes.NONE &&
+                      penguinKey.currentContext != null
+                      ? CosmeticAnimate(
+                    animation: _animation,
+                    cosmeticName:
+                    penguinCosmetics.penguinShoes.describeEnum(),
+                    imageList: currentPenguinAnimation.shoeData,
+                    penguinKey: penguinKey,
+                  )
+                      : Container(),
+
+                  //arm
+                  penguinCosmetics.penguinArm != PenguinArm.NONE &&
+                      penguinKey.currentContext != null
+                      ? CosmeticAnimate(
+                    animation: _animation,
+                    cosmeticName:
+                    penguinCosmetics.penguinArm.describeEnum(),
+                    imageList: currentPenguinAnimation.armData,
+                    penguinKey: penguinKey,
+                  )
+                      : Container(),
+                ],
+              )),
+        ));
+  }
+
+  void changeAnimationType() {
+    switch (curAnimationType) {
+      case (PenguinAnimationType.wave):
+        currentPenguinAnimation = wave_animation;
+        break;
+      default:
+        print("no animation set! (no bueno)");
+    }
+  }
+
+  void waddle() {
+    _waddleController.addListener(() => setState(() {}));
+    TickerFuture tickerFuture = _waddleController.repeat();
+    tickerFuture.timeout(Duration(seconds: 3), onTimeout: () {
+      _waddleController.forward(from: 0);
+      _waddleController.stop(canceled: true);
+    });
   }
 
   void setWaveAnimationPositionalData() {
     //<-------------------------------------------------------------Wave Animation------------------------------------------------------------->
-    double cosmeticSize = 300;
+    double cosmeticSize = 1;
 
     List<PositionCosmetics> hatInfo = new List<PositionCosmetics>();
     double hatX = 482;
     double lowHatY = 184;
     double highHatY = 174;
     double vertical = 0;
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //1
-    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize));
     //2
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //3
-    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, highHatY, vertical, cosmeticSize));
     //4
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //5
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //6
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //7
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //8
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
     //9
-    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize, penguinKey));
+    hatInfo.add(PositionCosmetics(hatX, lowHatY, vertical, cosmeticSize));
 
     List<PositionCosmetics> armInfo = new List<PositionCosmetics>();
     double armLowAngle = -math.pi * 2 / 10;
     double armHighAngle = -math.pi * 2 / 16;
 
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //1
-    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
     //2
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //3
-    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(212, 521, armHighAngle, cosmeticSize));
     //4
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //5
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //6
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //7
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //8
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
     //9
-    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize, penguinKey));
+    armInfo.add(PositionCosmetics(234, 566, armLowAngle, cosmeticSize));
 
     List<PositionCosmetics> shirtInfo = new List<PositionCosmetics>();
-    shirtInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize, penguinKey));
+    shirtInfo.add(PositionCosmetics(500, 500, 0, cosmeticSize));
 
     List<PositionCosmetics> shoeInfo = new List<PositionCosmetics>();
-    shoeInfo.add(PositionCosmetics(500, 500, 0, widget.penguinSize, penguinKey));
+    shoeInfo.add(PositionCosmetics(500, 500, 0, cosmeticSize));
 
     List<PositionCosmetics> shadowInfo = new List<PositionCosmetics>();
-    shadowInfo.add(PositionCosmetics(388, 574, 0, widget.penguinSize, penguinKey));
+    shadowInfo.add(PositionCosmetics(388, 574, 0, cosmeticSize));
 
     wave_animation = new PenguinAnimationData(
         hatData: hatInfo,
@@ -482,10 +517,9 @@ class PenguinAnimate extends AnimatedWidget {
   final String animationName;
   final List<int> frames;
 
-  PenguinAnimate(
-      {@required Animation<int> animation,
-      @required this.animationName,
-      @required this.frames})
+  PenguinAnimate({@required Animation<int> animation,
+    @required this.animationName,
+    @required this.frames})
       : super(listenable: animation);
 
   @override
@@ -509,11 +543,12 @@ class PenguinAnimate extends AnimatedWidget {
 class CosmeticAnimate extends AnimatedWidget {
   final String cosmeticName;
   final ImageList imageList;
+  final GlobalKey penguinKey;
 
-  CosmeticAnimate(
-      {@required Animation<int> animation,
-      @required this.cosmeticName,
-      @required this.imageList})
+  CosmeticAnimate({@required Animation<int> animation,
+    @required this.cosmeticName,
+    @required this.imageList,
+    @required this.penguinKey})
       : super(listenable: animation);
 
   @override
@@ -523,7 +558,8 @@ class CosmeticAnimate extends AnimatedWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
-          return imageList.get(cosmeticName, animation.value, context);
+        return imageList.get(
+            cosmeticName, animation.value, context, penguinKey);
       },
     );
   }
@@ -533,12 +569,13 @@ class PositionCosmetics {
   double realX;
   double realY;
   double rotationAngle;
-  double size;
-  GlobalKey penguinKey;
+  double percentOfPenguin;
 
-  PositionCosmetics(this.realX, this.realY, this.rotationAngle, this.size, this.penguinKey);
+  PositionCosmetics(this.realX, this.realY, this.rotationAngle,
+      this.percentOfPenguin);
 
-  Widget placeCosmetic(BuildContext context, String image) {
+  Widget placeCosmetic(BuildContext context, String image,
+      GlobalKey penguinKey) {
     //locate penguin
     RenderBox pengBox = penguinKey.currentContext.findRenderObject();
 
@@ -546,24 +583,24 @@ class PositionCosmetics {
     RenderBox scaffoldBox = scaffoldContext.findRenderObject();
 
     //x y coords of where to start drawing cosmetic = peng global x - offsetx, peng global y - offsety
-    Offset penguLocation = pengBox.localToGlobal(Offset(
-        -scaffoldBox.localToGlobal(Offset.zero).dx,
-        -scaffoldBox.localToGlobal(Offset.zero).dy));
+    /*Offset penguLocation = pengBox.localToGlobal(Offset(
+        -scaffoldBox
+            .localToGlobal(Offset.zero)
+            .dx,
+        -scaffoldBox
+            .localToGlobal(Offset.zero)
+            .dy));*/
 
     return Positioned(
       //math to determine where to place cosmetic:
-      //1. locate ratio of where the cosmetic is normally placed in 1000 x 1000 grid ex: 388/1000, 500/1000
-      //2. multiply by size of penguin
-      //3. subtract by half the size of cosmetic to center
-      left: (realX / PENGUIN_IMAGE_SIZE) * penguinSize +
-          penguLocation.dx -
-          size / 2,
-      top: (realY / PENGUIN_IMAGE_SIZE) * penguinSize +
-          penguLocation.dy -
-          size / 2,
+      //1. place the cosmetic in the 1000 x 1000 grid ex: 388, 500
+      //2. subtract by half the size of cosmetic to center
+      left:
+      realX/* + penguLocation.dx*/ - PENGUIN_IMAGE_SIZE * percentOfPenguin / 2,
+      top: realY/* + penguLocation.dy*/ - PENGUIN_IMAGE_SIZE * percentOfPenguin / 2,
       child: Container(
-          width: size,
-          height: size,
+          width: PENGUIN_IMAGE_SIZE * percentOfPenguin,
+          height: PENGUIN_IMAGE_SIZE * percentOfPenguin,
           child: Transform.rotate(
             angle: rotationAngle,
             child: Image.asset(
@@ -583,14 +620,18 @@ class PenguinCosmetics {
   PenguinShoes penguinShoes = PenguinShoes.NONE;
   PenguinShadow penguinShadow = PenguinShadow.circular;
 
-  PenguinCosmetics({@required this.penguinHat, @required this.penguinShirt, @required this.penguinArm,
-    @required this.penguinShoes, @required this.penguinShadow});
+  PenguinCosmetics({@required this.penguinHat,
+    @required this.penguinShirt,
+    @required this.penguinArm,
+    @required this.penguinShoes,
+    @required this.penguinShadow});
 
   PenguinCosmetics.fromSnapshot(DataSnapshot snapshot)
       : penguinHat = PenguinHat.samuraiHat.toEnum(snapshot.value["hat"]),
         penguinShirt = PenguinShirt.usaTShirt.toEnum(snapshot.value["shirt"]),
         penguinArm = PenguinArm.koala.toEnum(snapshot.value["arm"]),
-        penguinShoes = PenguinShoes.mcdonaldShoes.toEnum(snapshot.value["shoes"]);
+        penguinShoes =
+        PenguinShoes.mcdonaldShoes.toEnum(snapshot.value["shoes"]);
 }
 
 class PenguinAnimationData {
@@ -605,15 +646,14 @@ class PenguinAnimationData {
   int frameNum;
   int seconds;
 
-  PenguinAnimationData(
-      {@required List<PositionCosmetics> hatData,
-      @required List<PositionCosmetics> shirtData,
-      @required List<PositionCosmetics> armData,
-      @required List<PositionCosmetics> shoeData,
-      @required List<PositionCosmetics> shadowData,
-      @required this.animationName,
-      @required this.frames,
-      @required this.seconds}) {
+  PenguinAnimationData({@required List<PositionCosmetics> hatData,
+    @required List<PositionCosmetics> shirtData,
+    @required List<PositionCosmetics> armData,
+    @required List<PositionCosmetics> shoeData,
+    @required List<PositionCosmetics> shadowData,
+    @required this.animationName,
+    @required this.frames,
+    @required this.seconds}) {
     this.hatData.data = hatData;
     this.shirtData.data = shirtData;
     this.armData.data = armData;
@@ -642,7 +682,8 @@ class ImageList {
   CosmeticFrameDictionary frameDictionary = new CosmeticFrameDictionary();
   String type = "";
 
-  Widget get(String cosmeticName, int frame, BuildContext context) {
+  Widget get(String cosmeticName, int frame, BuildContext context,
+      GlobalKey penguinKey) {
     String image = "";
     //if special animation for cosmetic exists, access dictionary
     if (frameDictionary.get(cosmeticName) != null) {
@@ -654,10 +695,10 @@ class ImageList {
 
     //if frame doesn't have animation data
     if (frame - 1 < data.length) {
-      return data[frame - 1].placeCosmetic(context, image);
+      return data[frame - 1].placeCosmetic(context, image, penguinKey);
     } else {
       //resort to frame 1 data
-      return data[0].placeCosmetic(context, image);
+      return data[0].placeCosmetic(context, image, penguinKey);
     }
   }
 

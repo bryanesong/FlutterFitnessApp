@@ -86,6 +86,8 @@ flutter:
     - assets/images/homeButtonTEMP.png
     - assets/images/HomeScreenBackArrow.png
     - assets/images/hamburger.png
+    - assets/images/upPanel.png
+    - assets/images/downPanel.png
     #ANIMATION IMAGES
     - assets/images/waveAnimation/1.png
     - assets/images/waveAnimation/2.png
@@ -108,6 +110,7 @@ flutter:
     - assets/images/hats/pilgrimHat.png
     - assets/images/hats/samuraiHat.png
     #SHIRT IMAGES
+    - assets/images/shirts/samuraiArmor.png
     - assets/images/shirts/waveAnimation/usaTShirt(1).png
     - assets/images/shirts/waveAnimation/usaTShirt(2).png
     - assets/images/shirts/waveAnimation/usaTShirt(3).png
@@ -116,6 +119,7 @@ flutter:
     - assets/images/shirts/waveAnimation/samuraiArmor(2).png
     - assets/images/shirts/waveAnimation/samuraiArmor(3).png
     - assets/images/shirts/waveAnimation/samuraiArmor(4).png
+    #SHOE IMAGES
     - assets/images/shoes/mcdonaldShoes.png
     - assets/images/shoes/clogs.png
     #SHADOW IMAGES

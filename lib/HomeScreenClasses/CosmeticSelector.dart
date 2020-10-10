@@ -13,25 +13,45 @@ class CosmeticSelector extends StatefulWidget {
   CosmeticSelectorState createState() => CosmeticSelectorState();
 }
 
-
-class CosmeticSelectorState extends State<CosmeticSelector> with TickerProviderStateMixin {
+class CosmeticSelectorState extends State<CosmeticSelector>
+    with TickerProviderStateMixin {
   List<bool> isSelected = [true, false, false, false];
   List<Widget> gridViewTiles = new List<Widget>();
 
   @override
   void initState() {
-    for(int i = 0; i < 30; i++) {
-      gridViewTiles.add(
-        FlatButton(
+    for (int i = 0; i < 30; i++) {
+      if (i != 20) {
+        gridViewTiles.add(
+          Stack(
+            children: [
+              Image.asset("assets/images/upPanel.png"),
+              Image.asset("assets/images/shopItems/pelletDrum.png"),
+              FlatButton(
+                  child: Container(constraints: BoxConstraints.expand()),
+                  onPressed: () {
+                    setState(() {
 
-          onPressed: () {  },
-          height: 20,
-          child: Container(
-            color: Colors.white,
-            child: Image.asset("assets/images/shopItems/pelletDrum.png"),
+                    });
+                  })
+            ],
           ),
-        )
-      );
+        );
+      } else {
+        gridViewTiles.add(
+          Stack(
+            children: [
+              Image.asset("assets/images/downPanel.png"),
+              Image.asset("assets/images/shopItems/pelletDrum.png"),
+              FlatButton(
+                  child: Container(constraints: BoxConstraints.expand()),
+                  onPressed: () {
+                    print("hi");
+                  })
+            ],
+          ),
+        );
+      }
     }
     super.initState();
   }
@@ -61,24 +81,38 @@ class CosmeticSelectorState extends State<CosmeticSelector> with TickerProviderS
             children: [
               Container(
                 width: PSize.wPix(24.7),
-                child: Text("Hats", textAlign: TextAlign.center,),
+                child: Text(
+                  "Hats",
+                  textAlign: TextAlign.center,
+                ),
               ),
               Container(
                 width: PSize.wPix(24.7),
-                child: Text("Shirts", textAlign: TextAlign.center,),
+                child: Text(
+                  "Shirts",
+                  textAlign: TextAlign.center,
+                ),
               ),
               Container(
                 width: PSize.wPix(24.7),
-                child: Text("Hand", textAlign: TextAlign.center,),
+                child: Text(
+                  "Hand",
+                  textAlign: TextAlign.center,
+                ),
               ),
               Container(
                 width: PSize.wPix(24.7),
-                child: Text("Shoes", textAlign: TextAlign.center,),
+                child: Text(
+                  "Shoes",
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
             onPressed: (int index) {
               setState(() {
-                for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                for (int buttonIndex = 0;
+                    buttonIndex < isSelected.length;
+                    buttonIndex++) {
                   if (buttonIndex == index) {
                     isSelected[buttonIndex] = true;
                   } else {
@@ -97,15 +131,13 @@ class CosmeticSelectorState extends State<CosmeticSelector> with TickerProviderS
           height: PSize.hPix(30),
           child: GridView.count(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              crossAxisCount: 5,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-
-              children: gridViewTiles,
+            crossAxisCount: 5,
+            crossAxisSpacing: 3,
+            mainAxisSpacing: 3,
+            children: gridViewTiles,
           ),
         )
       ],
     );
   }
-
 }
