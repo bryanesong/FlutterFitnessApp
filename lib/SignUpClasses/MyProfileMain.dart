@@ -268,7 +268,7 @@ class MyProfileMainState extends State<MyProfileMain> {
       top: miniPenguinY,
       child: Container(
         child: Image.asset(
-          "assets/images/penguin1.png",
+          "assets/images/waveAnimation/1.png",
           width: miniPenguinSize,
           height: miniPenguinSize,
         ),

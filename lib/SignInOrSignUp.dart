@@ -106,11 +106,11 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
         size: penguinSize,
         penguinAnimationType: PenguinAnimationType.wave,
         cosmetics: PenguinCosmetics(
-            penguinHat: PenguinHat.NONE,
+            penguinHat: PenguinHat.NO_HAT,
             penguinShadow: PenguinShadow.circular,
-            penguinShirt: PenguinShirt.NONE,
-            penguinArm: PenguinArm.NONE,
-            penguinShoes: PenguinShoes.NONE));
+            penguinShirt: PenguinShirt.NO_SHIRT,
+            penguinArm: PenguinArm.NO_ARM,
+            penguinShoes: PenguinShoes.NO_SHOES));
   }
 
   Widget createSignInSignOutRow() {

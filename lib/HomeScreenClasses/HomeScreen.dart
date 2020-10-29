@@ -1,4 +1,5 @@
 import 'package:FlutterFitnessApp/ContainerClasses/AppStateEnum.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/OwnedCosmeticsRealtime.dart';
 import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
 import 'package:FlutterFitnessApp/ContainerClasses/PenguinCosmeticRealtime.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -110,19 +111,19 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   PSize.wPix(1), PSize.wPix(2), 0),
                             ),
                           ),
-                          PenguinCreator(
-                            penguinType: PenguinType.Penguin,
-                            size: hidePenguin ? 0 : 300,
-                            centerXCoord: PSize.wPix(40),
+                          !hidePenguin ? PenguinCreator(
+                            penguinType: PenguinType.penguin,
+                            size: 300,
+                            centerXCoord: PSize.wPix(50),
                             penguinAnimationType: PenguinAnimationType.wave,
-                            centerYCoord: PSize.hPix(20),
-                          ),
+                            centerYCoord: PSize.hPix(50),
+                          ) : Container(),
                           Container(
                             alignment: Alignment.bottomCenter,
                             child: FlatButton(
                               onPressed: () {
                                 setState(() {
-                                  swapItem();
+                                  OwnedCosmeticsRealtime.pushBoughtCosmetic("jollyMeal");
                                 });
                               },
                               child: Icon(Icons.navigate_next),
@@ -273,7 +274,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } else {
       currentInt = 0;
     }
-    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.Penguin, arm: heldItem[currentInt]);
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: heldItem[currentInt].describeEnum());
   }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
