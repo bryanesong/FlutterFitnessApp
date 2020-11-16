@@ -1,3 +1,4 @@
+import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
 import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
 import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -91,15 +92,18 @@ class SignUpState extends State<SignUpRoute> {
       title: Text("Sign Up"),
     );
     return Scaffold(
-        appBar: appbar,
+        //appBar: appbar,
         body: Stack(children: [
-          AnimatedContainer(
-            height: MediaQuery
-                .of(context)
-                .viewInsets
-                .bottom > 0 ? 0 : 100,
-            duration: Duration(milliseconds: 100),
-            child: createTitle(),
+          Container(
+            padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+            child: AnimatedContainer(
+              height: MediaQuery
+                  .of(context)
+                  .viewInsets
+                  .bottom > 20 ? 0 : 100,
+              duration: Duration(milliseconds: 100),
+              child: createTitle(),
+            ),
           ),
           Column(
             //crossAxisAlignment: CrossAxisAlignment.center,
@@ -154,9 +158,6 @@ class SignUpState extends State<SignUpRoute> {
                         _emailController,
                         true),
                   )),
-              Flexible(
-                child: createCheckboxTile(),
-              ),
               Flexible(child: createGoButton()),
 
             ],
@@ -230,30 +231,6 @@ class SignUpState extends State<SignUpRoute> {
     );
   }
 
-  Widget createCheckboxTile() {
-/*    double spaceFromRight = 0;
-    print('checkbox');
-    RenderBox box = rememberMeSpacer.currentContext.findRenderObject();
-    Offset position = box.localToGlobal(Offset.zero);
-    spaceFromRight = position.dx;*/
-
-    return Container(
-        alignment: Alignment.centerRight,
-        child: Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
-            alignment: Alignment.centerRight,
-            width: 200 + 30.0,
-            child: CheckboxListTile(
-              title: Text('Remember Me'),
-              controlAffinity: ListTileControlAffinity.trailing,
-              value: _checked,
-              onChanged: (bool value) {
-                _checked = value;
-                setState(() {});
-              },
-            )));
-  }
-
   Widget createGoButton() {
     return Container(
         padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
@@ -285,11 +262,9 @@ class SignUpState extends State<SignUpRoute> {
       RenderBox box = key.currentContext.findRenderObject();
       Offset position = box.localToGlobal(Offset.zero);
       fishY = position.dy -
-          AppBar().preferredSize.height -
-          MediaQuery
-              .of(context)
-              .padding
-              .top - fishSize / 2 + box.size.height / 2;
+          //AppBar().preferredSize.height -
+          //MediaQuery.of(context).padding.top -
+          fishSize / 2 + box.size.height / 2;
       print(position.dy);
       waitForAnimation = true;
 

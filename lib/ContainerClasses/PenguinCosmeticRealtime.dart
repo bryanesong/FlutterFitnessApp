@@ -72,7 +72,10 @@ class PenguinCosmeticRealtime {
   _onChange(Event event) {
     print("get penguin cosmetics");
     cosmeticRef.once().then((DataSnapshot snapshot) {
-        PenguinCosmetics snapshotData = PenguinCosmetics.fromSnapshot(snapshot);
+        PenguinCosmetics snapshotData;
+        if(snapshot != null) {
+          snapshotData = PenguinCosmetics.fromSnapshot(snapshot);
+        }
         if(snapshotData != null) {
           print("not null");
           listOfPenguinCosmetics[penguinType.index] = snapshotData;

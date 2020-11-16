@@ -61,15 +61,15 @@ class PromptAlphaCodeState extends State<PromptAlphaCode> {
     return Scaffold(
         key: formKey,
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
+        /*appBar: AppBar(
           title: Text("Alpha Code"),
-        ),
+        ),*/
         body: Stack(
           children: [
             Column(
               children: [
                 Container(
-                  padding: EdgeInsets.fromLTRB(0, PSize.hPix(1), 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).padding.top + PSize.hPix(1), 0, 0),
                   alignment: Alignment.topCenter,
                   child: Text(
                     "Alpha Code",

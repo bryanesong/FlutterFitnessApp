@@ -278,7 +278,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
 
     //penguin size animation
     _sizeController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+        AnimationController(vsync: this, duration: Duration(seconds: 3));
     _sizeLength = Tween<double>(begin: 0, end: 0.005).animate(_sizeController);
     _sizeController.addListener(() {
       setState(() {});
@@ -320,7 +320,7 @@ class _PenguinCreatorState extends State<PenguinCreator>
     }
 
     //detect scale change
-    if (_curScale != widget.size) {
+    if (_curScale != widget.size/PENGUIN_IMAGE_SIZE) {
       _sizeLength =
           Tween<double>(begin: _curScale, end: widget.size / PENGUIN_IMAGE_SIZE)
               .animate(_sizeController);

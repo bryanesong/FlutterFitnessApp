@@ -129,13 +129,6 @@ class LoginRouteState extends State<LoginRoute> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         new Padding(padding: EdgeInsets.only(top: 20.0)),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            createCheckboxTile(),
-                            Text(" Remember Me"),
-                          ],
-                        ),
                         new Padding(padding: EdgeInsets.only(top: 20.0)),
                         new Builder(
                           builder: (context)=>

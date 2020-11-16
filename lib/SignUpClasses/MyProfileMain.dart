@@ -98,45 +98,34 @@ class MyProfileMainState extends State<MyProfileMain> {
   @override
   Widget build(BuildContext context) {
 
-    //decrease window size for MyProfileInfo list view
-    if (MediaQuery.of(context).viewInsets.bottom != 0) {
-      print("keyboard up");
-      if(listViewKey.currentContext != null) {
-        RenderBox box = listViewKey.currentContext.findRenderObject();
-        decreaseListviewHeightBy = box
-            .localToGlobal(Offset.zero)
-            .dy +
-            box.size.height -
-            (MediaQuery
-                .of(context)
-                .size
-                .height -
-                MediaQuery
-                    .of(context)
-                    .viewInsets
-                    .bottom);
-      }
-    } else {
-      decreaseListviewHeightBy = 0;
-    }
-
-
     updateListView();
-
-    //create variables to store the 3 list views
 
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
+        /*appBar: AppBar(
           title: Text("Register Info"),
-        ),
+        ),*/
         resizeToAvoidBottomInset: false,
         body: Stack(children: [
           Column(children: [
-            createTitle(),
-            createRow(),
-            createDivider(),
-            displayListView(),
+            Container(
+              height: PSize.hPix(15),
+              child: createTitle(),
+            ),
+            Container(
+              height: PSize.hPix(10),
+              child: createRow(),
+            ),
+            Container(
+              height: PSize.hPix(3),
+              child: createDivider(),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(PSize.wPix(5), 0, PSize.wPix(5), PSize.hPix(2)),
+              height: PSize.hPix(62),
+              child: displayListView(),
+            ),
+            //expanded so adapts to everything else
             makeArrowButtons(),
           ]),
           makeMiniPenguin(),
@@ -145,8 +134,9 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createTitle() {
     return Container(
+        margin: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
         alignment: Alignment.topCenter,
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        constraints: BoxConstraints.expand(),
         child: AutoSizeText(
           _titleText,
           maxLines: 1,
@@ -283,9 +273,9 @@ class MyProfileMainState extends State<MyProfileMain> {
     position = box.localToGlobal(Offset.zero);
     miniPenguinSize = box.size.height;
     miniPenguinX = position.dx;
-    miniPenguinY = position.dy -
+    miniPenguinY = position.dy/* -
         AppBar().preferredSize.height -
-        MediaQuery.of(context).padding.top;
+        MediaQuery.of(context).padding.top*/;
     setState(() {
 
     });
@@ -295,7 +285,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createGoalsListView() {
     return Container(
-        height: PSize.hPix(40),
+      constraints: BoxConstraints.expand(),
         child: Scrollbar(
             isAlwaysShown: true,
             controller: _scrollController,
@@ -357,22 +347,22 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createInfoListView() {
     return Container(
-        key: listViewKey,
-        width: PSize.wPix(80),
-        height: PSize.hPix(40) - decreaseListviewHeightBy,
-        child: Scrollbar(
-            isAlwaysShown: true,
-            controller: _scrollController,
-            child: ListView(
+          constraints: BoxConstraints.expand(),
+          child: Scrollbar(
+              isAlwaysShown: true,
               controller: _scrollController,
-              children: [
-                createAgeRow(),
-                createHeightRow(),
-                createWeightRow("Weight", _weightController),
-                createWeightRow("Target Weight", _targetWeightController),
-                createSedentaryLevels(),
-              ],
-            )));
+              child: ListView(
+                controller: _scrollController,
+                children: [
+                  createAgeRow(),
+                  createHeightRow(),
+                  createWeightRow("Weight", _weightController),
+                  createWeightRow("Target Weight", _targetWeightController),
+                  createSedentaryLevels(),
+                ],
+              )
+          ),
+    );
   }
 
   Widget createAgeRow() {
@@ -539,8 +529,7 @@ class MyProfileMainState extends State<MyProfileMain> {
 
   Widget createReviewListView() {
     return Container(
-      width: PSize.wPix(80),
-      height: PSize.hPix(40) - decreaseListviewHeightBy,
+      constraints: BoxConstraints.expand(),
       child: Scrollbar(
           isAlwaysShown: true,
           controller: _scrollController,

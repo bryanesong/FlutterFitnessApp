@@ -44,7 +44,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     //set size of screen size
     PSize.width = MediaQuery.of(context).size.width;
-    PSize.height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+    PSize.height = MediaQuery.of(context).size.height;
 
     logoutContext = context;
     return Scaffold(
@@ -53,72 +53,72 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: Builder(
-          builder: (context) => SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
+        builder: (context) => Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  //content
+                  getCustomContainer(),
+                  //top navigation bar
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: PSize.hPix(9),
+                      child: Row(
                         children: [
-                          //content
-                          getCustomContainer(),
-                          //top navigation bar
-                          Align(
-                            alignment: Alignment.topCenter,
+                          Expanded(
                             child: Container(
-                              height: PSize.hPix(9),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: SizedBox(
-                                        width: PSize.wPix(12),
-                                        child: FlatButton(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                          onPressed: () {
-                                            onBack();
-                                          },
-                                          child: Image.asset(
-                                            "assets/images/HomeScreenBackArrow.png",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                width: PSize.wPix(12),
+                                child: FlatButton(
+                                  padding: EdgeInsets.fromLTRB(0,
+                                      MediaQuery.of(context).padding.top, 0, 0),
+                                  onPressed: () {
+                                    onBack();
+                                  },
+                                  child: Image.asset(
+                                    "assets/images/HomeScreenBackArrow.png",
                                   ),
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        width: PSize.wPix(8),
-                                        child: FlatButton(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                          onPressed: () {
-                                            Scaffold.of(context)
-                                                .openEndDrawer();
-                                          },
-                                          child: Image.asset(
-                                            "assets/images/hamburger.png",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
+                                ),
                               ),
-                              padding: EdgeInsets.fromLTRB(PSize.wPix(2),
-                                  PSize.wPix(1), PSize.wPix(2), 0),
                             ),
                           ),
-                          !hidePenguin ? PenguinCreator(
-                            penguinType: PenguinType.penguin,
-                            size: 300,
-                            centerXCoord: PSize.wPix(50),
-                            penguinAnimationType: PenguinAnimationType.wave,
-                            centerYCoord: PSize.hPix(50),
-                          ) : Container(),
-                          Container(
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: PSize.wPix(8),
+                                child: FlatButton(
+                                  padding: EdgeInsets.fromLTRB(0,
+                                      MediaQuery.of(context).padding.top, 0, 0),
+                                  onPressed: () {
+                                    Scaffold.of(context).openEndDrawer();
+                                  },
+                                  child: Image.asset(
+                                    "assets/images/hamburger.png",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      padding: EdgeInsets.fromLTRB(
+                          PSize.wPix(2), PSize.wPix(1), PSize.wPix(2), 0),
+                    ),
+                  ),
+                  !hidePenguin
+                      ? PenguinCreator(
+                          penguinType: PenguinType.penguin,
+                          size: 300,
+                          centerXCoord: PSize.wPix(50),
+                          penguinAnimationType: PenguinAnimationType.wave,
+                          centerYCoord: PSize.hPix(50),
+                        )
+                      : Container(),
+                  /*Container(
                             alignment: Alignment.bottomCenter,
                             child: FlatButton(
                               onPressed: () {
@@ -128,143 +128,142 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               },
                               child: Icon(Icons.navigate_next),
                             ),
-                          )
-                        ],
+                          )*/
+                ],
+              ),
+            ),
+            //bottom nav bar
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(width: 4.0, color: Colors.blueAccent)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: PSize.hPix(10),
+                      height: PSize.hPix(10),
+                      child: new Image.asset(
+                        'assets/images/calorieButton.png',
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    //bottom nav bar
-                    Container(
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(width: 4.0, color: Colors.blueAccent)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          MaterialButton(
-                            padding: EdgeInsets.all(0),
-                            minWidth: 5,
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 1, //this is the side of the border
-                                    color: Colors.blue,
-                                    style: BorderStyle.solid)),
-                            child: SizedBox(
-                              width: PSize.hPix(10),
-                              height: PSize.hPix(10),
-                              child: new Image.asset(
-                                'assets/images/calorieButton.png',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                print("set state invoked for calorie.");
-                                changeContainer(
-                                    AppState.Calorie_Log, WidgetMarker.calorie);
-                              });
-                            },
-                          ),
-                          MaterialButton(
-                            padding: EdgeInsets.all(0),
-                            minWidth: 5,
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 1, //this is the side of the border
-                                    color: Colors.blue,
-                                    style: BorderStyle.solid)),
-                            child: SizedBox(
-                              width: PSize.hPix(10),
-                              height: PSize.hPix(10),
-                              child: new Image.asset(
-                                'assets/images/workoutButton.png',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                print("set state invoked for workout.");
-                                changeContainer(
-                                    AppState.Workout_Log, WidgetMarker.workout);
-                              });
-                            },
-                          ),
-                          MaterialButton(
-                            padding: EdgeInsets.all(0),
-                            minWidth: 5,
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 1, //this is the side of the border
-                                    color: Colors.blue,
-                                    style: BorderStyle.solid)),
-                            child: SizedBox(
-                              width: PSize.hPix(10),
-                              height: PSize.hPix(10),
-                              child: new Image.asset(
-                                'assets/images/inventoryButton.png',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                print("set state invoked for inventory.");
-                                changeContainer(AppState.Cosmetics_Home,
-                                    WidgetMarker.inventory);
-                              });
-                            },
-                          ),
-                          MaterialButton(
-                            padding: EdgeInsets.all(0),
-                            minWidth: 5,
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 1, //this is the side of the border
-                                    color: Colors.blue,
-                                    style: BorderStyle.solid)),
-                            child: SizedBox(
-                              width: PSize.hPix(10),
-                              height: PSize.hPix(10),
-                              child: new Image.asset(
-                                'assets/images/statsButton.png',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                print("set state invoked for stats.");
-                                changeContainer(AppState.Statistics_Home,
-                                    WidgetMarker.stats);
-                              });
-                            },
-                          ),
-                          MaterialButton(
-                            padding: EdgeInsets.all(0),
-                            minWidth: 5,
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 1, //this is the side of the border
-                                    color: Colors.blue,
-                                    style: BorderStyle.solid)),
-                            child: SizedBox(
-                              width: PSize.hPix(10),
-                              height: PSize.hPix(10),
-                              child: new Image.asset(
-                                'assets/images/homeButtonTEMP.png',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                changeContainer(AppState.HomeScreen_Idle,
-                                    WidgetMarker.home);
-                              });
-                            },
-                          ),
-                        ],
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for calorie.");
+                        changeContainer(
+                            AppState.Calorie_Log, WidgetMarker.calorie);
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: PSize.hPix(10),
+                      height: PSize.hPix(10),
+                      child: new Image.asset(
+                        'assets/images/workoutButton.png',
+                        fit: BoxFit.fill,
                       ),
                     ),
-                  ],
-                ),
-              )),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for workout.");
+                        changeContainer(
+                            AppState.Workout_Log, WidgetMarker.workout);
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: PSize.hPix(10),
+                      height: PSize.hPix(10),
+                      child: new Image.asset(
+                        'assets/images/inventoryButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for inventory.");
+                        changeContainer(
+                            AppState.Cosmetics_Home, WidgetMarker.inventory);
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: PSize.hPix(10),
+                      height: PSize.hPix(10),
+                      child: new Image.asset(
+                        'assets/images/statsButton.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        print("set state invoked for stats.");
+                        changeContainer(
+                            AppState.Statistics_Home, WidgetMarker.stats);
+                      });
+                    },
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 5,
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 1, //this is the side of the border
+                            color: Colors.blue,
+                            style: BorderStyle.solid)),
+                    child: SizedBox(
+                      width: PSize.hPix(10),
+                      height: PSize.hPix(10),
+                      child: new Image.asset(
+                        'assets/images/homeButtonTEMP.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        changeContainer(
+                            AppState.HomeScreen_Idle, WidgetMarker.home);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -274,7 +273,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } else {
       currentInt = 0;
     }
-    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: heldItem[currentInt].describeEnum());
+    PenguinCosmeticRealtime.pushCosmetics(
+        penguinType: PenguinType.penguin,
+        cosmeticName: heldItem[currentInt].describeEnum());
   }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar
@@ -289,30 +290,36 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           fit: BoxFit.fill,
         );
       case WidgetMarker.calorie:
-        return CalorieTracker(
-          appState: enumStack.peek(),
-          onAppStateChange: (AppState appState) {
-            setAppState(appState);
-          },
+        return SafeArea(
+          child: CalorieTracker(
+            appState: enumStack.peek(),
+            onAppStateChange: (AppState appState) {
+              setAppState(appState);
+            },
+          ),
         );
       case WidgetMarker.workout:
-        return WorkoutTracker(
-          appState: enumStack.peek(),
-          onAppStateChange: (AppState appState) {
-            setAppState(appState);
-          },
+        return SafeArea(
+          child: WorkoutTracker(
+            appState: enumStack.peek(),
+            onAppStateChange: (AppState appState) {
+              setAppState(appState);
+            },
+          ),
         );
       case WidgetMarker.inventory:
-        return CosmeticSelector(
-          appState: enumStack.peek(),
-          onAppStateChange: (AppState appState) {
-            setAppState(appState);
-          },
+        return SafeArea(
+          child: CosmeticSelector(
+            appState: enumStack.peek(),
+            onAppStateChange: (AppState appState) {
+              setAppState(appState);
+            },
+          ),
         );
       case WidgetMarker.stats:
-        return Container();
+        return SafeArea(child: Container());
       case WidgetMarker.logCardio:
-        return Container();
+        return SafeArea(child: Container());
     }
     return Container();
   }

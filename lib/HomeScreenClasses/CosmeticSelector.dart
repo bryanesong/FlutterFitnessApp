@@ -80,81 +80,81 @@ class CosmeticSelectorState extends State<CosmeticSelector>
   }
 
   Widget gridView() {
-    return Column(
+    return Stack(
+      fit: StackFit.expand,
       children: [
-        Expanded(
-          child: Stack(
-            children: [
-              PenguinCreator(centerXCoord: PSize.wPix(50), centerYCoord: PSize.hPix(30), size: PSize.wPix(60), penguinAnimationType: PenguinAnimationType.wave, penguinType: PenguinType.penguin,)
-            ],
-          ),
+        //background
+        FittedBox(fit: BoxFit.fill, child: Image.asset("assets/images/inventoryBackground.jpg"),),
+        Column(
+          children: [
+            Expanded(
+              //penguin
+              child: Stack(
+                children: [
+                  PenguinCreator(centerXCoord: PSize.wPix(50), centerYCoord: PSize.hPix(30), size: PSize.wPix(60), penguinAnimationType: PenguinAnimationType.wave, penguinType: PenguinType.penguin,)
+                ],
+              ),
+            ),
+            //inventory
+            Container(
+              height: PSize.hPix(5),
+              margin: EdgeInsets.fromLTRB(0, 0, 0, PSize.hPix(1)),
+              child: Row(
+                children: _createInventoryTypeButtons(),
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              alignment: Alignment.bottomCenter,
+              width: PSize.wPix(100),
+              height: PSize.hPix(30),
+              child: GridView.count(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                crossAxisCount: 4,
+                crossAxisSpacing: 3,
+                mainAxisSpacing: 3,
+                children: _displayedCosmetics,
+              ),
+            )
+          ],
         ),
-        Container(
-          height: PSize.hPix(5),
-          width: PSize.wPix(100),
-          child: ToggleButtons(
-            children: [
-              Container(
-                width: PSize.wPix(24.7),
-                child: Text(
-                  "Hats",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                width: PSize.wPix(24.7),
-                child: Text(
-                  "Shirts",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                width: PSize.wPix(24.7),
-                child: Text(
-                  "Hand",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                width: PSize.wPix(24.7),
-                child: Text(
-                  "Shoes",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-            onPressed: (int index) {
+      ],
+    );
+  }
+
+  List<Widget> _createInventoryTypeButtons() {
+    List<String> inventoryTypes = ["Hats","Shirts","Hand","Shoes"];
+    List<Widget> buttonList = new List<Widget>();
+    for(int i = 0; i < inventoryTypes.length; i++) {
+      buttonList.add(Expanded(
+          child: FlatButton(
+            color: _selected[i] ? Colors.cyan : Colors.white,
+            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            onPressed: () {
               setState(() {
-                for (int buttonIndex = 0;
-                    buttonIndex < _selected.length;
-                    buttonIndex++) {
-                  if (buttonIndex == index) {
-                    _selected[buttonIndex] = true;
-                  } else {
-                    _selected[buttonIndex] = false;
-                  }
-                }
+                _inventoryTypeSelected(i);
                 setOwnedCosmeticsList();
               });
             },
-            isSelected: _selected,
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          alignment: Alignment.bottomCenter,
-          width: PSize.wPix(100),
-          height: PSize.hPix(30),
-          child: GridView.count(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            crossAxisCount: 4,
-            crossAxisSpacing: 3,
-            mainAxisSpacing: 3,
-            children: _displayedCosmetics,
-          ),
-        )
-      ],
-    );
+            child: Text(
+              inventoryTypes[i],
+              textAlign: TextAlign.center,
+            ),
+          )
+      ),);
+    }
+    return buttonList;
+  }
+
+  void _inventoryTypeSelected(int index) {
+    //when flat button for inventory type has been selected
+    for(int i = 0; i < _selected.length; i++) {
+      if(i != index) {
+        _selected[i] = false;
+      } else {
+        _selected[i] = true;
+      }
+    }
   }
 
   void updateInventory() {

@@ -28,6 +28,9 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   FirebaseUser user;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  //var to be disposed when object life is over
+  var _entryAddedListener;
+
   //list of dated food entries
   CalorieEntryContainer entries;
 
@@ -71,6 +74,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     _brandNameController.dispose();
     _foodNameController.dispose();
     _addFoodEntryController.dispose();
+    _entryAddedListener.cancel();
     super.dispose();
   }
 
@@ -87,7 +91,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
         .child("Calorie Tracker Data");
 
     //update list on items being added
-    entryRef.child("My Entries").onChildAdded.listen(_onEntry);
+    _entryAddedListener = entryRef.child("My Entries").onChildAdded.listen(_onEntry);
   }
 
   void _onEntry(Event e) {
@@ -226,7 +230,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           ],
         ),
         Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(5),
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             onPressed: () {
