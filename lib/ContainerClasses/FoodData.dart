@@ -62,7 +62,7 @@ class FoodData {
         parsedFats = i["amount"];
       }
       if (i["name"] == "Energy") {
-        parsedCalories = i["amount"];
+        parsedCalories = i["amount"].toDouble();
       }
     }
 

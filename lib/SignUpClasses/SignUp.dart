@@ -1,4 +1,5 @@
 import 'package:FlutterFitnessApp/ContainerClasses/PSize.dart';
+import 'package:FlutterFitnessApp/ContainerClasses/PenguinCosmeticRealtime.dart';
 import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
 import 'package:FlutterFitnessApp/SignUpClasses/MyProfileMain.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -320,15 +321,19 @@ class SignUpState extends State<SignUpRoute> {
         ref.child("Alpha Codes").child(event.snapshot.key).child("inUse").set(true);
       });
     }
-    //FirebaseAuth.instance.currentUser().
+
+    //create base penguin cosmetics
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: "NO_HAT");
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: "NO_SHIRT");
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: "NO_ARMS");
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: "NO_SHOES");
+    PenguinCosmeticRealtime.pushCosmetics(penguinType: PenguinType.penguin, cosmeticName: "NO_SHADOW");
 
     navigateToProfileMainPage(context);
   }
 
   Future navigateToProfileMainPage(context) async{
-    if(_checked) {
 
-    }
     Navigator.push(context,MaterialPageRoute(
         builder: (context) => MyProfileMain(username: _usernameController.text, email: _emailController.text,)
     ));

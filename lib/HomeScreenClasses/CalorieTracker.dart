@@ -131,18 +131,21 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
       children: [
         Column(
           children: [
-            TableCalendar(
-              calendarController: _calorieCalendarController,
-              initialSelectedDay:
-                  selectedDateTime != null ? selectedDateTime : DateTime.now(),
-              initialCalendarFormat: CalendarFormat.week,
-              formatAnimation: FormatAnimation.slide,
-              startingDayOfWeek: StartingDayOfWeek.sunday,
-              availableGestures: AvailableGestures.all,
-              availableCalendarFormats: const {
-                CalendarFormat.week: 'Weekly',
-              },
-              onDaySelected: _onDaySelectedCalorie,
+            Container(
+              padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+              child: TableCalendar(
+                calendarController: _calorieCalendarController,
+                initialSelectedDay:
+                selectedDateTime != null ? selectedDateTime : DateTime.now(),
+                initialCalendarFormat: CalendarFormat.week,
+                formatAnimation: FormatAnimation.slide,
+                startingDayOfWeek: StartingDayOfWeek.sunday,
+                availableGestures: AvailableGestures.all,
+                availableCalendarFormats: const {
+                  CalendarFormat.week: 'Weekly',
+                },
+                onDaySelected: _onDaySelectedCalorie,
+              ),
             ),
             Expanded(
                 child: listOfCurDay != null
@@ -247,9 +250,10 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
   }
 
   void _onDaySelectedCalorie(DateTime day, List events) {
-    selectedDateTime = day;
     //update widgets when new day is selected
-    setState(() {});
+    setState(() {
+      selectedDateTime = day;
+    });
   }
 
   //<-------------------------------------------------EditEntryPage------------------------------------------------->
@@ -414,47 +418,42 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
       children: [
         Column(
           children: [
-            Row(
-              children: [
-                //back button to go back to the log
-/*                Container(
-                  child: FlatButton(
-                    onPressed: () {
-                      _calorieState = CalorieTrackerScreen.log;
-                      _searchFoodController.clear();
-                      searchEntries.clear();
-                      setState(() {});
-                    },
-                    child: Icon(Icons.chevron_left),
-                  ),
-                ),*/
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.fromLTRB(PSize.wPix(15), PSize.wPix(2), PSize.wPix(2), 0),
-                  child: FlatButton(
-                    color: widget.appState == AppState.Calorie_SearchFood
-                        ? Colors.lightBlueAccent
-                        : Colors.blue,
-                    onPressed: () {},
-                    child: Text("Search Food"),
-                  ),
-                )),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(15), 0),
-                  child: FlatButton(
-                    color: widget.appState == AppState.Calorie_MyFood
-                        ? Colors.lightBlueAccent
-                        : Colors.blue,
-                    onPressed: () {
-                      widget.onAppStateChange(AppState.Calorie_MyFood);
-                      setState(() {});
-                    },
-                    child: Text("My Food"),
-                  ),
-                )),
-              ],
+            Container(
+              //to space below the nav bar
+              padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(2), 0),
+                        child: FlatButton(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                          color: widget.appState == AppState.Calorie_SearchFood
+                              ? Colors.lightBlueAccent
+                              : Colors.blue,
+                          onPressed: () {},
+                          child: Text("Search Food"),
+                        ),
+                      )),
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2),PSize.wPix(2), 0),
+                        child: FlatButton(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                          color: widget.appState == AppState.Calorie_MyFood
+                              ? Colors.lightBlueAccent
+                              : Colors.blue,
+                          onPressed: () {
+                            widget.onAppStateChange(AppState.Calorie_MyFood);
+                            setState(() {});
+                          },
+                          child: Text("My Food"),
+                        ),
+                      )),
+                ],
+              ),
             ),
+
             Row(
               children: [
                 Container(
@@ -572,34 +571,40 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
       children: [
         Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.fromLTRB(PSize.wPix(15), PSize.wPix(2), PSize.wPix(2), 0),
-                  child: FlatButton(
-                    color: widget.appState == AppState.Calorie_SearchFood
-                        ? Colors.lightBlueAccent
-                        : Colors.blue,
-                    onPressed: () {
-                      widget.onAppStateChange(AppState.Calorie_SearchFood);
-                      setState(() {});
-                    },
-                    child: Text("Search Food"),
-                  ),
-                )),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(15), 0),
-                  child: FlatButton(
-                    color: widget.appState == AppState.Calorie_MyFood
-                        ? Colors.lightBlueAccent
-                        : Colors.blue,
-                    onPressed: () {},
-                    child: Text("My Food"),
-                  ),
-                )),
-              ],
+            Container(
+              //to space below the nav bar
+              padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(2), 0),
+                        child: FlatButton(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                          color: widget.appState == AppState.Calorie_SearchFood
+                              ? Colors.lightBlueAccent
+                              : Colors.blue,
+                          onPressed: () {
+                            widget.onAppStateChange(AppState.Calorie_SearchFood);
+                            setState(() {});
+                          },
+                          child: Text("Search Food"),
+                        ),
+                      )),
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(PSize.wPix(2), PSize.wPix(2), PSize.wPix(2), 0),
+                        child: FlatButton(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                          color: widget.appState == AppState.Calorie_MyFood
+                              ? Colors.lightBlueAccent
+                              : Colors.blue,
+                          onPressed: () {},
+                          child: Text("My Food"),
+                        ),
+                      )),
+                ],
+              ),
             ),
             createMyFoodListView(),
           ],
@@ -672,7 +677,8 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(0, PSize.hPix(3), 0, 0),
+          //to space below the nav bar
+          padding: EdgeInsets.fromLTRB(0, PSize.hPix(6.5), 0, 0),
           child: Column(
             children: [
               createRow("Food Name", "Pizza", _foodNameController, "text"),
@@ -742,6 +748,9 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
               decoration: InputDecoration(
                 hintText: hint,
                 errorText: title == _errorTextBox ? _errorMessage : null,
+                /*focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.pinkAccent),
+                )*/
                 //counterText: " ",
               ),
               keyboardType: inputType == "number"

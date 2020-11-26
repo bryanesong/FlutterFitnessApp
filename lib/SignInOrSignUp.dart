@@ -39,6 +39,9 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
 
   @override
   void initState() {
+    //test of user is already logged in
+    userLoggedIn().then((value) => value ? navigateToHomePage(context) : null);
+
     //executed after initial build state
     WidgetsBinding.instance.addPostFrameCallback((_) => {
           setState(() {
@@ -46,6 +49,10 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
           })
         });
     super.initState();
+  }
+
+  Future<bool> userLoggedIn() async {
+    return await FirebaseAuth.instance.currentUser() != null;
   }
 
   @override
@@ -93,31 +100,33 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
                             createSignInSignOutRow()
                           ],
                         ),
-                  _showGestureDetector ? GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          //draw other components in stack
-                          _comicShown = false;
-                          _comicOpacity = 0.0;
-                        });
+                  _showGestureDetector
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              //draw other components in stack
+                              _comicShown = false;
+                              _comicOpacity = 0.0;
+                            });
 
-                        //replace gesture detector with container to detect clicks on "Sign In" and "Sign Up"
-                        Future.delayed(Duration(seconds: 2), () {
-                          setState(() {
-                            _showGestureDetector = false;
-                          });
-                        });
-                      },
-                      child: AnimatedOpacity(
-                        duration: Duration(seconds: 2),
-                        opacity: _comicOpacity,
-                        child: Container(
-                          constraints: BoxConstraints.expand(),
-                          child: Image.asset(
-                            "assets/images/comicStrip.jpg",
-                          ),
-                        ),
-                      )) : Container()
+                            //replace gesture detector with container to detect clicks on "Sign In" and "Sign Up"
+                            Future.delayed(Duration(seconds: 2), () {
+                              setState(() {
+                                _showGestureDetector = false;
+                              });
+                            });
+                          },
+                          child: AnimatedOpacity(
+                            duration: Duration(seconds: 2),
+                            opacity: _comicOpacity,
+                            child: Container(
+                              constraints: BoxConstraints.expand(),
+                              child: Image.asset(
+                                "assets/images/comicStrip.jpg",
+                              ),
+                            ),
+                          ))
+                      : Container()
                 ],
               ))),
     );
@@ -190,7 +199,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
                 constraints: BoxConstraints(
                     minWidth: _iconSize,
                     minHeight: _iconSize,
-                    maxHeight:_iconSize,
+                    maxHeight: _iconSize,
                     maxWidth: _iconSize),
                 onPressed: () => (buttonPushed("Sign Up")),
                 fillColor: Colors.white,
@@ -239,16 +248,15 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
     }
   }
 
+  Future navigateToHomePage(context) async {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HomeScreen()));
+  }
+
   Future navigateToLoginPage(context) async {
-    if (await FirebaseAuth.instance.currentUser() != null) {
-      print("currently logged in.");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
-    } else {
-      print("NOT logged in,");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginRoute()));
-    }
+    print("NOT logged in,");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginRoute()));
   }
 
   Future navigateToAlphaCodePage(context) async {

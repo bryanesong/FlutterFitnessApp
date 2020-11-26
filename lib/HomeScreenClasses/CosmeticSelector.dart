@@ -126,6 +126,10 @@ class CosmeticSelectorState extends State<CosmeticSelector>
     List<String> inventoryTypes = ["Hats","Shirts","Hand","Shoes"];
     List<Widget> buttonList = new List<Widget>();
     for(int i = 0; i < inventoryTypes.length; i++) {
+      //create spacing
+      buttonList.add(Container(width: PSize.wPix(2),));
+
+      //create circular buttons
       buttonList.add(Expanded(
           child: FlatButton(
             color: _selected[i] ? Colors.cyan : Colors.white,
@@ -142,7 +146,12 @@ class CosmeticSelectorState extends State<CosmeticSelector>
             ),
           )
       ),);
+
     }
+
+    //tag on spacing on far right
+    buttonList.add(Container(width: PSize.wPix(2),));
+
     return buttonList;
   }
 
