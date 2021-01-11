@@ -1,6 +1,7 @@
 enum AppState {
   //HOMESCREEN ENUMS
   HomeScreen_Idle,
+  HomeScreen_Chat,
 
   //CALORIE LOG ENUMS
   Calorie_Log,

@@ -1068,7 +1068,7 @@ class WorkoutTrackerState extends State<WorkoutTracker> with TickerProviderState
                   child: FlatButton(
                     onPressed: () {
                       setState(() {
-                        workouts.removeAt(index);
+                        removeWorkout(workouts[index]);
                       });
                     },
                     child: Icon(Icons.delete),

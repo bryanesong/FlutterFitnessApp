@@ -112,6 +112,9 @@ flutter:
     - assets/images/HomeScreenBackArrow.png
     - assets/images/hamburger.png
     - assets/images/shoes/mcdonaldShoes.png
+    - assets/images/chatButton.png
+    - assets/images/search_icon.png
+    - assets/images/TEMP_profile_picture.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

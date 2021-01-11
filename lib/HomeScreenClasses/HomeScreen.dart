@@ -1,9 +1,11 @@
 import 'package:FlutterFitnessApp/Container%20Classes/AppStateEnum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterFitnessApp/PenguinCreator.dart';
 import 'CalorieTracker.dart';
+import 'FriendsList.dart';
 import 'WorkoutTracker.dart';
 import 'package:FlutterFitnessApp/Container Classes/EnumStack.dart';
 
@@ -110,7 +112,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    //bottom nav bar
+                    //bottom nav bar------------------------------------------------------------
                     Container(
                       decoration: BoxDecoration(
                           border:
@@ -252,8 +254,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget getCustomContainer() {
     //make penguin disappear if not on dashboard page
     switch (selectedWidgetMarker) {
-      case WidgetMarker.home:
-        return Container();
+      case WidgetMarker.home:{
+        return homeScreenNavigation();
+      }
       case WidgetMarker.calorie:
         return CalorieTracker(
           appState: enumStack.peek(),
@@ -271,6 +274,64 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Container();
     }
     return Container();
+  }
+
+  //responsible for home screen navigation
+  Widget homeScreenNavigation(){
+    //get current appstate from top of stack
+    AppState current = enumStack.peek();
+    if(current == AppState.HomeScreen_Idle){
+      return homeScreenIdleWidget();
+    }else if(current == AppState.HomeScreen_Chat){
+      return homeScreenChat();
+    }else{
+      //return error if current state returns something that isnt native to the home screen, which it wouldn't....right?
+      return Container(
+        child: Text("Error...pepehands..."),
+      );
+    }
+  }
+
+  Widget homeScreenIdleWidget(){
+    return new Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/japanBackground.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+      child: new Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(hpad(4)),
+          ),
+          Row(
+            children:[
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: wpad(14),
+                    child: FlatButton(
+                      padding:
+                      EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Image.asset("assets/images/chatButton.png"),
+                      onPressed: () {
+                        setAppState(AppState.HomeScreen_Chat);
+                      },
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget homeScreenChat(){
+    return FriendsList();
   }
 
   void setAppState(AppState appState) {
