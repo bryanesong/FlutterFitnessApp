@@ -23,14 +23,13 @@ class HomeScreen extends StatefulWidget {
 final GlobalKey _scaffoldKey = new GlobalKey();
 BuildContext logoutContext;
 bool hidePenguin = false;
-//seperate enum states per major button
 
 //stack for back arrow enum implementation
 EnumStack enumStack = new EnumStack();
 
-//temp handheld variable
-int currentInt = 0;
-List<PenguinArm> heldItem = PenguinArm.values;
+//bottom nav bar icon size
+double ICON_SIZE = 9.5;
+
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
@@ -148,8 +147,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.blue,
                             style: BorderStyle.solid)),
                     child: SizedBox(
-                      width: PSize.hPix(10),
-                      height: PSize.hPix(10),
+                      width: PSize.hPix(ICON_SIZE),
+                      height: PSize.hPix(ICON_SIZE),
                       child: new Image.asset(
                         'assets/images/calorieButton.png',
                         fit: BoxFit.fill,
@@ -172,8 +171,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.blue,
                             style: BorderStyle.solid)),
                     child: SizedBox(
-                      width: PSize.hPix(10),
-                      height: PSize.hPix(10),
+                      width: PSize.hPix(ICON_SIZE),
+                      height: PSize.hPix(ICON_SIZE),
                       child: new Image.asset(
                         'assets/images/workoutButton.png',
                         fit: BoxFit.fill,
@@ -196,8 +195,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.blue,
                             style: BorderStyle.solid)),
                     child: SizedBox(
-                      width: PSize.hPix(10),
-                      height: PSize.hPix(10),
+                      width: PSize.hPix(ICON_SIZE),
+                      height: PSize.hPix(ICON_SIZE),
                       child: new Image.asset(
                         'assets/images/inventoryButton.png',
                         fit: BoxFit.fill,
@@ -220,8 +219,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.blue,
                             style: BorderStyle.solid)),
                     child: SizedBox(
-                      width: PSize.hPix(10),
-                      height: PSize.hPix(10),
+                      width: PSize.hPix(ICON_SIZE),
+                      height: PSize.hPix(ICON_SIZE),
                       child: new Image.asset(
                         'assets/images/statsButton.png',
                         fit: BoxFit.fill,
@@ -244,8 +243,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.blue,
                             style: BorderStyle.solid)),
                     child: SizedBox(
-                      width: PSize.hPix(10),
-                      height: PSize.hPix(10),
+                      width: PSize.hPix(ICON_SIZE),
+                      height: PSize.hPix(ICON_SIZE),
                       child: new Image.asset(
                         'assets/images/homeButtonTEMP.png',
                         fit: BoxFit.fill,
@@ -265,17 +264,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-
-  void swapItem() {
-    if (currentInt < heldItem.length - 1) {
-      currentInt++;
-    } else {
-      currentInt = 0;
-    }
-    PenguinCosmeticRealtime.pushCosmetics(
-        penguinType: PenguinType.penguin,
-        cosmeticName: heldItem[currentInt].describeEnum());
   }
 
   //returns the custom container that is shown above the 5 main app buttons at the bottom and below the appbar

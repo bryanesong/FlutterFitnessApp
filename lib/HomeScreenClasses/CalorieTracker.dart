@@ -412,6 +412,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
 
   //<-------------------------------------------------SearchFoodPage------------------------------------------------->
   List<FoodData> searchEntries = new List<FoodData>();
+  String dropdownValue = "";
 
   Widget searchFoodPage() {
     return Stack(
@@ -420,7 +421,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           children: [
             Container(
               //to space below the nav bar
-              padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+              padding: EdgeInsets.fromLTRB(0, PSize.hPix(7), 0, 0),
               child: Row(
                 children: [
                   Expanded(
@@ -474,6 +475,25 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
                     ),
                   ),
                 ),
+                Container(
+                  child: DropdownButton<String>(
+                    value: dropdownValue,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                        //resort list
+                        sortSearchFoodList(searchEntries);
+                      });
+                    },
+                    items: <String>['' ,'A-Z', 'Z-A', 'Cal ^', 'Cal v']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  )
+                )
               ],
             ),
             createSearchListView()
@@ -541,6 +561,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
 
   void searchDatabase(String foodSearch) async {
     searchEntries = await fetchData(foodSearch);
+    sortSearchFoodList(searchEntries);
     setState(() {});
   }
 
@@ -565,6 +586,51 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
     return searchEntryList;
   }
 
+  void sortSearchFoodList(List<FoodData> searchEntries) {
+    bool swapOccured = true;
+    while(swapOccured) {
+      swapOccured = false;
+      for (int i = 0; i < searchEntries.length-1; i++) {
+        FoodData tempData = searchEntries[0];
+
+        print("run");
+        if(dropdownValue == "A-Z" && searchEntries[i].foodType.compareTo(searchEntries[i+1].foodType) > 0) {
+          //if entry 1 comes later than entry 2 in the alphabet, swap
+          tempData = searchEntries[i];
+          searchEntries[i] = searchEntries[i+1];
+          searchEntries[i+1] = tempData;
+          //stay in loop of swap occured
+          swapOccured = true;
+
+        } else if(dropdownValue == "Z-A" && searchEntries[i].foodType.compareTo(searchEntries[i+1].foodType) < 0) {
+          //if entry 1 comes earlier than entry 2 in the alphabet, swap
+          tempData = searchEntries[i];
+          searchEntries[i] = searchEntries[i+1];
+          searchEntries[i+1] = tempData;
+          //stay in loop of swap occured
+          swapOccured = true;
+
+        } else if(dropdownValue == "Cal v" && searchEntries[i].calories < searchEntries[i+1].calories) {
+          //if entry 1 has less calories than entry 2, swap
+          tempData = searchEntries[i];
+          searchEntries[i] = searchEntries[i+1];
+          searchEntries[i+1] = tempData;
+          //stay in loop of swap occured
+          swapOccured = true;
+
+        } else if(dropdownValue == "Cal ^" && searchEntries[i].calories > searchEntries[i+1].calories) {
+          //if entry 1 has more calories than entry 2, swap
+          tempData = searchEntries[i];
+          searchEntries[i] = searchEntries[i+1];
+          searchEntries[i+1] = tempData;
+          //stay in loop of swap occured
+          swapOccured = true;
+
+        }
+      }
+    }
+  }
+
   //<-------------------------------------------------myFoodPage------------------------------------------------->
   Widget myFoodPage() {
     return Stack(
@@ -573,7 +639,7 @@ class CalorieTrackerState extends State<CalorieTracker> with TickerProviderState
           children: [
             Container(
               //to space below the nav bar
-              padding: EdgeInsets.fromLTRB(0, PSize.hPix(5), 0, 0),
+              padding: EdgeInsets.fromLTRB(0, PSize.hPix(7), 0, 0),
               child: Row(
                 children: [
                   Expanded(
