@@ -89,7 +89,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp>
                                 padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                                 child: FittedBox(
                                   child: Text(
-                                    'FITNESS NAME',
+                                    'PENGU FIT',
                                     style: TextStyle(
                                         decoration: TextDecoration.none,
                                         fontFamily: 'Work Sans',
