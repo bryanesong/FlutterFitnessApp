@@ -8,9 +8,38 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:956658967590:android:4fba1135abebf74035b2e7",
+        "android_client_info": {
+          "package_name": "com.FlutterFitnessApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtc0S_e_3udlyX04tBymC9P_kR9EokK7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956658967590-pub4035850ion3oat64e1g67m73r8dp3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:956658967590:android:15577641fdcc213d35b2e7",
         "android_client_info": {
-          "package_name": "com.example.FlutterFitnessApp"
+          "package_name": "com.FlutterFitnessApp"
         }
       },
       "oauth_client": [
